@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_item"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardPreventCornerOverlap="true">
+
+    <ImageView
+        android:id="@+id/image_banner"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        app:aspectRatio="0.56"
+        app:aspectRatioEnabled="true"
+        app:dominantMeasurement="Width"
+        tools:ignore="MissingClass" />
+
+</androidx.cardview.widget.CardView>

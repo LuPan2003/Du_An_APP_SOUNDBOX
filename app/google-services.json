@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "265264289877",
+    "firebase_url": "https://soundbox-du-an-md31-default-rtdb.firebaseio.com",
+    "project_id": "soundbox-du-an-md31",
+    "storage_bucket": "soundbox-du-an-md31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265264289877:android:ccf4d03158da4c825e9cdc",
+        "android_client_info": {
+          "package_name": "com.example.soundbox_du_an_md31"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkGWmbme3Ngk1sXvDpyJmgtKpNtpVJ7Do"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
