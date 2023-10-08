@@ -41,6 +41,9 @@
             android:name=".Activity.RegistrationActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.PlayMusicActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.SplashActivity"
             android:exported="false" />
         <activity

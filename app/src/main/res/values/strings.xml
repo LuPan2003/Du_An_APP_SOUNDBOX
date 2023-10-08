@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Soundbox_Du_An_MD31</string>
     <string name="splash_text">Highly committed to quality products &amp; excellent services</string>
-    <string name="tincoder">TinCoder</string>
+
 
     <string name="menu_home">Home</string>
     <string name="menu_all_songs">All Songs</string>
