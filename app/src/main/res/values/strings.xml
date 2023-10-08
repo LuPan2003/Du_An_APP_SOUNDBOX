@@ -2,7 +2,7 @@
     <string name="app_name">Soundbox_Du_An_MD31</string>
     <string name="splash_text">Highly committed to quality products &amp; excellent services</string>
 
-
+    <string name="name_app">Soundbox</string>
     <string name="menu_home">Home</string>
     <string name="menu_all_songs">All Songs</string>
     <string name="menu_featured_songs">Featured Songs</string>
@@ -47,6 +47,6 @@
     // Message
     <string name="msg_please_waiting">Please wait…</string>
     <string name="msg_send_feedback_success">Send feedback successfully!</string>
-    <string name="msg_exit_app">Are you sure you want to exit?</string>
+    <string name="msg_exit_app">Bạn chắc chắn muốn thoát ?</string>
     <string name="msg_get_date_error">General error, please try again later</string>
 </resources>

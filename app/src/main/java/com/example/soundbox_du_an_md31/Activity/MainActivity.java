@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void openHomeScreen() {
         replaceFragment(new HomeFragment());
         mTypeScreen = TYPE_HOME;
-        initToolbar(getString(R.string.app_name));
+        initToolbar(getString(R.string.name_app));
         displayLayoutPlayAll();
     }
 
@@ -200,9 +200,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         transaction.replace(R.id.content_frame, fragment).commitAllowingStateLoss();
     }
 
+    //Sự kiện khi nhấn nút thoát
     private void showConfirmExitApp() {
         new MaterialDialog.Builder(this)
-                .title(getString(R.string.app_name))
+                .title(getString(R.string.name_app))
                 .content(getString(R.string.msg_exit_app))
                 .positiveText(getString(R.string.action_ok))
                 .onPositive((dialog, which) -> finish())
@@ -210,6 +211,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 .cancelable(false)
                 .show();
     }
+    ///////////////
 
     private void displayLayoutPlayAll() {
         switch (mTypeScreen) {
@@ -219,12 +221,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case TYPE_NEW_SONGS:
                 mActivityMainBinding.header.layoutPlayAll.setVisibility(View.VISIBLE);
                 break;
-
             default:
                 mActivityMainBinding.header.layoutPlayAll.setVisibility(View.GONE);
                 break;
         }
     }
+
 
     private void displayLayoutBottom() {
         if (MusicService.mPlayer == null) {
@@ -236,6 +238,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         showStatusButtonPlay();
     }
 
+
+
+
     private void handleMusicAction() {
         if (Constant.CANNEL_NOTIFICATION == mAction) {
             mActivityMainBinding.layoutBottom.layoutItem.setVisibility(View.GONE);
@@ -246,6 +251,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         showStatusButtonPlay();
     }
 
+
+    //Show thông tin bài hát hình ảnh tên bài hát vào tác giả
     private void showInforSong() {
         if (MusicService.mListSongPlaying == null || MusicService.mListSongPlaying.isEmpty()) {
             return;
@@ -256,6 +263,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         GlideUtils.loadUrl(currentSong.getImage(), mActivityMainBinding.layoutBottom.imgSong);
     }
 
+    //trạng thái chuyển bài trên thông báo khi phát nhạc
     private void showStatusButtonPlay() {
         if (MusicService.isPlaying) {
             mActivityMainBinding.layoutBottom.imgPlay.setImageResource(R.drawable.ic_pause_black);
@@ -264,6 +272,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+
+    //Thực hiện các sự kiện khi click tại layout bottom
     private void clickOnPrevButton() {
         GlobalFuntion.startMusicService(this, Constant.PREVIOUS, MusicService.mSongPosition);
     }
@@ -291,7 +301,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public ActivityMainBinding getActivityMainBinding() {
         return mActivityMainBinding;
     }
-
+////
     @Override
     public void onBackPressed() {
         showConfirmExitApp();

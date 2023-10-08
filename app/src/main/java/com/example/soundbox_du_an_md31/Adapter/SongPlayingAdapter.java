@@ -59,9 +59,7 @@ public class SongPlayingAdapter extends RecyclerView.Adapter<SongPlayingAdapter.
     }
 
     public static class SongPlayingViewHolder extends RecyclerView.ViewHolder {
-
         private final ItemSongPlayingBinding mItemSongPlayingBinding;
-
         public SongPlayingViewHolder(ItemSongPlayingBinding itemSongPlayingBinding) {
             super(itemSongPlayingBinding.getRoot());
             this.mItemSongPlayingBinding = itemSongPlayingBinding;

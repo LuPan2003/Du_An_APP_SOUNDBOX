@@ -57,5 +57,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             super(itemSongBinding.getRoot());
             this.mItemSongBinding = itemSongBinding;
         }
+
     }
 }
