@@ -1,18 +1,23 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.Activity.PlayMusicActivity;
 import com.example.soundbox_du_an_md31.Adapter.SongAdapter;
+import com.example.soundbox_du_an_md31.Adapter.SongGridAdapter;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Song;
@@ -20,11 +25,13 @@ import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentAllSongsBinding;
+import com.example.soundbox_du_an_md31.utils.StringUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AllSongsFragment extends Fragment {
@@ -36,13 +43,14 @@ public class AllSongsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentAllSongsBinding = FragmentAllSongsBinding.inflate(inflater, container, false);
-
-        getListAllSongs();
+        getListSongFromFirebase("");
         initListener();
-
+        getListAllSongs();
         return mFragmentAllSongsBinding.getRoot();
     }
 
+
+    //Hiển thị tất cả các bài hát
     private void getListAllSongs() {
         if (getActivity() == null) {
             return;
@@ -58,6 +66,7 @@ public class AllSongsFragment extends Fragment {
                     }
                     mListSong.add(0, song);
                 }
+
                 displayListAllSongs();
             }
 
@@ -87,6 +96,7 @@ public class AllSongsFragment extends Fragment {
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
     }
 
+
     private void initListener() {
         MainActivity activity = (MainActivity) getActivity();
         if (activity == null || activity.getActivityMainBinding() == null) {
@@ -99,5 +109,130 @@ public class AllSongsFragment extends Fragment {
             GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
             GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
         });
+
+        //Sự kiện tìm kiếm bài hát
+        mFragmentAllSongsBinding.imgSearchAll.setOnClickListener(view -> searchSong());
+        mFragmentAllSongsBinding.edtSearchNameAll.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                searchSong();
+                return true;
+            }
+            return false;
+        });
+
+        mFragmentAllSongsBinding.edtSearchNameAll.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Do nothing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String strKey = s.toString().trim();
+                if (strKey.equals("") || strKey.length() == 0) {
+                    if (mListSong != null) mListSong.clear();
+                    getListSongFromFirebase("");
+                }
+            }
+        });
+
+        mFragmentAllSongsBinding.layoutViewAllPopularAll.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openPopularSongsScreen();
+            }
+        });
+
+
     }
+    private void getListSongFromFirebase(String key) {
+        if (getActivity() == null) {
+            return;
+        }
+        MyApplication.get(getActivity()).getSongsDatabaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                mFragmentAllSongsBinding.layoutContentAll.setVisibility(View.VISIBLE);
+                mListSong = new ArrayList<>();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Song song = dataSnapshot.getValue(Song.class);
+                    if (song == null) {
+                        return;
+                    }
+
+                    if (StringUtil.isEmpty(key)) {
+                        mListSong.add(0, song);
+                    } else {
+                        if (GlobalFuntion.getTextSearch(song.getTitle()).toLowerCase().trim()
+                                .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())) {
+                            mListSong.add(0, song);
+                        }
+                    }
+                }
+
+                displayListPopularSongs();
+                displayListNewSongs();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+            }
+        });
+    }
+
+    private void displayListPopularSongs() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        mFragmentAllSongsBinding.rcvPopularSongsAll.setLayoutManager(gridLayoutManager);
+        SongGridAdapter songGridAdapter = new SongGridAdapter(getListPopularSongs(), this::goToSongDetail);
+        mFragmentAllSongsBinding.rcvPopularSongsAll.setAdapter(songGridAdapter);
+    }
+    private List<Song> getListPopularSongs() {
+        List<Song> list = new ArrayList<>();
+        if (mListSong == null || mListSong.isEmpty()) {
+            return list;
+        }
+        List<Song> allSongs = new ArrayList<>(mListSong);
+        Collections.sort(allSongs, (song1, song2) -> song2.getCount() - song1.getCount());
+        for (Song song : allSongs) {
+            if (list.size() < Constant.MAX_COUNT_POPULAR) {
+                list.add(song);
+            }
+        }
+        return list;
+    }
+
+    private void displayListNewSongs() {
+        if (getActivity() == null) {
+            return;
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mFragmentAllSongsBinding.rcvData.setLayoutManager(linearLayoutManager);
+
+        SongAdapter songAdapter = new SongAdapter(getListNewSongs(), this::goToSongDetail);
+        mFragmentAllSongsBinding.rcvData.setAdapter(songAdapter);
+    }
+    private List<Song> getListNewSongs() {
+        List<Song> list = new ArrayList<>();
+        if (mListSong == null || mListSong.isEmpty()) {
+            return list;
+        }
+        for (Song song : mListSong) {
+            if (song.isLatest() && list.size() < Constant.MAX_COUNT_LATEST) {
+                list.add(song);
+            }
+        }
+        return list;
+    }
+    private void searchSong() {
+        String strKey = mFragmentAllSongsBinding.edtSearchNameAll.getText().toString().trim();
+        if (mListSong != null) mListSong.clear();
+        getListSongFromFirebase(strKey);
+        GlobalFuntion.hideSoftKeyboard(getActivity());
+    }
+
 }

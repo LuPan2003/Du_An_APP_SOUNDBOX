@@ -37,7 +37,6 @@ public class FeedbackFragment extends Fragment {
             return;
         }
         MainActivity activity = (MainActivity) getActivity();
-
         String strName = mFragmentFeedbackBinding.edtName.getText().toString();
         String strPhone = mFragmentFeedbackBinding.edtPhone.getText().toString();
         String strEmail = mFragmentFeedbackBinding.edtEmail.getText().toString();

@@ -179,6 +179,7 @@
                     </LinearLayout>
                 </RelativeLayout>
 
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcv_new_songs"
                     android:layout_width="match_parent"
