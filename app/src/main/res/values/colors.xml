@@ -34,4 +34,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="xam2">#393838</color>
+
+<!--    Quý-->
+    <color name="lavender">#8692f7</color>
 </resources>

@@ -8,8 +8,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -31,7 +33,7 @@ import com.example.soundbox_du_an_md31.utils.GlideUtils;
 
 
 @SuppressLint("NonConstantResourceId")
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener  {
 
     public static final int TYPE_HOME = 1;
     public static final int TYPE_ALL_SONGS = 2;
@@ -59,6 +61,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mActivityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mActivityMainBinding.getRoot());
 
+        mActivityMainBinding.bottomNavView.setBackground(null);
+
+        replaceFragment(new HomeFragment());
+
+        mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
+            if(item.getItemId() == R.id.home){
+                replaceFragment(new HomeFragment());
+            }else if(item.getItemId() == R.id.search){
+                replaceFragment(new AllSongsFragment());
+            }else if(item.getItemId() == R.id.library){
+                replaceFragment(new FeaturedSongsFragment());
+            }else if(item.getItemId() == R.id.premimum){
+                replaceFragment(new FeedbackFragment());
+            }
+            return true;
+        });
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter(Constant.CHANGE_LISTENER));
 //
@@ -68,22 +86,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initToolbar(String title) {
-        mActivityMainBinding.header.imgLeft.setImageResource(R.drawable.ic_menu_left);
         mActivityMainBinding.header.tvTitle.setText(title);
     }
 
     private void initListener() {
         mActivityMainBinding.header.imgLeft.setOnClickListener(this);
         mActivityMainBinding.header.layoutPlayAll.setOnClickListener(this);
-
-        mActivityMainBinding.menuLeft.layoutClose.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuHome.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuAllSongs.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuFeaturedSongs.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuPopularSongs.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuNewSongs.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuFeedback.setOnClickListener(this);
-        mActivityMainBinding.menuLeft.tvMenuContact.setOnClickListener(this);
+//
+//        mActivityMainBinding.menuLeft.layoutClose.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuHome.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuAllSongs.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuFeaturedSongs.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuPopularSongs.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuNewSongs.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuFeedback.setOnClickListener(this);
+//        mActivityMainBinding.menuLeft.tvMenuContact.setOnClickListener(this);
 
         mActivityMainBinding.layoutBottom.imgPrevious.setOnClickListener(this);
         mActivityMainBinding.layoutBottom.imgPlay.setOnClickListener(this);
@@ -92,14 +109,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mActivityMainBinding.layoutBottom.layoutText.setOnClickListener(this);
         mActivityMainBinding.layoutBottom.imgSong.setOnClickListener(this);
     }
-
+//
     private void openHomeScreen() {
         replaceFragment(new HomeFragment());
         mTypeScreen = TYPE_HOME;
         initToolbar(getString(R.string.name_app));
         displayLayoutPlayAll();
     }
-
+//
     public void openPopularSongsScreen() {
         replaceFragment(new PopularSongsFragment());
         mTypeScreen = TYPE_POPULAR_SONGS;
@@ -117,61 +134,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.layout_close:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                break;
-
-            case R.id.img_left:
-                mActivityMainBinding.drawerLayout.openDrawer(GravityCompat.START);
-                break;
-
-            case R.id.tv_menu_home:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                openHomeScreen();
-                break;
-
-            case R.id.tv_menu_all_songs:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                replaceFragment(new AllSongsFragment());
-                mTypeScreen = TYPE_ALL_SONGS;
-                initToolbar(getString(R.string.menu_all_songs));
-                displayLayoutPlayAll();
-                break;
-
-            case R.id.tv_menu_featured_songs:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                replaceFragment(new FeaturedSongsFragment());
-                mTypeScreen = TYPE_FEATURED_SONGS;
-                initToolbar(getString(R.string.menu_featured_songs));
-                displayLayoutPlayAll();
-                break;
-
-            case R.id.tv_menu_popular_songs:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                openPopularSongsScreen();
-                break;
-
-            case R.id.tv_menu_new_songs:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                openNewSongsScreen();
-                break;
-
-            case R.id.tv_menu_feedback:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                replaceFragment(new FeedbackFragment());
-                mTypeScreen = TYPE_FEEDBACK;
-                initToolbar(getString(R.string.menu_feedback));
-                displayLayoutPlayAll();
-                break;
-
-            case R.id.tv_menu_contact:
-                mActivityMainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-                replaceFragment(new ContactFragment());
-                mTypeScreen = TYPE_CONTACT;
-                initToolbar(getString(R.string.menu_contact));
-                displayLayoutPlayAll();
-                break;
-
             case R.id.img_previous:
                 clickOnPrevButton();
                 break;
@@ -197,7 +159,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, fragment).commitAllowingStateLoss();
+        transaction.replace(R.id.frame_layout, fragment).commitAllowingStateLoss();
     }
 
     //Sự kiện khi nhấn nút thoát
