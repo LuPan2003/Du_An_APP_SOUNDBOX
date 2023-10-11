@@ -44,8 +44,8 @@ public class AllSongsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentAllSongsBinding = FragmentAllSongsBinding.inflate(inflater, container, false);
         getListSongFromFirebase("");
-        initListener();
         getListAllSongs();
+        initListener();
         return mFragmentAllSongsBinding.getRoot();
     }
 
@@ -150,6 +150,7 @@ public class AllSongsFragment extends Fragment {
 
 
     }
+
     private void getListSongFromFirebase(String key) {
         if (getActivity() == null) {
             return;
