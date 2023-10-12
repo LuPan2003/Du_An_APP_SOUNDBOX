@@ -8,10 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -19,7 +16,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
-import com.example.soundbox_du_an_md31.Fragment.ContactFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeaturedSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;

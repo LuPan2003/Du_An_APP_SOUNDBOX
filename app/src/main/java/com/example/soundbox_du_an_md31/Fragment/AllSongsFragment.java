@@ -50,7 +50,9 @@ public class AllSongsFragment extends Fragment {
     }
 
 
-    //Hiển thị tất cả các bài hát
+    //được sử dụng để lấy danh sách tất cả các bài hát từ Firebase Realtime Database.
+    // Trong hàm này, chúng ta sẽ sử dụng phương thức addValueEventListener()
+    // để lắng nghe các thay đổi đối với dữ liệu trong Firebase Realtime Database.
     private void getListAllSongs() {
         if (getActivity() == null) {
             return;
@@ -76,7 +78,7 @@ public class AllSongsFragment extends Fragment {
             }
         });
     }
-
+    //được sử dụng để hiển thị danh sách tất cả các bài hát lên giao diện người dùng.
     private void displayListAllSongs() {
         if (getActivity() == null) {
             return;
@@ -87,7 +89,7 @@ public class AllSongsFragment extends Fragment {
         SongAdapter songAdapter = new SongAdapter(mListSong, this::goToSongDetail);
         mFragmentAllSongsBinding.rcvData.setAdapter(songAdapter);
     }
-
+    //được sử dụng để chuyển đến giao diện chi tiết của một bài hát.
     private void goToSongDetail(@NonNull Song song) {
         MusicService.clearListSongPlaying();
         MusicService.mListSongPlaying.add(song);
@@ -96,7 +98,9 @@ public class AllSongsFragment extends Fragment {
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
     }
 
-
+    //được sử dụng để thiết lập các lắng nghe cho các sự kiện.
+    //thiết lập lắng nghe cho sự kiện nhấp chuột vào nút phát tất cả các bài hát.
+    //Khi nút này được nhấp chuột, chúng ta sẽ thiết lập lại danh sách các bài hát đang phát và thêm tất cả các bài hát trong danh sách bài hát hiện tại vào danh sách các bài hát đang phát. Sau đó, chúng ta sẽ khởi động dịch vụ âm nhạc và chuyển đến giao diện chi tiết của bài hát.
     private void initListener() {
         MainActivity activity = (MainActivity) getActivity();
         if (activity == null || activity.getActivityMainBinding() == null) {
@@ -147,8 +151,6 @@ public class AllSongsFragment extends Fragment {
                 mainActivity.openPopularSongsScreen();
             }
         });
-
-
     }
 
     private void getListSongFromFirebase(String key) {
