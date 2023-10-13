@@ -47,6 +47,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return null;
     }
 
+    //khởi tạo đối tượng MediaPlayer, được sử dụng để phát nhạc.
     @Override
     public void onCreate() {
         super.onCreate();

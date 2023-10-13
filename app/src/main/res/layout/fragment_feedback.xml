@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:padding="@dimen/define_dimen_16">
+        android:padding="@dimen/define_dimen_10">
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
             android:id="@+id/edt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_5"
+            android:layout_marginTop="@dimen/define_dimen_2"
             android:background="@drawable/bg_white_shape_border_color_main"
             android:imeOptions="actionNext"
             android:inputType="text"
@@ -122,10 +122,10 @@
             android:layout_width="@dimen/define_dimen_200"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/bg_main_shape_corner_6"
             android:gravity="center"
-            android:padding="@dimen/define_dimen_12"
+            android:padding="@dimen/define_dimen_5"
             android:text="@string/send_feedback"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_normal" />

@@ -22,12 +22,14 @@ import java.util.regex.Pattern;
 
 public class GlobalFuntion {
 
+    //Khởi chạy hoạt động mới.
     public static void startActivity(Context context, Class<?> clz) {
         Intent intent = new Intent(context, clz);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
+    //Ẩn bàn phím mềm.
     public static void hideSoftKeyboard(Activity activity) {
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) activity.
@@ -38,7 +40,7 @@ public class GlobalFuntion {
         }
     }
 
-
+//    Mở ứng dụng hoặc trang web Facebook.
     public static void onClickOpenFacebook(Context context) {
         Intent intent;
         try {
@@ -54,12 +56,12 @@ public class GlobalFuntion {
         }
         context.startActivity(intent);
     }
-
+    //Mở kênh YouTube cho ứng dụng.
     public static void onClickOpenYoutubeChannel(Context context) {
         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.LINK_YOUTUBE)));
     }
 
-
+    //Gọi số điện thoại được chỉ định trong lớp Constant.
     public static void callPhoneNumber(Activity activity) {
         try {
             if (Build.VERSION.SDK_INT > 22) {
@@ -81,24 +83,24 @@ public class GlobalFuntion {
             ex.printStackTrace();
         }
     }
-
+    //Hiển thị thông báo toast.
     public static void showToastMessage(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
-
+    //Xóa dấu phụ âm khỏi một chuỗi.
     public static String getTextSearch(String input) {
         String nfdNormalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
-
+    //Khởi động dịch vụ âm nhạc.
     public static void startMusicService(Context ctx, int action, int songPosition) {
         Intent musicService = new Intent(ctx, MusicService.class);
         musicService.putExtra(Constant.MUSIC_ACTION, action);
         musicService.putExtra(Constant.SONG_POSITION, songPosition);
         ctx.startService(musicService);
     }
-
+    //Trả về một PendingIntent có thể được sử dụng để mở trình nhận âm nhạc.
     @SuppressLint("UnspecifiedImmutableFlag")
     public static PendingIntent openMusicReceiver(Context ctx, int action) {
         Intent intent = new Intent(ctx, MusicReceiver.class);
