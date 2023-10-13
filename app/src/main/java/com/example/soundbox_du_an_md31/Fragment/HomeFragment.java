@@ -168,6 +168,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
     private List<Song> getListBannerSongs() {
         if (mListSongBanner != null) {
             mListSongBanner.clear();

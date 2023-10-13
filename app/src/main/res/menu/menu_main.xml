@@ -8,7 +8,7 @@
     <item
         android:id="@+id/search"
         android:title="Search"
-        android:icon="@drawable/ic_home_white"
+        android:icon="@drawable/search"
         />
     <item
         android:id="@+id/fab"
@@ -18,11 +18,11 @@
     <item
         android:id="@+id/library"
         android:title="Library"
-        android:icon="@drawable/ic_home_white"
+        android:icon="@drawable/album"
         />
     <item
         android:id="@+id/premimum"
-        android:title="Premium"
-        android:icon="@drawable/ic_home_white"
+        android:title="More"
+        android:icon="@drawable/more"
         />
 </menu>

@@ -8,26 +8,38 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
+import com.example.soundbox_du_an_md31.Adapter.ContactAdapter;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
+import com.example.soundbox_du_an_md31.Model.Contact;
 import com.example.soundbox_du_an_md31.Model.Feedback;
 import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.databinding.FragmentFeedbackBinding;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class FeedbackFragment extends Fragment {
 
     private FragmentFeedbackBinding mFragmentFeedbackBinding;
-
+    private ContactAdapter mContactAdapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentFeedbackBinding = FragmentFeedbackBinding.inflate(inflater, container, false);
 
         mFragmentFeedbackBinding.tvSendFeedback.setOnClickListener(v -> onClickSendFeedback());
+        mContactAdapter = new ContactAdapter(getActivity(), getListContact(), () -> GlobalFuntion.callPhoneNumber(getActivity()));
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+        mFragmentFeedbackBinding.rcvData.setNestedScrollingEnabled(false);
+        mFragmentFeedbackBinding.rcvData.setFocusable(false);
+        mFragmentFeedbackBinding.rcvData.setLayoutManager(layoutManager);
+        mFragmentFeedbackBinding.rcvData.setAdapter(mContactAdapter);
 
         return mFragmentFeedbackBinding.getRoot();
     }
@@ -37,7 +49,6 @@ public class FeedbackFragment extends Fragment {
             return;
         }
         MainActivity activity = (MainActivity) getActivity();
-
         String strName = mFragmentFeedbackBinding.edtName.getText().toString();
         String strPhone = mFragmentFeedbackBinding.edtPhone.getText().toString();
         String strEmail = mFragmentFeedbackBinding.edtEmail.getText().toString();
@@ -58,7 +69,14 @@ public class FeedbackFragment extends Fragment {
                     });
         }
     }
+    public List<Contact> getListContact() {
+        List<Contact> contactArrayList = new ArrayList<>();
+        contactArrayList.add(new Contact(Contact.FACEBOOK, R.drawable.ic_facebook));
+        contactArrayList.add(new Contact(Contact.HOTLINE, R.drawable.ic_hotline));
+        contactArrayList.add(new Contact(Contact.YOUTUBE, R.drawable.ic_youtube));
 
+        return contactArrayList;
+    }
     public void sendFeedbackSuccess() {
         GlobalFuntion.hideSoftKeyboard(getActivity());
         GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_send_feedback_success));
@@ -66,5 +84,10 @@ public class FeedbackFragment extends Fragment {
         mFragmentFeedbackBinding.edtPhone.setText("");
         mFragmentFeedbackBinding.edtEmail.setText("");
         mFragmentFeedbackBinding.edtComment.setText("");
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mContactAdapter.release();
     }
 }

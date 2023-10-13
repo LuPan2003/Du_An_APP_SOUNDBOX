@@ -96,12 +96,12 @@ public class PopularSongsFragment extends Fragment {
         if (activity == null || activity.getActivityMainBinding() == null) {
             return;
         }
-        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
-            MusicService.clearListSongPlaying();
-            MusicService.mListSongPlaying.addAll(mListSong);
-            MusicService.isPlaying = false;
-            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
-            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
-        });
+//        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
+//            MusicService.clearListSongPlaying();
+//            MusicService.mListSongPlaying.addAll(mListSong);
+//            MusicService.isPlaying = false;
+//            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+//            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+//        });
     }
 }

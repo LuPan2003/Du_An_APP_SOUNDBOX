@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#6699CC"
     android:orientation="vertical">
 
     <LinearLayout
@@ -85,13 +85,20 @@
             android:layout_marginTop="@dimen/define_dimen_40"
             android:gravity="center"
             android:orientation="horizontal">
-
+            <ImageView
+                android:id="@+id/img_shuffle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iconsuffle"
+                tools:ignore="ContentDescription" />
             <ImageView
                 android:id="@+id/img_previous"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_previous_black"
+                android:src="@drawable/iconpreview"
                 tools:ignore="ContentDescription" />
+
+
 
             <ImageView
                 android:id="@+id/img_play"
@@ -99,16 +106,33 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/define_dimen_20"
                 android:layout_marginEnd="@dimen/define_dimen_20"
-                android:src="@drawable/ic_play_black"
+                android:src="@drawable/iconplay"
                 tools:ignore="ContentDescription" />
+
 
             <ImageView
                 android:id="@+id/img_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_next_black"
+                android:src="@drawable/iconnext"
                 tools:ignore="ContentDescription" />
+            <ImageView
+                android:id="@+id/img_blocked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/iconrepeat"
+
+                tools:ignore="ContentDescription" />
+
         </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/share"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="20dp"
+            />
     </LinearLayout>
 
 </LinearLayout>

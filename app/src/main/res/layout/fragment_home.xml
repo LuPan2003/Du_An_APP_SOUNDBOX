@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_white_shape_border_red_corner_8"
-            android:hint="@string/hint_search_name"
+            android:hint="Tên bài hát"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:padding="@dimen/define_dimen_12"
@@ -178,6 +178,7 @@
                             android:background="@color/purple_700"/>
                     </LinearLayout>
                 </RelativeLayout>
+
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcv_new_songs"
