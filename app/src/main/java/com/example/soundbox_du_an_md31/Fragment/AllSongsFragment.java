@@ -38,11 +38,18 @@ public class AllSongsFragment extends Fragment {
 
     private FragmentAllSongsBinding mFragmentAllSongsBinding;
     private List<Song> mListSong;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentAllSongsBinding = FragmentAllSongsBinding.inflate(inflater, container, false);
+        mFragmentAllSongsBinding.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
+
         getListSongFromFirebase("");
         getListAllSongs();
         initListener();
@@ -106,6 +113,7 @@ public class AllSongsFragment extends Fragment {
         if (activity == null || activity.getActivityMainBinding() == null) {
             return;
         }
+
         activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
             MusicService.clearListSongPlaying();
             MusicService.mListSongPlaying.addAll(mListSong);
@@ -152,6 +160,8 @@ public class AllSongsFragment extends Fragment {
             }
         });
     }
+
+
 
     private void getListSongFromFirebase(String key) {
         if (getActivity() == null) {

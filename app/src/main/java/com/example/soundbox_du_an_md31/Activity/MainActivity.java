@@ -64,8 +64,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.home){
                 replaceFragment(new HomeFragment());
+
             }else if(item.getItemId() == R.id.search){
                 replaceFragment(new AllSongsFragment());
+
             }else if(item.getItemId() == R.id.library){
                 replaceFragment(new FeaturedSongsFragment());
             }else if(item.getItemId() == R.id.premimum){
@@ -76,27 +78,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter(Constant.CHANGE_LISTENER));
 //
-        openHomeScreen();
+
         initListener();
         displayLayoutBottom();
     }
 
-    private void initToolbar(String title) {
-        mActivityMainBinding.header.tvTitle.setText(title);
-    }
+
 
     private void initListener() {
-        mActivityMainBinding.header.imgLeft.setOnClickListener(this);
-        mActivityMainBinding.header.layoutPlayAll.setOnClickListener(this);
+//        mActivityMainBinding.header.imgLeft.setOnClickListener(this);
+//        mActivityMainBinding.header.layoutPlayAll.setOnClickListener(this);
 //
-//        mActivityMainBinding.menuLeft.layoutClose.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuHome.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuAllSongs.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuFeaturedSongs.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuPopularSongs.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuNewSongs.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuFeedback.setOnClickListener(this);
-//        mActivityMainBinding.menuLeft.tvMenuContact.setOnClickListener(this);
 
         mActivityMainBinding.layoutBottom.imgPrevious.setOnClickListener(this);
         mActivityMainBinding.layoutBottom.imgPlay.setOnClickListener(this);
@@ -105,26 +97,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mActivityMainBinding.layoutBottom.layoutText.setOnClickListener(this);
         mActivityMainBinding.layoutBottom.imgSong.setOnClickListener(this);
     }
-//
-    private void openHomeScreen() {
-        replaceFragment(new HomeFragment());
-        mTypeScreen = TYPE_HOME;
-        initToolbar(getString(R.string.name_app));
-        displayLayoutPlayAll();
-    }
-//
+
+
     public void openPopularSongsScreen() {
         replaceFragment(new PopularSongsFragment());
         mTypeScreen = TYPE_POPULAR_SONGS;
-        initToolbar(getString(R.string.menu_popular_songs));
-        displayLayoutPlayAll();
+
     }
 
     public void openNewSongsScreen() {
         replaceFragment(new NewSongsFragment());
         mTypeScreen = TYPE_NEW_SONGS;
-        initToolbar(getString(R.string.menu_new_songs));
-        displayLayoutPlayAll();
     }
 
     @Override
@@ -149,6 +132,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
             case R.id.layout_text:
             case R.id.img_song:
                 openPlayMusicActivity();
+
                 break;
         }
     }
@@ -171,19 +155,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     }
     ///////////////
 
-    private void displayLayoutPlayAll() {
-        switch (mTypeScreen) {
-            case TYPE_ALL_SONGS:
-            case TYPE_FEATURED_SONGS:
-            case TYPE_POPULAR_SONGS:
-            case TYPE_NEW_SONGS:
-                mActivityMainBinding.header.layoutPlayAll.setVisibility(View.VISIBLE);
-                break;
-            default:
-                mActivityMainBinding.header.layoutPlayAll.setVisibility(View.GONE);
-                break;
-        }
-    }
+
 
 
     private void displayLayoutBottom() {
