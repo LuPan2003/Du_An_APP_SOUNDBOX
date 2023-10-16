@@ -1,8 +1,12 @@
 package com.example.soundbox_du_an_md31.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +15,7 @@ import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Contact;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.databinding.ItemContactBinding;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
 
@@ -64,6 +69,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             case Contact.YOUTUBE:
                 holder.mItemContactBinding.tvContact.setText(context.getString(R.string.label_youtube));
                 break;
+            case Contact.FEeDBACK:
+                holder.mItemContactBinding.tvContact.setText("Feedback");
+                break;
+
 
 //            case Contact.ZALO:
 //                holder.mItemContactBinding.tvContact.setText(context.getString(R.string.label_zalo));
@@ -95,6 +104,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 //                case Contact.ZALO:
 //                    GlobalFuntion.onClickOpenZalo(context);
 //                    break;
+
+                case  Contact.FEeDBACK:
+
+              showFeedbackDialog();
+
+                    break;
             }
         });
     }
@@ -117,4 +132,35 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
             this.mItemContactBinding = itemContactBinding;
         }
     }
+
+    private void showFeedbackDialog() {
+        // Tạo dialog
+        BottomSheetDialog dialog = new BottomSheetDialog(context);
+
+        // Inflate layout của hộp thoại từ một tệp XML
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.layout_feedback, null);
+
+        // Lấy các View trong hộp thoại
+        EditText edtFeedback = dialogView.findViewById(R.id.edtFeedback);
+        Button btnSubmitFeedback = dialogView.findViewById(R.id.btnSubmitFeedback);
+
+        // Gắn sự kiện cho nút Gửi
+        btnSubmitFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String feedbackText = edtFeedback.getText().toString();
+                // Xử lý phản hồi ở đây (ví dụ: có thể gửi phản hồi lên máy chủ)
+                // Đóng hộp thoại
+                dialog.dismiss();
+            }
+        });
+
+        // Gắn layout và hiển thị hộp thoại
+        dialog.setContentView(dialogView);
+        dialog.show();
+    }
+
+
+    // Khai báo biến alertDialog
+    private AlertDialog alertDialog;
 }

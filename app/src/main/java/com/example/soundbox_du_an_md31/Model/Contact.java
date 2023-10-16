@@ -5,6 +5,8 @@ public class Contact {
     public static final int FACEBOOK = 0;
     public static final int HOTLINE = 1;
     public static final int YOUTUBE = 4;
+    public static final int FEeDBACK = 2;
+
 
     private int id;
     private int image;

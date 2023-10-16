@@ -33,7 +33,7 @@ public class FeedbackFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentFeedbackBinding = FragmentFeedbackBinding.inflate(inflater, container, false);
 
-        mFragmentFeedbackBinding.tvSendFeedback.setOnClickListener(v -> onClickSendFeedback());
+        mFragmentFeedbackBinding.btnfeeback.setOnClickListener(v -> onClickSendFeedback());
         mContactAdapter = new ContactAdapter(getActivity(), getListContact(), () -> GlobalFuntion.callPhoneNumber(getActivity()));
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
         mFragmentFeedbackBinding.rcvData.setNestedScrollingEnabled(false);
@@ -74,6 +74,7 @@ public class FeedbackFragment extends Fragment {
         contactArrayList.add(new Contact(Contact.FACEBOOK, R.drawable.ic_facebook));
         contactArrayList.add(new Contact(Contact.HOTLINE, R.drawable.ic_hotline));
         contactArrayList.add(new Contact(Contact.YOUTUBE, R.drawable.ic_youtube));
+         contactArrayList.add(new Contact(Contact.FEeDBACK,R.drawable.icon_feedback));
 
         return contactArrayList;
     }
@@ -85,6 +86,9 @@ public class FeedbackFragment extends Fragment {
         mFragmentFeedbackBinding.edtEmail.setText("");
         mFragmentFeedbackBinding.edtComment.setText("");
     }
+
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
