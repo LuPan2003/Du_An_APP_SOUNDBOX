@@ -60,6 +60,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mActivityMainBinding.bottomNavView.setBackground(null);
 
         replaceFragment(new HomeFragment());
+        mActivityMainBinding.fltBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                replaceFragment(new HomeFragment());
+            }
+        });
 
         mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.home){
