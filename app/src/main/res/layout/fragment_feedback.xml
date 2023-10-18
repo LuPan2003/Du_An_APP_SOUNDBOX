@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <ImageView
             android:layout_width="200dp"
             android:layout_height="100dp"
             android:layout_margin="20dp"
-            android:src="@drawable/soundboxlogo"/>
+            android:src="@drawable/soundboxlogo" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,24 +22,16 @@
             android:textColor="@color/black"
             android:textSize="25dp"
             android:textStyle="bold"
-            android:layout_margin="12dp"/>
+            android:layout_margin="12dp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcvData"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_marginBottom="@dimen/define_dimen_14"
-            android:layout_marginStart="@dimen/define_dimen_14"/>
-
-    </LinearLayout>
+            android:layout_marginStart="@dimen/define_dimen_14" />
 
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="@dimen/define_dimen_10">
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,18 +43,18 @@
             android:id="@+id/edt_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_2"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_white_shape_border_color_main"
             android:imeOptions="actionNext"
             android:inputType="text"
-            android:padding="@dimen/define_dimen_12"
-            android:textSize="@dimen/text_size_small"
+            android:padding="12dp"
+            android:textSize="14sp"
             tools:ignore="Autofill,LabelFor" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_16"
+            android:layout_marginTop="16dp"
             android:text="@string/feedback_phone"
             android:textColor="@color/black" />
 
@@ -69,18 +62,18 @@
             android:id="@+id/edt_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_5"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_white_shape_border_color_main"
             android:imeOptions="actionNext"
             android:inputType="phone"
-            android:padding="@dimen/define_dimen_12"
-            android:textSize="@dimen/text_size_small"
+            android:padding="12dp"
+            android:textSize="14sp"
             tools:ignore="Autofill,LabelFor" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_16"
+            android:layout_marginTop="16dp"
             android:text="@string/feedback_email"
             android:textColor="@color/black" />
 
@@ -88,47 +81,40 @@
             android:id="@+id/edt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_5"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_white_shape_border_color_main"
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
-            android:padding="@dimen/define_dimen_12"
-            android:textSize="@dimen/text_size_small"
+            android:padding="12dp"
+            android:textSize="14sp"
             tools:ignore="Autofill,LabelFor" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/define_dimen_16"
+            android:layout_marginTop="16dp"
             android:text="@string/feedback_comment"
             android:textColor="@color/black" />
 
         <EditText
             android:id="@+id/edt_comment"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/define_dimen_80"
-            android:layout_marginTop="@dimen/define_dimen_5"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
             android:background="@drawable/bg_white_shape_border_color_main"
             android:gravity="start"
             android:imeOptions="actionDone"
-            android:maxLength="1000"
             android:inputType="textMultiLine"
-            android:padding="@dimen/define_dimen_12"
-            android:textSize="@dimen/text_size_small"
+            android:maxLength="1000"
+            android:padding="12dp"
+            android:textSize="14sp"
             tools:ignore="Autofill,LabelFor" />
 
-        <TextView
-            android:id="@+id/tv_send_feedback"
-            android:layout_width="@dimen/define_dimen_200"
+        <Button
+            android:id="@+id/btnfeeback"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_main_shape_corner_6"
-            android:gravity="center"
-            android:padding="@dimen/define_dimen_5"
-            android:text="@string/send_feedback"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_normal" />
+            android:layout_marginTop="16dp"
+            android:text="Gửi phản hồi" />
     </LinearLayout>
-</LinearLayout>
-
+</ScrollView>
