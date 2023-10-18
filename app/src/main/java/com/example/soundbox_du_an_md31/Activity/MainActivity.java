@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,11 +18,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
+import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
+import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeaturedSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
+import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
+import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
 import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
@@ -30,7 +36,6 @@ import com.example.soundbox_du_an_md31.utils.GlideUtils;
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements View.OnClickListener  {
-
     public static final int TYPE_HOME = 1;
     public static final int TYPE_ALL_SONGS = 2;
     public static final int TYPE_FEATURED_SONGS = 3;
@@ -42,6 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     private int mTypeScreen = TYPE_HOME;
 //
     private ActivityMainBinding mActivityMainBinding;
+    private TextView tv_header;
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -70,12 +76,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.home){
                 replaceFragment(new HomeFragment());
-
             }else if(item.getItemId() == R.id.search){
                 replaceFragment(new AllSongsFragment());
-
             }else if(item.getItemId() == R.id.library){
-                replaceFragment(new FeaturedSongsFragment());
+                replaceFragment(new LibraryFragment());
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
+                fragmentTransaction.commit();
             }else if(item.getItemId() == R.id.premimum){
                 replaceFragment(new FeedbackFragment());
             }
@@ -84,6 +91,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter(Constant.CHANGE_LISTENER));
 //
+
+
 
         initListener();
         displayLayoutBottom();
@@ -247,5 +256,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     protected void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+    }
+
+    public void gotoProfile(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        ProfileFragment profileFragment = new ProfileFragment();
+        fragmentTransaction.replace(R.id.frame_layout,profileFragment);
+        fragmentTransaction.addToBackStack(ProfileFragment.TAG);
+        fragmentTransaction.commit();
+    }
+    public void gotoChangeInformation(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        ChangeInformationFragment changeInformationFragment = new ChangeInformationFragment();
+        fragmentTransaction.replace(R.id.frame_layout,changeInformationFragment);
+        fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
+        fragmentTransaction.commit();
+    }
+    public void gotoChangePassword(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
+        fragmentTransaction.replace(R.id.frame_layout,changePasswordFragment);
+        fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
+        fragmentTransaction.commit();
     }
 }

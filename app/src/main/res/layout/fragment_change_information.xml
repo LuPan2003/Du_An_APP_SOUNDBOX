@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.ChangeInformationFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_back_ios_24_black" />
+
+        <TextView
+            android:id="@+id/tv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Change Infomation"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edt_name"
+        android:drawableLeft="@drawable/ic_abc_24"
+        android:hint="Enter your name"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_white_corner_8_gray_border"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp"
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edt_nunmberphone"
+        android:drawableLeft="@drawable/ic_abc_24"
+        android:hint="Enter your numberphone"
+        android:drawablePadding="10dp"
+        android:padding="10dp"
+        android:background="@drawable/bg_white_corner_8_gray_border"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_update"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_white_corner_8_gray_border"
+        android:text="Update"
+        />
+</LinearLayout>

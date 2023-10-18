@@ -152,13 +152,6 @@ public class AllSongsFragment extends Fragment {
                 }
             }
         });
-
-        mFragmentAllSongsBinding.layoutViewAllPopularAll.setOnClickListener(v -> {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            if (mainActivity != null) {
-                mainActivity.openPopularSongsScreen();
-            }
-        });
     }
 
 
@@ -182,7 +175,10 @@ public class AllSongsFragment extends Fragment {
                         mListSong.add(0, song);
                     } else {
                         if (GlobalFuntion.getTextSearch(song.getTitle()).toLowerCase().trim()
-                                .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())) {
+                                .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                            || GlobalFuntion.getTextSearch(song.getArtist()).toLowerCase().trim()
+                                .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                        ) {
                             mListSong.add(0, song);
                         }
                     }
@@ -200,9 +196,7 @@ public class AllSongsFragment extends Fragment {
 
     private void displayListPopularSongs() {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mFragmentAllSongsBinding.rcvPopularSongsAll.setLayoutManager(gridLayoutManager);
         SongGridAdapter songGridAdapter = new SongGridAdapter(getListPopularSongs(), this::goToSongDetail);
-        mFragmentAllSongsBinding.rcvPopularSongsAll.setAdapter(songGridAdapter);
     }
     private List<Song> getListPopularSongs() {
         List<Song> list = new ArrayList<>();

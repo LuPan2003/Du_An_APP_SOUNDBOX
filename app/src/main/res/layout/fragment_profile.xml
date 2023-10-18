@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragment.ProfileFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/icon_back_24" />
+
+        <TextView
+            android:id="@+id/tv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Profile"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/img_back"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:background="@drawable/back_profile"
+                    android:scaleType="fitXY"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_avatar"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_back"
+                    app:layout_constraintEnd_toEndOf="@+id/img_back"
+                    app:layout_constraintStart_toStartOf="@+id/img_back"
+                    app:layout_constraintTop_toBottomOf="@+id/img_back"
+                    app:cardCornerRadius="100dp"
+                    >
+
+                    <ImageView
+                        android:id="@+id/img_avatar"
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/avatar_profile_back" />
+                </androidx.cardview.widget.CardView>
+
+                <ImageView
+                    android:id="@+id/img_changeImage"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="70dp"
+                    android:src="@drawable/ic_camera_alt_24"
+                    app:layout_constraintBottom_toBottomOf="@+id/card_avatar"
+                    app:layout_constraintEnd_toEndOf="@+id/card_avatar"
+                    app:layout_constraintStart_toStartOf="@+id/card_avatar"
+                    app:layout_constraintTop_toBottomOf="@+id/card_avatar" />
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Đào Duy Quý"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/card_avatar"
+                    app:layout_constraintStart_toStartOf="@+id/card_avatar"
+                    app:layout_constraintTop_toBottomOf="@+id/card_avatar" />
+
+                <TextView
+                    android:id="@+id/tv_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="quynau07@gmail.com"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_name"
+                    app:layout_constraintStart_toStartOf="@+id/tv_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_name"
+
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_email">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_change_infor"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/btn_background_white"
+                        android:drawableStart="@drawable/ic_abc_24"
+                        android:drawablePadding="20dp"
+                        android:paddingStart="20dp"
+                        android:text="Change infomation"
+                        android:textAlignment="viewStart" />
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_change_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/btn_background_white"
+                        android:drawableStart="@drawable/ic_password_24"
+                        android:drawablePadding="20dp"
+                        android:paddingStart="20dp"
+                        android:text="Change password"
+                        android:textAlignment="viewStart" />
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btn_premium"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:textAlignment="viewStart"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/btn_background_white"
+                        android:drawableStart="@drawable/ic_backup_24"
+                        android:drawablePadding="20dp"
+                        android:paddingStart="20dp"
+                        android:text="Go to Premium" />
+                    <Button
+                        android:id="@+id/btn_exits"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:textAlignment="viewStart"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginEnd="32dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/btn_background_white"
+                        android:text="Logout" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
