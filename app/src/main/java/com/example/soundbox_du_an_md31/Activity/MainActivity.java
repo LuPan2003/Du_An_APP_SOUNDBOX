@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,7 +19,6 @@ import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
-import com.example.soundbox_du_an_md31.Fragment.FeaturedSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
@@ -48,6 +46,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //
     private ActivityMainBinding mActivityMainBinding;
     private TextView tv_header;
+
+
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
