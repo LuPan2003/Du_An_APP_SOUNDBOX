@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,36 +72,36 @@ public class HomeFragment extends Fragment {
     }
 
     private void initListener() {
-        mFragmentHomeBinding.edtSearchName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Do nothing
-            }
+//        mFragmentHomeBinding.edtSearchName.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                // Do nothing
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                // Do nothing
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                String strKey = s.toString().trim();
+//                if (strKey.equals("") || strKey.length() == 0) {
+//                    if (mListSong != null) mListSong.clear();
+//                    getListSongFromFirebase("");
+//                }
+//            }
+//        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Do nothing
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String strKey = s.toString().trim();
-                if (strKey.equals("") || strKey.length() == 0) {
-                    if (mListSong != null) mListSong.clear();
-                    getListSongFromFirebase("");
-                }
-            }
-        });
-
-        mFragmentHomeBinding.imgSearch.setOnClickListener(view -> searchSong());
-
-        mFragmentHomeBinding.edtSearchName.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                searchSong();
-                return true;
-            }
-            return false;
-        });
+//        mFragmentHomeBinding.imgSearch.setOnClickListener(view -> searchSong());
+//
+//        mFragmentHomeBinding.edtSearchName.setOnEditorActionListener((v, actionId, event) -> {
+//            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                searchSong();
+//                return true;
+//            }
+//            return false;
+//        });
 
         mFragmentHomeBinding.layoutViewAllPopular.setOnClickListener(v -> {
             MainActivity mainActivity = (MainActivity) getActivity();
@@ -168,6 +169,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
     private List<Song> getListBannerSongs() {
         if (mListSongBanner != null) {
             mListSongBanner.clear();
@@ -232,12 +234,12 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-    private void searchSong() {
-        String strKey = mFragmentHomeBinding.edtSearchName.getText().toString().trim();
-        if (mListSong != null) mListSong.clear();
-        getListSongFromFirebase(strKey);
-        GlobalFuntion.hideSoftKeyboard(getActivity());
-    }
+//    private void searchSong() {
+//        String strKey = mFragmentHomeBinding.edtSearchName.getText().toString().trim();
+//        if (mListSong != null) mListSong.clear();
+//        getListSongFromFirebase(strKey);
+//        GlobalFuntion.hideSoftKeyboard(getActivity());
+//    }
 
     private void goToSongDetail(@NonNull Song song) {
         MusicService.clearListSongPlaying();

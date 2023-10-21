@@ -30,12 +30,13 @@ public class AspectRatioNoRadiusImageView extends AppCompatImageView {
     public AspectRatioNoRadiusImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
-
+    //hiển thị ảnh với tỷ lệ khung hình cố định
     public AspectRatioNoRadiusImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         loadStateFromAttrs(attrs);
     }
 
+    //tải các thuộc tính từ XML và lưu trữ chúng vào các biến thành viên của lớp.
     @SuppressLint("CustomViewStyleable")
     private void loadStateFromAttrs(AttributeSet attributeSet) {
         if (attributeSet == null) {
@@ -58,6 +59,9 @@ public class AspectRatioNoRadiusImageView extends AppCompatImageView {
         }
     }
 
+    //được gọi khi lớp cần đo kích thước của mình. Hàm này sẽ kiểm tra xem thuộc tính aspectRatioEnabled
+    // có được kích hoạt hay không. Nếu có, hàm sẽ tính toán kích thước mới của lớp dựa trên thuộc tính
+    // aspectRatio và dominantMeasurement.
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

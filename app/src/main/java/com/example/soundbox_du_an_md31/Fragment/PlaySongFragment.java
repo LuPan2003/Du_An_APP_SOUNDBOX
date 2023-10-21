@@ -26,6 +26,11 @@ import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentPlaySongBinding;
 import com.example.soundbox_du_an_md31.utils.AppUtil;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,6 +40,8 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 
     private FragmentPlaySongBinding mFragmentPlaySongBinding;
     private Timer mTimer;
+
+    private AdView mAdView;
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -48,7 +55,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentPlaySongBinding = FragmentPlaySongBinding.inflate(inflater, container, false);
-
         if (getActivity() != null) {
             LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver,
                     new IntentFilter(Constant.CHANGE_LISTENER));
@@ -57,9 +63,21 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-
+        // Banner QC
+        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = mFragmentPlaySongBinding.adView;
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        //
         return mFragmentPlaySongBinding.getRoot();
     }
+
+
+
 
     private void initControl() {
         mTimer = new Timer();

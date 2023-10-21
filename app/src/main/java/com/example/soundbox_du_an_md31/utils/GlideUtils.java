@@ -7,7 +7,7 @@ import com.example.soundbox_du_an_md31.R;
 
 
 public class GlideUtils {
-
+    //Style banner ảnh
     public static void loadUrlBanner(String url, ImageView imageView) {
         if (StringUtil.isEmpty(url)) {
             imageView.setImageResource(R.drawable.img_no_image);

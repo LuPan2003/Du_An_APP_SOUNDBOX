@@ -47,6 +47,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return null;
     }
 
+    //khởi tạo đối tượng MediaPlayer, được sử dụng để phát nhạc.
     @Override
     public void onCreate() {
         super.onCreate();
@@ -54,7 +55,10 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             mPlayer = new MediaPlayer();
         }
     }
-
+//Phương thức này được gọi khi dịch vụ được khởi động.
+// Phương thức này nhận một đối số là Intent,
+// chứa các thông tin về cách dịch vụ được khởi động.
+// Phương thức này cũng trả về một giá trị int, cho biết dịch vụ có nên tiếp tục chạy hay không.
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Bundle bundle = intent.getExtras();
@@ -72,6 +76,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return START_NOT_STICKY;
     }
 
+    // Phương thức này xử lý các hành động khác nhau của dịch vụ,
+    // như phát, tạm dừng, tiếp tục,
+    // bài hát trước, bài hát tiếp theo và hủy thông báo.
     private void handleActionMusic(int action) {
         switch (action) {
             case Constant.PLAY:
@@ -102,14 +109,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 break;
         }
     }
-
+//    Phương thức này phát bài hát hiện tại.
     private void playSong() {
         String songUrl = mListSongPlaying.get(mSongPosition).getUrl();
         if (!StringUtil.isEmpty(songUrl)) {
             playMediaPlayer(songUrl);
         }
     }
-
+//    Phương thức này tạm dừng bài hát hiện tại.
     private void pauseSong() {
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
@@ -118,7 +125,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             sendBroadcastChangeListener();
         }
     }
-
+//    Phương thức này hủy thông báo của dịch vụ.
     private void cannelNotification() {
         if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
@@ -129,7 +136,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendBroadcastChangeListener();
         stopSelf();
     }
-
+//Phương thức này tiếp tục phát bài hát hiện tại.
     private void resumeSong() {
         if (mPlayer != null) {
             mPlayer.start();
@@ -139,6 +146,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+
+//    Phương thức này phát bài hát trước.
     public void prevSong() {
         if (mListSongPlaying.size() > 1) {
             if (mSongPosition > 0) {
@@ -147,13 +156,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 mSongPosition = mListSongPlaying.size() - 1;
             }
         } else {
-            mSongPosition = 0;
+            if (mSongPosition == 0) {
+                mSongPosition = mListSongPlaying.size() - 1;
+            }
         }
         sendMusicNotification();
         sendBroadcastChangeListener();
         playSong();
     }
 
+    //Phương thức này phát bài hát tiếp theo.
     private void nextSong() {
         if (mListSongPlaying.size() > 1 && mSongPosition < mListSongPlaying.size() - 1) {
             mSongPosition++;
@@ -165,6 +177,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         playSong();
     }
 
+//    Phương thức này phát bài hát được truyền vào dưới dạng đối số.
     public void playMediaPlayer(String songUrl) {
         try {
             if (mPlayer.isPlaying()) {
@@ -178,12 +191,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
             e.printStackTrace();
         }
     }
-
+//    Phương thức này thiết lập các listener cho trình phát nhạc,
+//    chẳng hạn như listener sự kiện hoàn thành bài hát và listener sự kiện chuẩn bị phát bài hát.
     public void initControl() {
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnCompletionListener(this);
     }
-
+//Phương thức này gửi thông báo cho người dùng về bài hát hiện đang phát.
     private void sendMusicNotification() {
         Song song = mListSongPlaying.get(mSongPosition);
 
@@ -231,12 +245,39 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
     }
 
+    //Phương thức này được gọi khi bài hát hiện tại kết thúc. Phương thức này sẽ phát bài hát tiếp theo.
     @Override
     public void onCompletion(MediaPlayer mp) {
+//        showAd();
         mAction = Constant.NEXT;
         nextSong();
     }
 
+    // Hàm hiển thị quảng cáo
+//    private void showAd() {
+//        // Khởi tạo đối tượng AdView
+//        AdView adView = findViewById(R.id.adView);
+//
+//        // Tạo một đối tượng AdRequest
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//
+//        // Hiển thị quảng cáo
+//        adView.loadAd(adRequest);
+//
+//        // Thêm nút bỏ qua quảng cáo
+//        Button skipButton = findViewById(R.id.skipButton);
+//
+//        // Thiết lập listener cho sự kiện click
+//        skipButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Bỏ qua quảng cáo
+//                adView.setVisibility(View.GONE);
+//            }
+//        });
+//    }
+
+    //Phương thức này được gọi khi bài hát hiện tại đã được chuẩn bị để phát. Phương thức này sẽ phát bài hát hiện tại.
     @Override
     public void onPrepared(MediaPlayer mp) {
         mLengthSong = mPlayer.getDuration();
@@ -247,13 +288,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendBroadcastChangeListener();
         changeCountViewSong();
     }
-
+//    Phương thức này gửi thông báo cho các đối tượng đang lắng nghe sự kiện thay đổi bài hát.
     private void sendBroadcastChangeListener() {
         Intent intent = new Intent(Constant.CHANGE_LISTENER);
         intent.putExtra(Constant.MUSIC_ACTION, mAction);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
+//Phương thức này tăng số lượt xem của bài hát hiện đang phát.
     private void changeCountViewSong() {
         int songId = mListSongPlaying.get(mSongPosition).getId();
         MyApplication.get(this).getCountViewDatabaseReference(songId)

@@ -2,15 +2,9 @@ package com.example.soundbox_du_an_md31.Constant;
 
 public class Constant {
 
-    public static final String GENERIC_ERROR = "General error, please try again later";
-
-    public static final String PAGE_FACEBOOK = "fb://page/tincoder";
-    public static final String LINK_FACEBOOK = "https://www.facebook.com/tincoder";
-    public static final String LINK_YOUTUBE = "https://www.youtube.com/channel/UCu3DXfXYgygIYXN8TduNcNQ";
-    public static final String PHONE_NUMBER = "+84392229676";
-    public static final String GMAIL = "mixproduction29932@gmail.com";
-    public static final String SKYPE_ID = "dangtin29932";
-    public static final String ZALO_LINK = "https://zalo.me/0392229676";
+    public static final String LINK_FACEBOOK = "https://www.facebook.com/profile.php?id=100028497080138";
+    public static final String LINK_YOUTUBE = "https://www.youtube.com/channel/UC83eFpvrHHJb0IZv-Qrz1ZA";
+    public static final String PHONE_NUMBER = "+84376037578";
 
     // Firebase url
     public static final String FIREBASE_URL = "https://soundbox-du-an-md31-default-rtdb.firebaseio.com/";
