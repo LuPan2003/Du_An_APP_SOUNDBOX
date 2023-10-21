@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -42,6 +44,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     private Timer mTimer;
 
     private AdView mAdView;
+    private List<Song> mListSong;
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -73,10 +76,18 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         //
+        mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
         return mFragmentPlaySongBinding.getRoot();
     }
 
-
+    private void sharePlay() {
+        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        // Chia sẻ bài hát thông qua ứng dụng chia sẻ mặc định
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("audio/*");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(currentSong.getUrl()));
+        startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát"));
+    }
 
 
     private void initControl() {
@@ -85,7 +96,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         mFragmentPlaySongBinding.imgPrevious.setOnClickListener(this);
         mFragmentPlaySongBinding.imgPlay.setOnClickListener(this);
         mFragmentPlaySongBinding.imgNext.setOnClickListener(this);
-
         mFragmentPlaySongBinding.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {

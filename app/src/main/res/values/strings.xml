@@ -43,7 +43,7 @@
     <string name="hint_search_name">Bạn muốn nghe gì?</string>
 
     // Label
-    <string name="label_artist">Artist:</string>
+    <string name="label_artist">Ca sĩ:</string>
 
     // Message
     <string name="msg_please_waiting">Please wait…</string>

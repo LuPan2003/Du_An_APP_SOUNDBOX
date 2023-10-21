@@ -41,6 +41,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static int mLengthSong;
     public static int mAction = -1;
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
