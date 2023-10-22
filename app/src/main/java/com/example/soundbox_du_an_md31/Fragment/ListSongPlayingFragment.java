@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.session.MediaController;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +43,7 @@ import java.util.List;
 
 
 public class ListSongPlayingFragment extends Fragment {
-
+    private MediaController mediaController;
     private FragmentListSongPlayingBinding mFragmentListSongPlayingBinding;
     private SongPlayingAdapter mSongPlayingAdapter;
     private List<Song> mListSong;
@@ -240,6 +241,7 @@ public class ListSongPlayingFragment extends Fragment {
     private void clickItemSongPlaying(int position) {
         MusicService.isPlaying = false;
         GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, position);
+        
     }
     private void searchSong() {
         String strKey = mFragmentListSongPlayingBinding.edtSearchNameList.getText().toString().trim();
