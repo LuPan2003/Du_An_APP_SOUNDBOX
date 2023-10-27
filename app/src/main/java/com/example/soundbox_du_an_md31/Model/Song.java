@@ -10,6 +10,7 @@ public class Song implements Serializable {
     private String url;
     private String artist;
     private boolean latest;
+    private String genre;
     private boolean featured;
     private int count;
     private boolean isPlaying;
@@ -48,6 +49,10 @@ public class Song implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public String getGenre() {return genre;}
+
+    public void setGenre(String genre) {this.genre = genre;}
 
     public String getArtist() {
         return artist;

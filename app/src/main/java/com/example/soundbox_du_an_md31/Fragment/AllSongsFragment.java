@@ -178,6 +178,8 @@ public class AllSongsFragment extends Fragment {
                                 .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
                             || GlobalFuntion.getTextSearch(song.getArtist()).toLowerCase().trim()
                                 .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                                || GlobalFuntion.getTextSearch(song.getGenre()).toLowerCase().trim()
+                                .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
                         ) {
                             mListSong.add(0, song);
                         }

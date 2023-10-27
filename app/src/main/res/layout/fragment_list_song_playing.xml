@@ -1,12 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/layout_content_all"
     android:background="@color/white">
 
+    <RelativeLayout
+        android:id="@+id/layout_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/define_dimen_10"
+        android:layout_marginTop="@dimen/define_dimen_20"
+        android:layout_marginEnd="@dimen/define_dimen_10"
+        android:background="@color/white">
+
+        <EditText
+            android:id="@+id/edt_search_name_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_white_shape_border_red_corner_8"
+            android:hint="@string/hint_search_name"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:padding="@dimen/define_dimen_12"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/text_size_xsmall"
+            tools:ignore="Autofill" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="@dimen/define_dimen_35"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/img_search_all"
+            android:background="@color/colorPrimaryDark"
+            tools:ignore="UnknownIdInLayout" />
+
+        <ImageView
+            android:id="@+id/img_search_all_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/define_dimen_5"
+            android:padding="@dimen/define_dimen_5"
+            android:src="@drawable/ic_search_red"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_data_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Có thể bạn muốn nghe"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="5dp"
+        />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcv_data"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</RelativeLayout>
+</LinearLayout>

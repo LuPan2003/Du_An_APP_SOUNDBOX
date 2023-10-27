@@ -41,6 +41,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static int mLengthSong;
     public static int mAction = -1;
 
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -248,10 +249,34 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     //Phương thức này được gọi khi bài hát hiện tại kết thúc. Phương thức này sẽ phát bài hát tiếp theo.
     @Override
     public void onCompletion(MediaPlayer mp) {
+//        showAd();
         mAction = Constant.NEXT;
         nextSong();
     }
 
+    // Hàm hiển thị quảng cáo
+//    private void showAd() {
+//        // Khởi tạo đối tượng AdView
+//        AdView adView = findViewById(R.id.adView);
+//
+//        // Tạo một đối tượng AdRequest
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//
+//        // Hiển thị quảng cáo
+//        adView.loadAd(adRequest);
+//
+//        // Thêm nút bỏ qua quảng cáo
+//        Button skipButton = findViewById(R.id.skipButton);
+//
+//        // Thiết lập listener cho sự kiện click
+//        skipButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Bỏ qua quảng cáo
+//                adView.setVisibility(View.GONE);
+//            }
+//        });
+//    }
 
     //Phương thức này được gọi khi bài hát hiện tại đã được chuẩn bị để phát. Phương thức này sẽ phát bài hát hiện tại.
     @Override

@@ -6,7 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,20 +30,25 @@ import com.example.soundbox_du_an_md31.utils.AppUtil;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 @SuppressLint("NonConstantResourceId")
 public class PlaySongFragment extends Fragment implements View.OnClickListener {
-
+    InterstitialAd mInterstitialAd;
     private FragmentPlaySongBinding mFragmentPlaySongBinding;
     private Timer mTimer;
 
     private AdView mAdView;
+    private List<Song> mListSong;
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -73,10 +80,18 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
         //
+        mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
         return mFragmentPlaySongBinding.getRoot();
     }
 
-
+    private void sharePlay() {
+        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        // Chia sẻ bài hát thông qua ứng dụng chia sẻ mặc định
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("audio/*");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(currentSong.getUrl()));
+        startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát"));
+    }
 
 
     private void initControl() {
@@ -85,7 +100,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         mFragmentPlaySongBinding.imgPrevious.setOnClickListener(this);
         mFragmentPlaySongBinding.imgPlay.setOnClickListener(this);
         mFragmentPlaySongBinding.imgNext.setOnClickListener(this);
-
         mFragmentPlaySongBinding.seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -226,10 +240,68 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     }
 
     private void clickOnPrevButton() {
+        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+
+                        mInterstitialAd = null;
+                    }
+                });
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(getActivity());
+        } else {
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
         GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
     }
 
     private void clickOnNextButton() {
+        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+
+                        mInterstitialAd = null;
+                    }
+                });
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(getActivity());
+        } else {
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
         GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
     }
 

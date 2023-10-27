@@ -47,7 +47,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     private ActivityMainBinding mActivityMainBinding;
     private TextView tv_header;
 
-
     private int mAction;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -91,6 +90,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,
                 new IntentFilter(Constant.CHANGE_LISTENER));
 //
+        // Tạo một đối tượng `MediaController`
 
 
 

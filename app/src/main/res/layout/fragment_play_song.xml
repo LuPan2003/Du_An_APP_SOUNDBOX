@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#6699CC"
     android:orientation="vertical">
 
@@ -11,7 +12,20 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical">
-
+        <ImageButton
+            android:id="@+id/vertical3Dots"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="10dp"
+            android:layout_marginLeft="350dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/vertical_3dots_icon"
+            android:contentDescription="To open menu"
+            app:tint="@color/white" />
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_song"
             android:layout_width="match_parent"
@@ -19,7 +33,6 @@
             android:layout_margin="@dimen/define_dimen_40"
             android:src="@drawable/image_no_available" />
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -125,13 +138,44 @@
                 tools:ignore="ContentDescription" />
 
         </LinearLayout>
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:src="@drawable/share"-->
-<!--            android:layout_marginLeft="150dp"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            >
+            <ImageButton
+                android:id="@+id/share_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="To edit song info"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+
+                app:layout_constraintBottom_toBottomOf="@+id/favourite"
+                app:layout_constraintEnd_toStartOf="@+id/favourite"
+                app:layout_constraintTop_toTopOf="@+id/favourite"
+                app:srcCompat="@drawable/share"
+                app:tint="@color/colorWhite" />
+            <ImageButton
+                android:id="@+id/heart_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="To edit song info"
+                android:padding="5dp"
+                android:layout_marginLeft="50dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/favourite"
+                app:layout_constraintEnd_toStartOf="@+id/favourite"
+                app:layout_constraintTop_toTopOf="@+id/favourite"
+                app:srcCompat="@drawable/heart_outline_icon"
+                app:tint="@color/colorWhite" />
+        </LinearLayout>
 
     </LinearLayout>
     <com.google.android.gms.ads.AdView
