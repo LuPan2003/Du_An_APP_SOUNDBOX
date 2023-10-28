@@ -36,7 +36,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edt_name"
+        android:id="@+id/edt_nameUD"
         android:drawableLeft="@drawable/ic_abc_24"
         android:hint="Enter your name"
         android:drawablePadding="10dp"
@@ -50,7 +50,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edt_nunmberphone"
+        android:id="@+id/edt_nunmberphoneUD"
         android:drawableLeft="@drawable/ic_abc_24"
         android:hint="Enter your numberphone"
         android:drawablePadding="10dp"
@@ -64,7 +64,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_update"
+        android:id="@+id/btn_updateProfile"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="10dp"
