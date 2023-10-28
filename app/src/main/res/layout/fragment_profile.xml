@@ -73,10 +73,10 @@
                     >
 
                     <ImageView
-                        android:id="@+id/img_avatar"
+                        android:id="@+id/img_avatarProfile"
                         android:layout_width="120dp"
                         android:layout_height="match_parent"
-                        android:src="@drawable/avatar_profile_back" />
+                        android:src="@drawable/avata" />
                 </androidx.cardview.widget.CardView>
 
                 <ImageView

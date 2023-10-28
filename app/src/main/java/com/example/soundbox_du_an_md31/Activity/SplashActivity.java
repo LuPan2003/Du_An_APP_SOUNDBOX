@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.soundbox_du_an_md31.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 
 public class SplashActivity extends AppCompatActivity {
@@ -26,9 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(i);
-                finish();
+                nextActivity();
             }
         }, SPLASH_TIME_OUT);
     }
@@ -39,5 +39,18 @@ public class SplashActivity extends AppCompatActivity {
         AnimationSet animation = new AnimationSet(false); //change to false
         animation.addAnimation(fadeIn);
         logoApp.setAnimation(animation);
+    }
+    private void nextActivity(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
+        else{
+            Intent i = new Intent(SplashActivity.this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 }

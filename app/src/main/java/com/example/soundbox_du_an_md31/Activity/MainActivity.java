@@ -5,15 +5,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
@@ -30,11 +45,17 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.ActivityMainBinding;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.IOException;
 
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements View.OnClickListener  {
     public static final int TYPE_HOME = 1;
+    public static final int MY_REQUEST_CODE= 10;
+
     public static final int TYPE_ALL_SONGS = 2;
     public static final int TYPE_FEATURED_SONGS = 3;
     public static final int TYPE_POPULAR_SONGS = 4;
@@ -45,6 +66,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     private int mTypeScreen = TYPE_HOME;
 //
     private ActivityMainBinding mActivityMainBinding;
+
+     final private ProfileFragment mProfileFragment = new ProfileFragment();
+    final private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+             new ActivityResultCallback<ActivityResult>() {
+         @Override
+         public void onActivityResult(ActivityResult result) {
+             if(result.getResultCode()==RESULT_OK){
+                 Intent intent = result.getData();
+                 if(intent == null){
+                     return;
+                 }
+                 Uri uri = intent.getData();
+                 mProfileFragment.setUri(uri);
+                 try {
+                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+                     mProfileFragment.setImageBitmap(bitmap);
+                 } catch (IOException e) {
+                     throw new RuntimeException(e);
+                 }
+             }
+         }
+     });
     private TextView tv_header;
 
     private int mAction;
@@ -74,14 +117,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
         mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.home){
+
                 replaceFragment(new HomeFragment());
             }else if(item.getItemId() == R.id.search){
                 replaceFragment(new AllSongsFragment());
             }else if(item.getItemId() == R.id.library){
-                replaceFragment(new LibraryFragment());
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
-                fragmentTransaction.commit();
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                Uri photoUrl = user.getPhotoUrl();
+//                if(user == null){
+                    replaceFragment(new LibraryFragment());
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
+                    fragmentTransaction.commit();
+
+
+
             }else if(item.getItemId() == R.id.premimum){
                 replaceFragment(new FeedbackFragment());
             }
@@ -260,8 +310,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
     public void gotoProfile(){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        ProfileFragment profileFragment = new ProfileFragment();
-        fragmentTransaction.replace(R.id.frame_layout,profileFragment);
+
+        fragmentTransaction.replace(R.id.frame_layout,mProfileFragment);
         fragmentTransaction.addToBackStack(ProfileFragment.TAG);
         fragmentTransaction.commit();
     }
@@ -278,5 +328,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         fragmentTransaction.replace(R.id.frame_layout,changePasswordFragment);
         fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == MY_REQUEST_CODE){
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                openGallery();
+            }
+        }
+    }
+    public void openGallery(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        mActivityResultLauncher.launch(Intent.createChooser(intent,"Select Picture"));
     }
 }
