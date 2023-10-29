@@ -22,9 +22,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
-    Button btnDangky,btnSignIn;
+    Button btnSignIn;
     private TextInputEditText email , password ;
-    private TextView forgetpass;
+    private TextView forgetpass,btnDangky;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
