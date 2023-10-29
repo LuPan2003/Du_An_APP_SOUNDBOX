@@ -13,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +38,9 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.Timer;
@@ -50,6 +55,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     private AdView mAdView;
     private List<Song> mListSong;
     private int mAction;
+    private ImageView heart_song;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -67,6 +73,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                     new IntentFilter(Constant.CHANGE_LISTENER));
         }
         initControl();
+        heart_song = mFragmentPlaySongBinding.heartPlay;
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
@@ -81,7 +88,14 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         mAdView.loadAd(adRequest);
         //
         mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
+
+//        heart_song.setOnClickListener(view -> {
+//            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+//            addFavoriteSong(currentSong);
+//        });
+
         return mFragmentPlaySongBinding.getRoot();
+
     }
 
     private void sharePlay() {
@@ -311,5 +325,18 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         } else {
             GlobalFuntion.startMusicService(getActivity(), Constant.RESUME, MusicService.mSongPosition);
         }
+    }
+
+    private void addFavoriteSong(Song song){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("favoriteSong");
+
+        String pathObject = String.valueOf(song.getId());
+        myRef.child(pathObject).setValue(song, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                Toast.makeText(getActivity(), "Thêm vào danh sách yêu thích thành công", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
