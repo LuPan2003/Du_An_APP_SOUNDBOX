@@ -7,15 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResult;
@@ -28,13 +23,14 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Fragment.AlbumFragment;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
+import com.example.soundbox_du_an_md31.Fragment.AppFeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
+
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
@@ -46,8 +42,6 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.ActivityMainBinding;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.io.IOException;
 
@@ -344,6 +338,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
         fragmentTransaction.commit();
     }
+    public void gotoFeedback(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        AppFeedbackFragment feedbackAppFragment = new AppFeedbackFragment();
+        fragmentTransaction.replace(R.id.frame_layout,feedbackAppFragment);
+        fragmentTransaction.addToBackStack(AppFeedbackFragment.TAG);
+        fragmentTransaction.commit();
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

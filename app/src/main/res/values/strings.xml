@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Soundbox_Du_An_MD31</string>
     <string name="splash_text">Highly committed to quality products &amp; excellent services</string>
-
+    <string name="paypal_client_id">AXWJI8GqZPzlfX10Kwvt3IWyF-3k12Pq9kUXWKu5BXAS-oMhVgUeRxTI5Mm_nI6fPFX91IBhJdaUAtRT</string>
     <string name="name_app">Soundbox</string>
     <string name="menu_home">Home</string>
     <!--    <string name="menu_all_songs">All Songs</string>-->
@@ -9,6 +9,7 @@
     <string name="menu_popular_songs">Bài Hát Nổi Bật</string>
     <string name="menu_all_songs">Tất Cả Bài Hát</string>
     <string name="menu_new_songs">Bài Hát Mới</string>
+    <string name="menu_favorite">Bài Hát Yêu Thích</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_contact">Contact</string>
 
@@ -23,7 +24,7 @@
     <string name="feedback_email">Email</string>
     <string name="feedback_phone">Phone number</string>
     <string name="feedback_comment">Comment (*)</string>
-    <string name="send_feedback">Send Feedback</string>
+    <string name="send_feedback">Gửi Góp Ý</string>
 
     <string name="play_all">Play all</string>
     <string name="view_all">Tất cả</string>

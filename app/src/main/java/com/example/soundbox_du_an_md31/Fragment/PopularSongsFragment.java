@@ -37,7 +37,13 @@ public class PopularSongsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentPopularSongsBinding = FragmentPopularSongsBinding.inflate(inflater, container, false);
-
+//        mFragmentPopularSongsBinding.layoutPlayPopular.setOnClickListener(v -> {
+//            MusicService.clearListSongPlaying();
+//            MusicService.mListSongPlaying.addAll(mListSong);
+//            MusicService.isPlaying = false;
+//            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+//            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+//        });
         getListPopularSongs();
         initListener();
 

@@ -1,14 +1,11 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
+    private ProgressDialog progressDialog;
 
     private FragmentHomeBinding mFragmentHomeBinding;
 
@@ -64,7 +62,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false);
-
+        progressDialog = new ProgressDialog(getActivity());
         getListSongFromFirebase("");
         initListener();
 
@@ -119,12 +117,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void getListSongFromFirebase(String key) {
+        progressDialog.show();
         if (getActivity() == null) {
             return;
         }
         MyApplication.get(getActivity()).getSongsDatabaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                progressDialog.dismiss();
                 mFragmentHomeBinding.layoutContent.setVisibility(View.VISIBLE);
                 mListSong = new ArrayList<>();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {

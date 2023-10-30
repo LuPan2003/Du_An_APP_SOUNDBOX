@@ -1,5 +1,6 @@
 package com.example.soundbox_du_an_md31.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 
 public class RegistrationActivity extends AppCompatActivity {
+    private ProgressDialog progressDialog;
     Button btnHuy,btnSignUp;
     private FirebaseAuth mAuth;
     private TextInputEditText email,pass,rePass;
@@ -32,6 +34,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        progressDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         initUi();
         btnHuy.setOnClickListener(new View.OnClickListener() {
@@ -57,10 +60,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void createAccount(String email, String password) {
         // [START create_user_with_email]
+        progressDialog.show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             Toast.makeText(RegistrationActivity.this, "Đăng kí thành công", Toast.LENGTH_SHORT).show();
                             // Sign in success, update UI with the signed-in user's information
