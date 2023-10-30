@@ -1,6 +1,7 @@
 package com.example.soundbox_du_an_md31.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
+    private ProgressDialog progressDialog;
     Button btnSignIn;
     private TextInputEditText email , password ;
     private TextView forgetpass,btnDangky;
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        progressDialog = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         initUi();
 
@@ -73,11 +76,13 @@ public class LoginActivity extends AppCompatActivity {
         }
         // Thử đăng nhập người dùng.
         try {
+            progressDialog.show();
             FirebaseAuth.getInstance()
                     .signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+                            progressDialog.dismiss();
                             if (task.isSuccessful()) {
                             // Thành công
                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
