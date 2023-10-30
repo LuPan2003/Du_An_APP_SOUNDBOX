@@ -31,6 +31,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
+import com.example.soundbox_du_an_md31.Fragment.AlbumFragment;
 import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
@@ -59,6 +60,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public static final int TYPE_ALL_SONGS = 2;
     public static final int TYPE_FEATURED_SONGS = 3;
     public static final int TYPE_POPULAR_SONGS = 4;
+    public static final int TYPE_ALBUM_SONGS = 8;
     public static final int TYPE_NEW_SONGS = 5;
     public static final int TYPE_FEEDBACK = 6;
     public static final int TYPE_CONTACT = 7;
@@ -68,6 +70,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     private ActivityMainBinding mActivityMainBinding;
 
      final private ProfileFragment mProfileFragment = new ProfileFragment();
+
     final private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
              new ActivityResultCallback<ActivityResult>() {
          @Override
@@ -167,6 +170,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public void openPopularSongsScreen() {
         replaceFragment(new PopularSongsFragment());
         mTypeScreen = TYPE_POPULAR_SONGS;
+
+    }
+    public void openAlbumSongsScreen() {
+        replaceFragment(new AlbumFragment());
+        mTypeScreen = TYPE_ALBUM_SONGS;
 
     }
 
@@ -313,6 +321,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
         fragmentTransaction.replace(R.id.frame_layout,mProfileFragment);
         fragmentTransaction.addToBackStack(ProfileFragment.TAG);
+        fragmentTransaction.commit();
+    }
+    public void gotoAlBum(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        AlbumFragment changeInformationFragment = new AlbumFragment();
+        fragmentTransaction.replace(R.id.frame_layout,changeInformationFragment);
+        fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
         fragmentTransaction.commit();
     }
     public void gotoChangeInformation(){

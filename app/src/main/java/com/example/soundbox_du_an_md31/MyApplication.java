@@ -5,8 +5,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.widget.Toast;
+
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -42,6 +46,11 @@ public class MyApplication extends Application {
     public DatabaseReference getSongsDatabaseReference() {
         return mFirebaseDatabase.getReference("/songs");
     }
+    public DatabaseReference getSongsAlbumDatabaseReference() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return mFirebaseDatabase.getReference("/album/"+user.getUid());
+    }
+
     //trả về một tham chiếu đến cơ sở dữ liệu Firebase lưu trữ phản hồi của người dùng.
     public DatabaseReference getFeedbackDatabaseReference() {
         return mFirebaseDatabase.getReference("/feedback");

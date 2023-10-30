@@ -38,11 +38,15 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,7 +59,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     private AdView mAdView;
     private List<Song> mListSong;
     private int mAction;
-    private ImageView heart_song;
+    private ImageView heart_song,menuMusic;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -74,6 +78,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
         initControl();
         heart_song = mFragmentPlaySongBinding.heartPlay;
+        menuMusic = mFragmentPlaySongBinding.menuMusic;
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
@@ -81,6 +86,41 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        menuMusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user == null){
+                    return;
+                }
+                Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                mFragmentPlaySongBinding.tvSongName.setText(currentSong.getTitle());
+                Toast.makeText(getActivity(), "Id :"+ user.getUid() , Toast.LENGTH_SHORT).show();
+
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference ref = db.getReference("album/"+user.getUid()+"/"+currentSong.getId());
+//                DatabaseReference parentRef = db.getReference("song/"+ currentSong.getId());
+//                DatabaseReference childRef = parentRef.child("userid");
+//                childRef.setValue(""+user.getUid());
+
+                Map<String, Object> data = new HashMap<>();
+                DatabaseReference childRef = ref.child(""+user.getUid());
+                data.put("artist", currentSong.getArtist());
+                data.put("count", currentSong.getCount());
+                data.put("genre", currentSong.getGenre());
+                data.put("id", currentSong.getId());
+                data.put("image", currentSong.getImage());
+                data.put("latest", currentSong.isLatest());
+                data.put("title", currentSong.getTitle());
+                data.put("url", currentSong.getUrl());
+                childRef.setValue(data);
+                ref.setValue(data);
+
+
+
+
             }
         });
         mAdView = mFragmentPlaySongBinding.adView;

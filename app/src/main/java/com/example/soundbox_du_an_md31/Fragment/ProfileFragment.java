@@ -103,6 +103,7 @@ public class ProfileFragment extends Fragment {
         String name = user.getDisplayName();
         String email = user.getEmail();
         Uri photoUrl = user.getPhotoUrl();
+
         if (name == null) {
             tv_name.setVisibility(View.GONE);
             tv_email.setVisibility(View.GONE);
@@ -111,7 +112,7 @@ public class ProfileFragment extends Fragment {
             tv_name.setVisibility(View.VISIBLE);
             tv_email.setVisibility(View.VISIBLE);
             tv_name.setText(name);
-            tv_email.setText(name);
+            tv_email.setText(email);
         }
 
         Glide.with(getContext()).load(photoUrl).error(R.drawable.avata).into(img_avatarProfile);

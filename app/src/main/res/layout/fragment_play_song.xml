@@ -13,7 +13,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
         <ImageButton
-            android:id="@+id/vertical3Dots"
+            android:id="@+id/menuMusic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:scaleType="fitCenter"
