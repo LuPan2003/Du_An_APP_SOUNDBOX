@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,16 +38,11 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +59,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     private AdView mAdView;
     private List<Song> mListSong;
     private int mAction;
-    private ImageView heart_song, menuMusic;
+    private ImageView heart_song,menuMusic;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -98,97 +91,34 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         menuMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getActivity(), R.style.BottomSheetDialogTheme);
-                View bottomSheetView = LayoutInflater.from(getActivity()).inflate(R.layout.bottomsheet, (LinearLayout) bottomSheetDialog.findViewById(R.id.bottomsheetcontainer));
-                TextView txtaddAlbum = (TextView) bottomSheetView.findViewById(R.id.txt_addAlbum);
-                Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-                FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-                DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference parentRef1 = databaseRef1.child("album"); // Đường dẫn đến bảng cha
-                DatabaseReference itemRef1 = parentRef1.child(user1.getUid()).child(currentSong1.getId() + "");
-                itemRef1.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            // Phần tử tồn tại 
-                            txtaddAlbum.setText("Xóa khỏi danh sách phát");
-                        } else {
-                            // Phần tử không tồn tại
-                            txtaddAlbum.setText("Thêm danh sách phát");
-                        }
-                    }
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user == null){
+                    return;
+                }
+                Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                mFragmentPlaySongBinding.tvSongName.setText(currentSong.getTitle());
+                Toast.makeText(getActivity(), "Id :"+ user.getUid() , Toast.LENGTH_SHORT).show();
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Xử lý khi có lỗi xảy ra
-                    }
-                });
-                txtaddAlbum.setOnClickListener(view1 -> {
-                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    if (user == null) {
-                        Toast.makeText(getActivity(), "Chưa đăng nhập tài khoản", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-                    DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-                    DatabaseReference parentRef = databaseRef.child("album"); // Đường dẫn đến bảng cha
-                    DatabaseReference itemRef = parentRef.child(user.getUid()).child(currentSong.getId() + ""); // Đường dẫn đến bảng con và phần tử cần kiểm tra
-                    mFragmentPlaySongBinding.tvSongName.setText(currentSong.getTitle());
-                    itemRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                // Phần tử tồn tại
-                                itemRef.removeValue()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getActivity(), "Bỏ thành công", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Xóa thất bại
-                                            }
-                                        });
-                            } else {
-                                // Phần tử không tồn tại
-                                FirebaseDatabase db = FirebaseDatabase.getInstance();
-                                DatabaseReference ref = db.getReference("album/" + user.getUid() + "/" + currentSong.getId());
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference ref = db.getReference("album/"+user.getUid()+"/"+currentSong.getId());
 //                DatabaseReference parentRef = db.getReference("song/"+ currentSong.getId());
 //                DatabaseReference childRef = parentRef.child("userid");
 //                childRef.setValue(""+user.getUid());
 
-                                Map<String, Object> data = new HashMap<>();
-                                DatabaseReference childRef = ref.child("" + user.getUid());
-                                data.put("artist", currentSong.getArtist());
-                                data.put("count", currentSong.getCount());
-                                data.put("genre", currentSong.getGenre());
-                                data.put("id", currentSong.getId());
-                                data.put("image", currentSong.getImage());
-                                data.put("latest", currentSong.isLatest());
-                                data.put("title", currentSong.getTitle());
-                                data.put("url", currentSong.getUrl());
-                                childRef.setValue(data);
-                                ref.setValue(data);
-                                Toast.makeText(getActivity(), "Thêm thành công", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            // Xử lý khi có lỗi xảy ra
-                        }
-                    });
+                Map<String, Object> data = new HashMap<>();
+                DatabaseReference childRef = ref.child(""+user.getUid());
+                data.put("artist", currentSong.getArtist());
+                data.put("count", currentSong.getCount());
+                data.put("genre", currentSong.getGenre());
+                data.put("id", currentSong.getId());
+                data.put("image", currentSong.getImage());
+                data.put("latest", currentSong.isLatest());
+                data.put("title", currentSong.getTitle());
+                data.put("url", currentSong.getUrl());
+                childRef.setValue(data);
+                ref.setValue(data);
 
 
-                    bottomSheetDialog.cancel();
-                });
-
-
-                bottomSheetDialog.setContentView(bottomSheetView);
-                bottomSheetDialog.show();
 
 
             }
@@ -371,7 +301,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -404,7 +334,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -437,7 +367,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void addFavoriteSong(Song song) {
+    private void addFavoriteSong(Song song){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("favoriteSong");
 

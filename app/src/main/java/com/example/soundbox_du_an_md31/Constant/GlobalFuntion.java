@@ -89,6 +89,9 @@ public class GlobalFuntion {
     }
     //Xóa dấu phụ âm khỏi một chuỗi.
     public static String getTextSearch(String input) {
+        if (input == null) {
+            return ""; // hoặc thực hiện xử lý khác tùy theo yêu cầu
+        }
         String nfdNormalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(nfdNormalizedString).replaceAll("");

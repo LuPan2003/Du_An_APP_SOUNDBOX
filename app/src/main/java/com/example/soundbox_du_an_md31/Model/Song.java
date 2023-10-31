@@ -15,6 +15,25 @@ public class Song implements Serializable {
     private int count;
     private boolean isPlaying;
 
+    private boolean isCopyrighted;
+    private boolean access;
+
+    public boolean isAccess() {
+        return access;
+    }
+
+    public void setAccess(boolean access) {
+        this.access = access;
+    }
+
+    public boolean isCopyrighted() {
+        return isCopyrighted;
+    }
+
+    public void setCopyrighted(boolean copyrighted) {
+        isCopyrighted = copyrighted;
+    }
+
     public Song() {
     }
 
