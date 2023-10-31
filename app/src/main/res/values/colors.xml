@@ -4,7 +4,8 @@
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
-
+    <color name="colorXanhSang">#BF4C41</color>
+    <color name="red2">#98042D</color>
     <color name="black_overlay">#667C7474</color>
     <color name="nen">#3C3831</color>
     <color name="colorPrimary">#07112a</color>
