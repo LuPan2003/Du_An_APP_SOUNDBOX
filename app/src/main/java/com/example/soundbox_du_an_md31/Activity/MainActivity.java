@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -30,7 +31,6 @@ import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.AppFeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
-
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
@@ -42,12 +42,22 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.ActivityMainBinding;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 
 import java.io.IOException;
 
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements View.OnClickListener  {
+    private AdView mAdView; // Đảm bảo rằng bạn đã khai báo biến mAdView
+    InterstitialAd mInterstitialAd;
     public static final int TYPE_HOME = 1;
     public static final int MY_REQUEST_CODE= 10;
 
@@ -100,6 +110,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        mAdView = mActivityMainBinding.adView;
+//        AdRequest adRequest = new AdRequest.Builder().build();
+//        mAdView.loadAd(adRequest);
+
         setContentView(mActivityMainBinding.getRoot());
 
         mActivityMainBinding.bottomNavView.setBackground(null);
@@ -288,6 +303,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     }
 
     private void clickOnCloseButton() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+        InterstitialAd.load(this,"ca-app-pub-8801498166910444/8422167536", adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+
+                        mInterstitialAd = null;
+                    }
+                });
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(this);
+        } else {
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
+        // Start music service
         GlobalFuntion.startMusicService(this, Constant.CANNEL_NOTIFICATION, MusicService.mSongPosition);
     }
 

@@ -301,7 +301,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-8801498166910444/9063512975", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -334,7 +334,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-8801498166910444/6877113584", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
