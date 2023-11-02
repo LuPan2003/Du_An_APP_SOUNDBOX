@@ -66,7 +66,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     private AdView mAdView;
     private List<Song> mListSong;
     private int mAction;
-    private ImageView heart_song,menuMusic;
+    private ImageView heart_song,menuMusic,heart_play;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -86,9 +86,11 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         initControl();
         heart_song = mFragmentPlaySongBinding.heartPlay;
         menuMusic = mFragmentPlaySongBinding.menuMusic;
+        heart_play = mFragmentPlaySongBinding.heartPlay;
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
+        checkIsFavorite();
         // Banner QC
         MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
             @Override
@@ -205,6 +207,40 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 //            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
 //            addFavoriteSong(currentSong);
 //        });
+        heart_play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user != null) {
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference myRef = database.getReference("favoritesongs").child(user.getUid());
+                            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("artist", currentSong.getArtist());
+                            data.put("count", currentSong.getCount());
+                            data.put("genre", currentSong.getGenre());
+                            data.put("id", currentSong.getId());
+                            data.put("image", currentSong.getImage());
+                            data.put("latest", currentSong.isLatest());
+                            data.put("title", currentSong.getTitle());
+                            data.put("url", currentSong.getUrl());
+                            myRef.child(String.valueOf(currentSong.getId())).setValue(data, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                    Toast.makeText(getActivity(), "Thêm thành công", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(getActivity(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
         return mFragmentPlaySongBinding.getRoot();
 
@@ -439,16 +475,32 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void addFavoriteSong(Song song){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("favoriteSong");
-
-        String pathObject = String.valueOf(song.getId());
-        myRef.child(pathObject).setValue(song, new DatabaseReference.CompletionListener() {
+    private void checkIsFavorite(){
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                Toast.makeText(getActivity(), "Thêm vào danh sách yêu thích thành công", Toast.LENGTH_SHORT).show();
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef = database.getReference("favoritesongs").child(user.getUid());
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+//                            check yêu thích
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                } else {
+                    Toast.makeText(getActivity(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
     }
 }

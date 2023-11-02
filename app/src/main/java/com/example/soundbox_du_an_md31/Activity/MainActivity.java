@@ -34,6 +34,7 @@ import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
+import com.example.soundbox_du_an_md31.Fragment.ListSongFavoriteFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
@@ -381,6 +382,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
         fragmentTransaction.replace(R.id.frame_layout,changePasswordFragment);
         fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
+        fragmentTransaction.commit();
+    }
+    public void gotoFavoriteSongs(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        ListSongFavoriteFragment listSongFavoriteFragment = new ListSongFavoriteFragment();
+        fragmentTransaction.replace(R.id.frame_layout,listSongFavoriteFragment);
+        fragmentTransaction.addToBackStack(ListSongFavoriteFragment.TAG);
         fragmentTransaction.commit();
     }
     public void gotoFeedback(){

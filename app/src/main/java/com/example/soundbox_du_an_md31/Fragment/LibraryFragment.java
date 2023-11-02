@@ -3,11 +3,13 @@ package com.example.soundbox_du_an_md31.Fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
+import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,11 +36,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.List;
+
 public class LibraryFragment extends Fragment {
     private MainActivity mainActivity;
     private ImageView profile;
-    private TextView soLuongAlbum;
-    private LinearLayout album;
+    private TextView soLuongAlbum,tv_favorite;
+    private LinearLayout album,favorite;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,9 +54,13 @@ public class LibraryFragment extends Fragment {
         profile = view.findViewById(R.id.icon_profile);
         album = view.findViewById(R.id.danhsachphat);
         soLuongAlbum = view.findViewById(R.id.soLuongAlbum);
+        favorite = view.findViewById(R.id.btn_listsongfavorite);
+        tv_favorite = view.findViewById(R.id.tv_favorite);
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             soLuongAlbum.setText("0 danh sách");
+            tv_favorite.setText("0 bài hát");
         }else{
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference musicRef = database.getReference("album");
@@ -69,6 +80,21 @@ public class LibraryFragment extends Fragment {
                     System.out.println("Lỗi: " + databaseError.getMessage());
                 }
             });
+            DatabaseReference favorite = database.getReference("favoritesongs").child(user.getUid());
+            favorite.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int count = (int) snapshot.getChildrenCount();
+                    // Số lượng phần tử trong bảng "album"
+                    tv_favorite.setText(count+" bài hát");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    System.out.println("Lỗi: " + error.getMessage());
+                }
+            });
+
         }
 
 
@@ -82,6 +108,13 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mainActivity.gotoAlBum();
+            }
+        });
+
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.gotoFavoriteSongs();
             }
         });
 
