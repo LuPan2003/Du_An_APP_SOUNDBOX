@@ -31,10 +31,12 @@ import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.AppFeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
+import com.example.soundbox_du_an_md31.Fragment.DangkinhacFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
+import com.example.soundbox_du_an_md31.Fragment.NhacVipFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
 import com.example.soundbox_du_an_md31.Model.Song;
@@ -390,6 +392,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         fragmentTransaction.addToBackStack(AppFeedbackFragment.TAG);
         fragmentTransaction.commit();
     }
+
+    public void gotoNhacVip(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        DangkinhacFragment nhacVipFragment = new DangkinhacFragment();
+        fragmentTransaction.replace(R.id.frame_layout,nhacVipFragment);
+        fragmentTransaction.addToBackStack(NhacVipFragment.TAG);
+        fragmentTransaction.commit();
+    }
+
+
 
 
     @Override

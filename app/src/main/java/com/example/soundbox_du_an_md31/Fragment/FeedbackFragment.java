@@ -1,10 +1,15 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +32,9 @@ public class FeedbackFragment extends Fragment {
     private FragmentFeedbackBinding mFragmentFeedbackBinding;
     private ContactAdapter mContactAdapter;
     private MainActivity mainActivity;
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,7 +47,18 @@ public class FeedbackFragment extends Fragment {
         mFragmentFeedbackBinding.rcvData.setFocusable(false);
         mFragmentFeedbackBinding.rcvData.setLayoutManager(layoutManager);
         mFragmentFeedbackBinding.rcvData.setAdapter(mContactAdapter);
+
+        mFragmentFeedbackBinding.btndkiSale.setOnClickListener(v -> openNhacVip() );
+        //btndkiplus = mFragmentFeedbackBinding.btndkiSale;
+//        btndkiplus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//               openZalo();
+//            }
+//        });
+
         return mFragmentFeedbackBinding.getRoot();
+
     }
 
     private void settingSound() {
@@ -57,6 +76,32 @@ public class FeedbackFragment extends Fragment {
         contactArrayList.add(new Contact(Contact.YOUTUBE, R.drawable.ic_youtube));
         return contactArrayList;
     }
+
+
+
+
+    public void openNhacVip(){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        LayoutInflater inflater = requireActivity().getLayoutInflater();
+//        View dialogView = inflater.inflate(R.layout.layout_dialognhacplus, null);
+//
+//// Tạo WindowManager.LayoutParams mới
+//        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+//        layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT; // R.dimen.dialog_width chứa giá trị 200dp
+//        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//
+//        builder.setView(dialogView);
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+//
+//// Đặt thuộc tính cửa sổ cho Dialog
+//        dialog.getWindow().setAttributes(layoutParams);
+        mainActivity.gotoNhacVip();
+
+
+
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
