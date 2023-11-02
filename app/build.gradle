@@ -7,7 +7,9 @@ plugins {
 android {
     namespace 'com.example.soundbox_du_an_md31'
     compileSdk 33
-
+    buildFeatures {
+        dataBinding true
+    }
 
     defaultConfig {
         applicationId "com.example.soundbox_du_an_md31"
@@ -47,6 +49,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx:22.1.2'
     implementation 'com.google.android.gms:play-services-ads-lite:22.4.0'
     implementation 'com.google.firebase:firebase-firestore:24.9.0'
+    implementation 'androidx.databinding:databinding-runtime:8.1.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -69,5 +72,7 @@ dependencies {
     implementation 'me.relex:circleindicator:2.1.6'
     //admob
     implementation 'com.google.android.gms:play-services-ads:22.4.0'
+    implementation 'com.google.android.material:material:1.4.0' // Sử dụng phiên bản mới nhất
+
 
 }
