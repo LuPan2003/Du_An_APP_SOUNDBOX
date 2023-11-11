@@ -3,10 +3,12 @@ package com.example.soundbox_du_an_md31.Activity;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,8 +23,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static String KEY_EMAIL = "email";
+    public static String KEY_PASSWORD = "password";
+    public static String KEY_CHECKSTATUS = "checkstatus";
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
+    private CheckBox cbLuuThongTin;
     Button btnSignIn;
     private TextInputEditText email , password ;
     private TextView forgetpass,btnDangky;
@@ -83,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
                             if (task.isSuccessful()) {
+                                luuThongTin();
                             // Thành công
                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                                 Intent login = new Intent(LoginActivity.this, MainActivity.class);
@@ -103,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
     public boolean checkValidCredentials(String email, String password) {
         // Kiểm tra xem email có hợp lệ hay không.
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -115,6 +124,36 @@ public class LoginActivity extends AppCompatActivity {
 
         return true;
     }
+    private void layThongTin() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        boolean check = sharedPreferences.getBoolean(KEY_CHECKSTATUS, false);
+        if (check) {
+            String emailNguoiDUng = sharedPreferences.getString(KEY_EMAIL, "");
+            String matKhau = sharedPreferences.getString(KEY_PASSWORD, "");
+            email.setText(emailNguoiDUng);
+            password.setText(matKhau);
+        } else {
+            email.setText("");
+            password.setText("");
+        }
+        cbLuuThongTin.setChecked(check);
+
+    }
+    private void luuThongTin() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String emailNguoiDung = email.getText().toString();
+        String pass = password.getText().toString();
+        boolean check = cbLuuThongTin.isChecked();
+        if (!check) {
+            editor.clear();
+        } else {
+            editor.putString(KEY_EMAIL, emailNguoiDung);
+            editor.putString(KEY_PASSWORD, pass);
+            editor.putBoolean(KEY_CHECKSTATUS, check);
+        }
+        editor.commit();
+    }
     @SuppressLint("WrongViewCast")
     private void initUi(){
         email = findViewById(R.id.UserName);
@@ -122,5 +161,12 @@ public class LoginActivity extends AppCompatActivity {
         btnDangky=findViewById(R.id.btnSignUp1);
         btnSignIn = findViewById(R.id.btnSignIn);
         forgetpass = findViewById(R.id.tvForgetpass);
+        cbLuuThongTin = findViewById(R.id.chk_remember);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        layThongTin();
     }
 }
