@@ -39,7 +39,7 @@ public class ProfileFragment extends Fragment {
     public static final String TAG = LibraryFragment.class.getName();
     private ImageView icon_back, img_avatarProfile, img_changeIMG;
     private TextView tv_name, tv_email;
-    private AppCompatButton btn_change_information, btn_change_password, btn_exit;
+    private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium;
     private MainActivity mainActivity;
 
     @Override
@@ -51,6 +51,7 @@ public class ProfileFragment extends Fragment {
         icon_back = view.findViewById(R.id.icon_back);
         btn_change_information = view.findViewById(R.id.btn_change_infor);
         btn_change_password = view.findViewById(R.id.btn_change_password);
+        btn_premium = view.findViewById(R.id.btn_premium);
         img_avatarProfile = view.findViewById(R.id.img_avatarProfile);
         tv_email = view.findViewById(R.id.tv_email);
         tv_name = view.findViewById(R.id.tv_name);
@@ -90,6 +91,12 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mainActivity.gotoChangePassword();
+            }
+        });
+        btn_premium.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.gotoPremium();
             }
         });
         initListener();

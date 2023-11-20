@@ -39,6 +39,7 @@ import com.example.soundbox_du_an_md31.Fragment.ListSongFavoriteFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.NhacVipFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
+import com.example.soundbox_du_an_md31.Fragment.PremiumFragment;
 import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
 import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.R;
@@ -408,7 +409,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         fragmentTransaction.addToBackStack(NhacVipFragment.TAG);
         fragmentTransaction.commit();
     }
-
+    public void gotoPremium(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        PremiumFragment premiumFragment = new PremiumFragment();
+        fragmentTransaction.replace(R.id.frame_layout,premiumFragment);
+        fragmentTransaction.addToBackStack(PremiumFragment.TAG);
+        fragmentTransaction.commit();
+    }
 
 
 
