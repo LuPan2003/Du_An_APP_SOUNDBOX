@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.soundbox_du_an_md31.Activity.CommentActivity;
+import com.example.soundbox_du_an_md31.Activity.LoginActivity;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Song;
@@ -60,13 +64,15 @@ import java.util.TimerTask;
 @SuppressLint("NonConstantResourceId")
 public class PlaySongFragment extends Fragment implements View.OnClickListener {
     InterstitialAd mInterstitialAd;
+
     private FragmentPlaySongBinding mFragmentPlaySongBinding;
     private Timer mTimer;
 
     private AdView mAdView;
     private List<Song> mListSong;
     private int mAction;
-    private ImageView heart_song,menuMusic,heart_play;
+    private String currentSongId;
+    private ImageView heart_song,menuMusic,heart_play ;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -87,6 +93,17 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         heart_song = mFragmentPlaySongBinding.heartPlay;
         menuMusic = mFragmentPlaySongBinding.menuMusic;
         heart_play = mFragmentPlaySongBinding.heartPlay;
+
+        // Nhận dữ liệu từ Bundle
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            currentSongId = arguments.getString("currentSongId");
+
+            // Log currentSongId
+            Log.d("PlaySongFragment", "Current Song ID: " + currentSongId);
+        }
+//        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> showCommentBottomSheet());
+        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> openComment());
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
@@ -97,6 +114,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
+
         menuMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,13 +228,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                     bottomSheetDialog.setContentView(bottomSheetView);
                     bottomSheetDialog.show();
                 }
-
-
-
-
-
-
-
             }
         });
         mAdView = mFragmentPlaySongBinding.adView;
@@ -225,10 +236,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         //
         mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
 
-//        heart_song.setOnClickListener(view -> {
-//            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-//            addFavoriteSong(currentSong);
-//        });
+
         heart_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -267,6 +275,66 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         return mFragmentPlaySongBinding.getRoot();
 
     }
+
+    private void openComment() {
+        // Kiểm tra đăng nhập
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Toast.makeText(getActivity(), "Vui lòng đăng nhập để bình luận!", Toast.LENGTH_SHORT).show();
+            // Người dùng chưa đăng nhập, chuyển họ đến màn hình đăng nhập/đăng ký
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+            return;
+        }
+
+        // Kiểm tra kết nối internet
+        if (!isOnline()) {
+            Toast.makeText(getActivity(), "Không có kết nối internet. Vui lòng kiểm tra lại.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Kiểm tra và gán giá trị cho currentSong từ nguồn dữ liệu phù hợp
+        Song currentSong = getSongFromSomeSource();
+        if (currentSong == null) {
+            // Nếu không thể lấy được bài hát, hiển thị thông báo hoặc thực hiện xử lý phù hợp
+            return;
+        }
+
+        // Tiếp tục với việc mở màn hình bình luận
+        Intent intent = new Intent(getActivity(), CommentActivity.class);
+
+        // Sử dụng phương thức để tạo SONG_ID từ Artist và Title
+        String songId = createSongId(currentSong.getArtist(), currentSong.getTitle());
+        intent.putExtra("SONG_ID", songId);
+        Log.d("openComment", "songId: " + songId);
+        startActivity(intent);
+    }
+
+    // Phương thức kiểm tra kết nối internet
+    private boolean isOnline() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    // Phương thức tạo SONG_ID từ Artist và Title
+    private String createSongId(String artist, String title) {
+        // Đơn giản là kết hợp Artist và Title, có thể bạn cần chuẩn hóa chúng trước khi kết hợp
+        artist = (artist != null) ? artist : "";
+        title = (title != null) ? title : "";
+        return artist + "_" + title;
+    }
+
+    // Phương thức để lấy đối tượng Song từ nguồn dữ liệu phù hợp
+    private Song getSongFromSomeSource() {
+        // Thực hiện logic để lấy đối tượng Song từ nguồn dữ liệu, ví dụ: danh sách bài hát
+        // Nếu không thể lấy được, trả về null hoặc thực hiện xử lý phù hợp
+        return MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+    }
+
+//    private void showCommentBottomSheet() {
+//        CommentBottomSheetFragment commentFragment = new CommentBottomSheetFragment();
+//        commentFragment.show(getChildFragmentManager(), commentFragment.getTag());
+//    }
 
     private void sharePlay() {
         Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
@@ -431,7 +499,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-8801498166910444/9063512975", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -464,7 +532,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(),"ca-app-pub-3940256099942544/1033173712", adRequest,
+        InterstitialAd.load(getActivity(),"ca-app-pub-8801498166910444/6877113584", adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {

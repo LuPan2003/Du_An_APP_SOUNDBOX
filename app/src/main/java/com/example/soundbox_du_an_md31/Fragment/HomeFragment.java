@@ -145,6 +145,7 @@ public class HomeFragment extends Fragment {
                 displayListBannerSongs();
                 displayListPopularSongs();
                 displayListNewSongs();
+                displayListcopyrightedSongs();
             }
 
             @Override
@@ -220,6 +221,31 @@ public class HomeFragment extends Fragment {
         SongAdapter songAdapter = new SongAdapter(getListNewSongs(), this::goToSongDetail);
         mFragmentHomeBinding.rcvNewSongs.setAdapter(songAdapter);
     }
+
+    private void displayListcopyrightedSongs() {
+        if (getActivity() == null) {
+            return;
+        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mFragmentHomeBinding.rcvCopyrightedSongs.setLayoutManager(linearLayoutManager);
+
+        SongAdapter songAdapter = new SongAdapter(getListcopyrightedSongs(), this::goToSongDetail);
+        mFragmentHomeBinding.rcvCopyrightedSongs.setAdapter(songAdapter);
+    }
+
+    private List<Song> getListcopyrightedSongs() {
+        List<Song> list = new ArrayList<>();
+        if (mListSong == null || mListSong.isEmpty()) {
+            return list;
+        }
+        for (Song song : mListSong) {
+            if (song.isCopyrighted() && list.size() < Constant.MAX_COUNT_LATEST) {
+                list.add(song);
+            }
+        }
+        return list;
+    }
+
 
     private List<Song> getListNewSongs() {
         List<Song> list = new ArrayList<>();
