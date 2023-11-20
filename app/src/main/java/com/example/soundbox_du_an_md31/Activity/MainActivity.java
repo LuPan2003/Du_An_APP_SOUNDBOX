@@ -35,6 +35,7 @@ import com.example.soundbox_du_an_md31.Fragment.DangkinhacFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
+import com.example.soundbox_du_an_md31.Fragment.LibraryLoginFragment;
 import com.example.soundbox_du_an_md31.Fragment.ListSongFavoriteFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.NhacVipFragment;
@@ -54,6 +55,8 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.IOException;
 
@@ -138,16 +141,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
             }else if(item.getItemId() == R.id.search){
                 replaceFragment(new AllSongsFragment());
             }else if(item.getItemId() == R.id.library){
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Uri photoUrl = user.getPhotoUrl();
-//                if(user == null){
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user != null){
                     replaceFragment(new LibraryFragment());
                     FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
                     fragmentTransaction.commit();
-
-
-
+                }else{
+                    replaceFragment(new LibraryLoginFragment());
+                }
             }else if(item.getItemId() == R.id.premimum){
                 replaceFragment(new FeedbackFragment());
             }

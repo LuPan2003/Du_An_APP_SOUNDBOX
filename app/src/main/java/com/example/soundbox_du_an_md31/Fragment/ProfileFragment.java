@@ -48,6 +48,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         mainActivity = (MainActivity) getActivity();
+
         icon_back = view.findViewById(R.id.icon_back);
         btn_change_information = view.findViewById(R.id.btn_change_infor);
         btn_change_password = view.findViewById(R.id.btn_change_password);
