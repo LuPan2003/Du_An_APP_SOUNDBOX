@@ -55,6 +55,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-        checkIsFavorite();
+        checkIsFavorite(heart_play);
         // Banner QC
         MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
             @Override
@@ -539,7 +540,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                         // The mInterstitialAd reference will be null until
                         // an ad is loaded.
                         mInterstitialAd = interstitialAd;
-
                     }
 
                     @Override
@@ -565,7 +565,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void checkIsFavorite(){
+    private void checkIsFavorite(ImageView heart_play){
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
             @Override
@@ -574,16 +574,29 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 if (user != null) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference myRef = database.getReference("favoritesongs").child(user.getUid());
+                    List<Song> favSong = new ArrayList<>();
+                    Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
                     myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-//                            check yêu thích
+
+                            Song song = snapshot.getValue(Song.class);
+                            if(song != null){
+                                favSong.add(song);
+                            }
+                            Log.d("size",favSong.toString().toLowerCase());
+                            for (int i =0; i<favSong.size(); i++){
+                                if(favSong.get(i).getId() == currentSong.getId()){
+                                    Toast.makeText(getActivity(), "Trung id", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(getActivity(), "Khong trung", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                                Log.d("error", error.toString());
                         }
                     });
                 } else {

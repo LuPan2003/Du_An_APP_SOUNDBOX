@@ -35,8 +35,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class LibraryFragment extends Fragment {
     private MainActivity mainActivity;
     private ImageView profile;
-    private TextView soLuongAlbum;
-    private LinearLayout album;
+    private TextView soLuongAlbum,tv_favorite;
+    private LinearLayout album, favorite;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,14 +46,18 @@ public class LibraryFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         profile = view.findViewById(R.id.icon_profile);
         album = view.findViewById(R.id.danhsachphat);
+        favorite = view.findViewById(R.id.btn_listsongfavorite);
         soLuongAlbum = view.findViewById(R.id.soLuongAlbum);
+        tv_favorite = view.findViewById(R.id.tv_favorite);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
             soLuongAlbum.setText("0 danh sách");
+            tv_favorite.setText("0 bài hát");
         }else{
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference musicRef = database.getReference("album");
             DatabaseReference albumRef = musicRef.child(user.getUid());
+            DatabaseReference favRef = database.getReference("favoritesongs").child(user.getUid());
 
             albumRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -69,6 +73,19 @@ public class LibraryFragment extends Fragment {
                     System.out.println("Lỗi: " + databaseError.getMessage());
                 }
             });
+            favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int count = (int) snapshot.getChildrenCount();
+                    // Số lượng phần tử trong bảng "album"
+                    tv_favorite.setText(count+" bài hát");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    System.out.println("Lỗi: " + error.getMessage());
+                }
+            });
         }
 
 
@@ -82,6 +99,12 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mainActivity.gotoAlBum();
+            }
+        });
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.gotoFavoriteSongs();
             }
         });
 
