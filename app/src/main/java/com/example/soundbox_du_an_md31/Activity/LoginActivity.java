@@ -107,11 +107,12 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 // Lấy UID của người dùng đã đăng nhập
                                 String userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                String userName  = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
                                 // Lấy thời gian hiện tại
                                 long currentTime = System.currentTimeMillis();
                                 // Cập nhật trường loginTime trong dữ liệu người dùng
                                 updateLoginTime(userUid, currentTime);
-
+                                Log.d("zzzzzz" ,  userUid + userName );
                                 luuThongTin();
                             // Thành công
                                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();

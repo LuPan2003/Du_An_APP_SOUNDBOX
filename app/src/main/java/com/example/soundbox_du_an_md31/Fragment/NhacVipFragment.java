@@ -5,12 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
-import androidx.databinding.DataBindingUtil; // Thêm import này
-import com.example.soundbox_du_an_md31.R;
-import com.example.soundbox_du_an_md31.databinding.FragmentAppFeedbackBinding;
-import com.example.soundbox_du_an_md31.databinding.FragmentNhacVipBinding; // Thêm import này
+
+import com.example.soundbox_du_an_md31.databinding.FragmentNhacVipBinding;
 
 public class NhacVipFragment extends Fragment {
     private FragmentNhacVipBinding myBinding;

@@ -175,6 +175,21 @@
                 app:layout_constraintTop_toTopOf="@+id/favourite"
                 app:srcCompat="@drawable/heart_outline_icon"
                 app:tint="@color/colorWhite" />
+            <ImageButton
+                android:id="@+id/comment_Play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="To edit song info"
+                android:padding="5dp"
+                android:layout_marginLeft="50dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/favourite"
+                app:layout_constraintEnd_toStartOf="@+id/favourite"
+                app:layout_constraintTop_toTopOf="@+id/favourite"
+                app:srcCompat="@drawable/comment"
+                app:tint="@color/colorWhite" />
         </LinearLayout>
 
     </LinearLayout>
