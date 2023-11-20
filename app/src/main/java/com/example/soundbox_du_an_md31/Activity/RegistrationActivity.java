@@ -74,14 +74,16 @@ public class RegistrationActivity extends AppCompatActivity {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             if (user != null) {
                                 String userID = user.getUid();
+                                // Lấy thời gian hiện tại
+                                long currentTime = System.currentTimeMillis();
                                 // Sử dụng ID người dùng ở đây cho mục đích xác thực hoặc quản lý thông tin người dùng.
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                                 // Tạo một node con cho người dùng với ID là userID
                                 DatabaseReference userNode = databaseReference.child("users").child(userID);
                                 userNode.child("email").setValue(user.getEmail());
                                 userNode.child("isVIP").setValue(false);
-                                userNode.child("expiryDate").setValue("2023-12-31");
-                                userNode.child("subscriptionType").setValue("basic");
+                                userNode.child("subscriptionType").setValue(false);
+                                userNode.child("creationTime").setValue(currentTime);
                             } else {
                                 // Người dùng chưa đăng nhập
                             }
