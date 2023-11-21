@@ -21,12 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,9 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private CheckBox cbLuuThongTin;
     Button btnSignIn;
-    private TextInputEditText email, password;
-    private TextView forgetpass, btnDangky;
-
+    private TextInputEditText email , password ;
+    private TextView forgetpass,btnDangky;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +68,13 @@ public class LoginActivity extends AppCompatActivity {
         // Kiểm tra xem email và mật khẩu có hợp lệ không.
         boolean isValid = checkValidCredentials(email.getText().toString(), password.getText().toString());
 
-        if (email.length() == 0) {
+        if (email.length()==0){
             Toast.makeText(this, "Vui lòng điền Email", Toast.LENGTH_SHORT).show();
             return;
-        } else if (password.length() == 0) {
+        }else if (password.length()==0){
             Toast.makeText(this, "Vui lòng điền password", Toast.LENGTH_SHORT).show();
             return;
-        } else {
+        }else {
             if (!isValid) {
                 Toast.makeText(this, "Email hoặc mật khẩu không hợp lệ", Toast.LENGTH_SHORT).show();
                 return;
@@ -96,68 +89,27 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            if (user == null) {
-                                return;
+                            if (task.isSuccessful()) {
+                                luuThongTin();
+                            // Thành công
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                Intent login = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(login);
                             } else {
-                                if (task.isSuccessful()) {
-
-                                    DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-
-// Truy cập đến nút (node) cần kiểm tra
-                                    DatabaseReference booleanRef = databaseRef.child("users/"+user.getUid()+"/isVIP");
-                                    // Đọc giá trị boolean từ nút đó
-                                    booleanRef.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            // Kiểm tra xem giá trị có tồn tại hay không
-                                            if (dataSnapshot.exists()) {
-                                                // Lấy giá trị boolean từ DataSnapshot
-                                                Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
-
-                                                // Kiểm tra giá trị boolean
-                                                if (booleanValue != null && booleanValue) {
-                                                    Toast.makeText(LoginActivity.this, "Giá trị là true", Toast.LENGTH_SHORT).show();
-                                                    // Giá trị là true
-                                                    // TODO: Xử lý khi giá trị là true
-                                                } else {
-                                                    // Giá trị là false hoặc null
-                                                    Toast.makeText(LoginActivity.this, "Giá trị là false", Toast.LENGTH_SHORT).show();
-
-                                                    // TODO: Xử lý khi giá trị là false hoặc null
-                                                }
-                                            } else {
-                                                Toast.makeText(LoginActivity.this, "Lỗi", Toast.LENGTH_SHORT).show();
-                                                // Nút không tồn tại trong database
-                                                // TODO: Xử lý khi nút không tồn tại
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                                            // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
-                                        }
-                                    });
-                                    luuThongTin();
-                                    // Thành công
-                                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                    Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(login);
-                                } else {
-                                    // Thất bại
-                                    String error = task.getException().getMessage();
-                                    Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
-                                }
+                            // Thất bại
+                                String error = task.getException().getMessage();
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         } catch (Exception ex) {
-            // Xử lý tất cả các ngoại lệ.
-            Toast.makeText(LoginActivity.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Xử lý tất cả các ngoại lệ.
+                    Toast.makeText(LoginActivity.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
         } finally {
-            // Mã luôn được thực thi, ngay cả khi có ngoại lệ xảy ra.
+                    // Mã luôn được thực thi, ngay cả khi có ngoại lệ xảy ra.
         }
     }
+
 
 
     public boolean checkValidCredentials(String email, String password) {
@@ -172,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
 
         return true;
     }
-
     private void layThongTin() {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         boolean check = sharedPreferences.getBoolean(KEY_CHECKSTATUS, false);
@@ -188,7 +139,6 @@ public class LoginActivity extends AppCompatActivity {
         cbLuuThongTin.setChecked(check);
 
     }
-
     private void luuThongTin() {
         SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -204,12 +154,11 @@ public class LoginActivity extends AppCompatActivity {
         }
         editor.commit();
     }
-
     @SuppressLint("WrongViewCast")
-    private void initUi() {
+    private void initUi(){
         email = findViewById(R.id.UserName);
         password = findViewById(R.id.Password);
-        btnDangky = findViewById(R.id.btnSignUp1);
+        btnDangky=findViewById(R.id.btnSignUp1);
         btnSignIn = findViewById(R.id.btnSignIn);
         forgetpass = findViewById(R.id.tvForgetpass);
         cbLuuThongTin = findViewById(R.id.chk_remember);

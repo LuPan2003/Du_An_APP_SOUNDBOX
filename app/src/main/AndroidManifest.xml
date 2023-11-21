@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-configuration android:name="android.pemission.INTERNET" />
+    <uses-configuration android:name="android.pemission.INTERNET"
+        />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <uses-permission
@@ -27,7 +28,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="UnusedAttribute"
-        tools:replace="android:allowBackup"
+        tools:replace="android:supportsRtl"
         tools:targetApi="31">
         <activity
             android:name=".Activity.ForgotPasswordActivity"
@@ -58,7 +59,10 @@
             android:name=".Activity.SplashActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name=".Activity.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +71,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".Activity.LoginActivity"
             android:exported="true">
 
         </activity>
