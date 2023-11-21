@@ -1,53 +1,34 @@
 package com.example.soundbox_du_an_md31.Model;
-
-import com.google.firebase.database.PropertyName;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class Comment {
+public class ReplyComment {
+    private String replyId;
     private String commentId;
     private String userId;
     private String userName;
-    private String songId;
     private String commentText;
+    private String replyText;
     private long timestamp;
-    @PropertyName("deleted")
-    private boolean isDeleted;
-    // Thêm trường để lưu trữ danh sách bình luận con
-    private List<ReplyComment> replies;
-
-    public Comment() {
-        this.replies = new ArrayList<>();
+    // Constructor không có đối số (nếu bạn không thêm constructor này, Firebase sẽ gặp vấn đề)
+    public ReplyComment() {
+        // Cần phải có constructor không có đối số cho Firebase
     }
 
-    // Getter and Setter for replies
-    public List<ReplyComment> getReplies() {
-        return replies;
-    }
-
-    public void setReplies(List<ReplyComment> replies) {
-        if (replies != null) {
-            this.replies = replies;
-        } else {
-            this.replies = new ArrayList<>();
-        }
-    }
-    public Comment(String commentId, String userId, String userName, String songId, String commentText, long timestamp) {
+    public ReplyComment(String replyId, String commentId, String userId, String userName, String commentText, String replyText, long timestamp) {
+        this.replyId = replyId;
         this.commentId = commentId;
         this.userId = userId;
         this.userName = userName;
-        this.songId = songId;
         this.commentText = commentText;
+        this.replyText = replyText;
         this.timestamp = timestamp;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
+
+    public String getReplyId() {
+        return replyId;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setReplyId(String replyId) {
+        this.replyId = replyId;
     }
 
     public String getCommentId() {
@@ -74,20 +55,20 @@ public class Comment {
         this.userName = userName;
     }
 
-    public String getSongId() {
-        return songId;
-    }
-
-    public void setSongId(String songId) {
-        this.songId = songId;
-    }
-
     public String getCommentText() {
         return commentText;
     }
 
     public void setCommentText(String commentText) {
         this.commentText = commentText;
+    }
+
+    public String getReplyText() {
+        return replyText;
+    }
+
+    public void setReplyText(String replyText) {
+        this.replyText = replyText;
     }
 
     public long getTimestamp() {

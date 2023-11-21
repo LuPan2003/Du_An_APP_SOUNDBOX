@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.soundbox_du_an_md31.Adapter.CommentAdapter;
 import com.example.soundbox_du_an_md31.Model.Comment;
+import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.R;
+import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -94,12 +96,64 @@ public class CommentActivity extends AppCompatActivity {
             Comment comment = commentList.get(position);
             showDeleteCommentDialog(comment);
         });
+        //Trả lời bình luận
+
+        commentAdapter.setOnReplyClickListener(position -> {
+            // Kiểm tra đăng nhập
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                Toast.makeText(this, "Vui lòng đăng nhập để bình luận!", Toast.LENGTH_SHORT).show();
+                // Người dùng chưa đăng nhập, chuyển họ đến màn hình đăng nhập/đăng ký
+                startActivity(new Intent(CommentActivity.this, LoginActivity.class));
+                return;
+            }
+            // Lấy thông tin bình luận hiện tại
+            Comment currentComment = commentList.get(position);
+
+            // Kiểm tra và gán giá trị cho currentSong từ nguồn dữ liệu phù hợp
+            Song currentSong = getSongFromSomeSource();
+            if (currentSong == null) {
+                // Nếu không thể lấy được bài hát, hiển thị thông báo hoặc thực hiện xử lý phù hợp
+                return;
+            }
+
+            // Tiếp tục với việc mở màn hình trả lời bình luận
+            Intent intentReply = new Intent(CommentActivity.this, ReplyActivity.class);
+            // Sử dụng phương thức để tạo SONG_ID từ Artist và Title
+            String songId = createSongId(currentSong.getArtist(), currentSong.getTitle());
+            intentReply.putExtra("SONG_ID", songId);
+            Log.d("SONG_ID", "SONG_ID: " + songId);
+            intentReply.putExtra("COMMENT_ID", currentComment.getCommentId());
+            Log.d("SONG_ID", "COMMENT_ID: " + currentComment.getCommentId());
+            intentReply.putExtra("COMMENT_TEXT", currentComment.getCommentText());
+            Log.d("SONG_ID", "COMMENT_TEXT: " + currentComment.getCommentText());
+            startActivity(intentReply);
+        });
+
         // Load và hiển thị danh sách bình luận
         loadComments();
     }
 
+
+    // Phương thức tạo SONG_ID từ Artist và Title
+    private String createSongId(String artist, String title) {
+        // Đơn giản là kết hợp Artist và Title, có thể bạn cần chuẩn hóa chúng trước khi kết hợp
+        artist = (artist != null) ? artist : "";
+        title = (title != null) ? title : "";
+        return artist + "_" + title;
+    }
+
+    // Phương thức để lấy đối tượng Song từ nguồn dữ liệu phù hợp
+    private Song getSongFromSomeSource() {
+        // Thực hiện logic để lấy đối tượng Song từ nguồn dữ liệu, ví dụ: danh sách bài hát
+        // Nếu không thể lấy được, trả về null hoặc thực hiện xử lý phù hợp
+        return MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+    }
+
+
     // Hàm hiển thị Dialog sửa bình luận
     private void showEditCommentDialog(Comment comment) {
+        Log.d("showEditCommentDialog" ,"zzzzzzzzzzzzzz");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Sửa bình luận");
 
@@ -173,44 +227,6 @@ public class CommentActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void loadComments() {
-        // Xóa danh sách bình luận cũ để tránh trùng lặp khi load lại
-        commentList.clear();
-        commentAdapter.notifyDataSetChanged();
-
-        // Lắng nghe sự kiện khi có thay đổi trong danh sách bình luận
-        commentsRef.child(songId).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Comment comment = dataSnapshot.getValue(Comment.class);
-                if (comment != null) {
-                    commentList.add(comment);
-                    commentAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                // Xử lý khi có sự thay đổi trong bình luận (nếu cần)
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                // Xử lý khi có bình luận bị xóa (nếu cần)
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                // Xử lý khi có sự di chuyển trong danh sách bình luận (nếu cần)
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("CommentActivity", "Error loading comments: " + databaseError.getMessage());
-            }
-        });
-    }
-
 
     private void postComment() {
         // Kiểm tra đăng nhập
@@ -255,5 +271,43 @@ public class CommentActivity extends AppCompatActivity {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnectedOrConnecting();
+    }
+
+    private void loadComments() {
+        // Xóa danh sách bình luận cũ để tránh trùng lặp khi load lại
+        commentList.clear();
+        commentAdapter.notifyDataSetChanged();
+
+        // Lắng nghe sự kiện khi có thay đổi trong danh sách bình luận
+        commentsRef.child(songId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Comment comment = dataSnapshot.getValue(Comment.class);
+                if (comment != null) {
+                    commentList.add(comment);
+                    commentAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                // Xử lý khi có sự thay đổi trong bình luận (nếu cần)
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                // Xử lý khi có bình luận bị xóa (nếu cần)
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                // Xử lý khi có sự di chuyển trong danh sách bình luận (nếu cần)
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("CommentActivity", "Error loading comments: " + databaseError.getMessage());
+            }
+        });
     }
 }

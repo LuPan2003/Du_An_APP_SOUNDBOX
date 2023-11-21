@@ -1,0 +1,67 @@
+<!-- res/layout/reply_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="8dp"
+    android:padding="8dp">
+
+    <!-- Tên người trả lời -->
+    <TextView
+        android:id="@+id/text_view_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="Tên Người Trả Lời"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp" />
+
+    <!-- Nội dung trả lời -->
+    <TextView
+        android:id="@+id/text_view_reply_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:text="Nội dung trả lời"
+        android:textColor="#000000"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp" />
+
+    <!-- Thời gian trả lời -->
+    <TextView
+        android:id="@+id/text_view_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:text="Thời gian trả lời"
+        android:layout_marginTop="4dp"
+        android:textColor="#000000"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp" />
+    <!-- Nút sửa bình luận -->
+    <ImageButton
+        android:id="@+id/editButtonreply"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_delete_black"
+        android:layout_marginLeft="8dp"
+        android:background="?android:selectableItemBackground"/>
+
+    <!-- Nút xóa bình luận -->
+    <ImageButton
+        android:id="@+id/deleteButtonreply"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_edit_black"
+        android:layout_marginLeft="8dp"
+        android:background="?android:selectableItemBackground"/>
+</LinearLayout>
