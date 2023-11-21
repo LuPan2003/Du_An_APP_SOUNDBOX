@@ -19,5 +19,13 @@
         app:aspectRatioEnabled="true"
         app:dominantMeasurement="Width"
         />
+    <ImageView
+        android:layout_gravity="top|right"
+        android:id="@+id/imgBannerVip"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/vuongmien"
+        tools:ignore="ContentDescription"
+        />
 
 </androidx.cardview.widget.CardView>
