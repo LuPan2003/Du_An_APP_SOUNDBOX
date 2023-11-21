@@ -11,11 +11,6 @@
         android:icon="@drawable/search"
         />
     <item
-        android:id="@+id/fab"
-        android:title=""
-        android:enabled="false"
-        />
-    <item
         android:id="@+id/library"
         android:title="Library"
         android:icon="@drawable/album"
