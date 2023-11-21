@@ -10,6 +10,7 @@ public class Song implements Serializable {
     private String url;
     private String artist;
     private boolean latest;
+    private boolean isVip;
     private String genre;
     private boolean featured;
     private int count;
@@ -111,5 +112,13 @@ public class Song implements Serializable {
 
     public void setPlaying(boolean playing) {
         isPlaying = playing;
+    }
+
+    public boolean isVip() {
+        return isVip;
+    }
+
+    public void setVip(boolean vip) {
+        isVip = vip;
     }
 }
