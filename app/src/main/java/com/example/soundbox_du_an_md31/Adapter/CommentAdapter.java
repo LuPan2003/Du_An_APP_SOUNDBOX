@@ -119,7 +119,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView textUsername, textComment, textTimestamp ,txtReply;
-        ImageButton editButton, deleteButton;
+        TextView editButton, deleteButton;
         private int currentPosition = RecyclerView.NO_POSITION;
 
         public CommentViewHolder(@NonNull View itemView) {

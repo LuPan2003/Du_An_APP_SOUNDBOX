@@ -90,7 +90,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
 
     public class ReplyViewHolder extends RecyclerView.ViewHolder {
         TextView textUsername, textReply, textTimestamp;
-        ImageButton editButton, deleteButton;
+        TextView editButton, deleteButton;
         private int currentPosition = RecyclerView.NO_POSITION;
 
         public ReplyViewHolder(@NonNull View itemView) {

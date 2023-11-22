@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,7 +40,7 @@ public class CommentActivity extends AppCompatActivity {
     private EditText commentEditText;
     private Button submitButton;
     private String songId;
-    private TextView tvBack;
+    private ImageView tvBack;
 
     // RecyclerView và Adapter
     private RecyclerView recyclerViewComments;
@@ -53,7 +55,7 @@ public class CommentActivity extends AppCompatActivity {
         commentsRef = FirebaseDatabase.getInstance().getReference().child("comments");
         commentEditText = findViewById(R.id.etComment);
         submitButton = findViewById(R.id.postCommentButton);
-        tvBack = findViewById(R.id.tvBack);
+        tvBack = findViewById(R.id.icon_back);
         // Khởi tạo RecyclerView và Adapter
         recyclerViewComments = findViewById(R.id.recyclerViewComments);
         commentList = new ArrayList<>();
