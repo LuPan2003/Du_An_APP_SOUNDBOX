@@ -75,10 +75,9 @@
                     <ImageView
                         android:id="@+id/img_avatarProfile"
                         android:layout_width="120dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="120dp"
                         android:src="@drawable/avata" />
                 </androidx.cardview.widget.CardView>
-
                 <ImageView
                     android:id="@+id/img_changeImage"
                     android:layout_width="24dp"

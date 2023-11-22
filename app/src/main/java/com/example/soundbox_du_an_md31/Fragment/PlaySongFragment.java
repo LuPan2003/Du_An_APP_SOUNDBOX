@@ -135,7 +135,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-        checkIsFavorite(heart_play);
         // Banner QC
         MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
             @Override
@@ -709,47 +708,5 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         } else {
             GlobalFuntion.startMusicService(getActivity(), Constant.RESUME, MusicService.mSongPosition);
         }
-    }
-
-    private void checkIsFavorite(ImageView heart_play) {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef = database.getReference("favoritesongs").child(user.getUid());
-                    List<Song> favSong = new ArrayList<>();
-                    Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                            Song song = snapshot.getValue(Song.class);
-                            if (song != null) {
-                                favSong.add(song);
-                            }
-                            Log.d("size", favSong.toString().toLowerCase());
-                            for (int i = 0; i < favSong.size(); i++) {
-                                if (favSong.get(i).getId() == currentSong.getId()) {
-                                    Toast.makeText(getActivity(), "Trung id", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getActivity(), "Khong trung", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.d("error", error.toString());
-                        }
-                    });
-                } else {
-                    Toast.makeText(getActivity(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
     }
 }
