@@ -13,7 +13,7 @@
     <string name="menu_favorite">Bài Hát Yêu Thích</string>
     <string name="menu_feedback">Feedback</string>
     <string name="menu_contact">Contact</string>
-
+    <string name="thank_you_feedback">Cảm ơn bạn đã gửi phản hồi cho nhà phát triểu , chúng tôi sẽ phản hồi cho bạn nhanh nhất</string>
     <string name="label_facebook">Facebook</string>
     <string name="label_call">Call Phone</string>
     <string name="label_gmail">Gmail</string>

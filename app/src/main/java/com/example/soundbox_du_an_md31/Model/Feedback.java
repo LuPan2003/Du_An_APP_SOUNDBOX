@@ -6,12 +6,36 @@ public class Feedback {
     private String phone;
     private String email;
     private String comment;
+    private long timestamp; // Thêm trường thời gian
+    private boolean reply; // Trường mới
+    public Feedback() {
+        // Cần có constructor mặc định cho Firebase
+    }
 
-    public Feedback(String name, String phone, String email, String comment) {
+
+    public Feedback(String name, String phone, String email, String comment, long timestamp, boolean reply) {
         this.name = name;
         this.phone = phone;
         this.email = email;
         this.comment = comment;
+        this.timestamp = timestamp;
+        this.reply = reply;
+    }
+
+    public boolean isReply() {
+        return reply;
+    }
+
+    public void setReply(boolean reply) {
+        this.reply = reply;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getName() {
