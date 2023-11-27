@@ -59,7 +59,7 @@ public class LibraryFragment extends Fragment {
         }else{
             Uri photoUrl = user.getPhotoUrl();
 
-            Glide.with(getContext()).load(photoUrl).error(R.drawable.avata).into(profile);
+            Glide.with(getContext()).load(photoUrl).override(32,32).error(R.drawable.avata).into(profile);
             Log.d("image", "onCreateView: "+ photoUrl);
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference musicRef = database.getReference("album");

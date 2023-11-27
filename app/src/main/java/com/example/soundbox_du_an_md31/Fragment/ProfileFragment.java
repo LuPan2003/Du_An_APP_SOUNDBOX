@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.soundbox_du_an_md31.Activity.LoginActivity;
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,13 +32,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class ProfileFragment extends Fragment {
     private ProgressDialog progressDialog;
     private Uri mUri;
     public static final String TAG = LibraryFragment.class.getName();
-    private ImageView icon_back, img_avatarProfile, img_changeIMG;
+    private ImageView icon_back, img_avatarProfile, img_changeIMG,img_changeIMGVip;
     private TextView tv_name, tv_email;
     private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium;
     private MainActivity mainActivity;
@@ -58,10 +64,56 @@ public class ProfileFragment extends Fragment {
         tv_name = view.findViewById(R.id.tv_name);
         btn_exit = view.findViewById(R.id.btn_exits);
         img_changeIMG = view.findViewById(R.id.img_changeImage);
+        img_changeIMG = view.findViewById(R.id.img_changeImage);
+        img_changeIMGVip = view.findViewById(R.id.img_changeImage1);
         progressDialog = new ProgressDialog(mainActivity);
 
 
+
         setProfile();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(mainActivity, "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
+        }
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+// Truy cập đến nút (node) cần kiểm tra
+        DatabaseReference booleanRef = databaseRef.child("users/"+user.getUid()+"/isVIP");
+        // Đọc giá trị boolean từ nút đó
+        booleanRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Kiểm tra xem giá trị có tồn tại hay không
+                if (dataSnapshot.exists()) {
+                    // Lấy giá trị boolean từ DataSnapshot
+                    Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
+
+                    // Kiểm tra giá trị boolean
+                    if (booleanValue != null && booleanValue) {
+                        // Giá trị là true
+                        // TODO: Xử lý khi giá trị là true
+                       img_changeIMGVip.setVisibility(View.VISIBLE);
+                    } else {
+                        // Giá trị là false hoặc null
+
+                        // TODO: Xử lý khi giá trị là false hoặc null
+                        // Thành công
+                        img_changeIMGVip.setVisibility(View.GONE);
+
+
+                    }
+                } else {
+                    // Nút không tồn tại trong database
+                    // TODO: Xử lý khi nút không tồn tại
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
+            }
+        });
 
         btn_exit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +177,7 @@ public class ProfileFragment extends Fragment {
             tv_email.setText(email);
         }
 
-        Glide.with(getContext()).load(photoUrl).error(R.drawable.avata).into(img_avatarProfile);
+        Glide.with(getContext()).load(photoUrl).override(120, 120).error(R.drawable.avata).into(img_avatarProfile);
 
 
     }

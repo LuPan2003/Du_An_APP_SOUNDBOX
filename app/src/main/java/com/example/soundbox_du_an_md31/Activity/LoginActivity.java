@@ -21,6 +21,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -91,10 +97,53 @@ public class LoginActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                             if (task.isSuccessful()) {
                                 luuThongTin();
-                            // Thành công
-                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(login);
+                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                if (user == null) {
+                                    return;
+                                }
+                                DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+// Truy cập đến nút (node) cần kiểm tra
+                                DatabaseReference booleanRef = databaseRef.child("users/"+user.getUid()+"/isLocked");
+                                // Đọc giá trị boolean từ nút đó
+                                booleanRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        // Kiểm tra xem giá trị có tồn tại hay không
+                                        if (dataSnapshot.exists()) {
+                                            // Lấy giá trị boolean từ DataSnapshot
+                                            Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
+
+                                            // Kiểm tra giá trị boolean
+                                            if (booleanValue != null && booleanValue) {
+                                                // Giá trị là true
+                                                // TODO: Xử lý khi giá trị là true
+                                                Toast.makeText(LoginActivity.this, "Tài khoản bạn bị khóa !! Liên hệ qua thông tin địa chỉ tại app hỗ trợ để được hỗ trợ", Toast.LENGTH_SHORT).show();
+                                                finishAffinity();
+                                            } else {
+                                                // Giá trị là false hoặc null
+
+                                                // TODO: Xử lý khi giá trị là false hoặc null
+                                                // Thành công
+                                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                                Intent login = new Intent(LoginActivity.this, MainActivity.class);
+                                                startActivity(login);
+
+                                            }
+                                        } else {
+                                            // Nút không tồn tại trong database
+                                            // TODO: Xử lý khi nút không tồn tại
+                                            Toast.makeText(LoginActivity.this, "Lỗi app đang bảo trì", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
+                                    }
+                                });
+
                             } else {
                             // Thất bại
                                 String error = task.getException().getMessage();
