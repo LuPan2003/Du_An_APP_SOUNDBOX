@@ -74,6 +74,7 @@
                     <ImageView
                         android:id="@+id/img_avatarProfile"
                         android:layout_width="120dp"
+                        android:scaleType="centerCrop"
                         android:layout_height="match_parent"
                         android:src="@drawable/avata" />
                 </androidx.cardview.widget.CardView>
