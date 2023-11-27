@@ -1,6 +1,7 @@
 package com.example.soundbox_du_an_md31.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,17 +25,21 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private Context context;
     private OnEditClickListener editClickListener;
     private OnDeleteClickListener deleteClickListener;
+    private OnReplyClickListener replyClickListener;
 
     public CommentAdapter(Context context, List<Comment> commentList) {
         this.context = context;
         this.commentList = commentList;
     }
 
-    public void updateComments(List<Comment> updatedComments) {
-        this.commentList.clear();
-        this.commentList.addAll(updatedComments);
-        notifyDataSetChanged();
-    }
+    // Thêm phương thức này để cập nhật danh sách bình luận
+//    public void updateReplies(int position, List<Comment> updatedReplies) {
+//        Comment comment = commentList.get(position);
+//        if (comment != null) {
+//            comment.setReplies(updatedReplies);
+//            notifyItemChanged(position);
+//        }
+//    }
 
     // Interface để lắng nghe sự kiện sửa
     public interface OnEditClickListener {
@@ -54,6 +59,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void setOnDeleteClickListener(OnDeleteClickListener listener) {
         this.deleteClickListener = listener;
     }
+
+    // Interface để lắng nghe sự kiện trả lời
+    public interface OnReplyClickListener {
+        void onReplyClick(int position);
+    }
+    public void setOnReplyClickListener(OnReplyClickListener listener) {
+        this.replyClickListener = listener;
+    }
+
 
     @NonNull
     @Override
@@ -79,6 +93,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 // Ẩn tùy chọn sửa/xóa
                 holder.hideEditDeleteOptions();
             }
+            // Hiển thị và quản lý danh sách trả lời
+//            List<Comment> replies = comment.getReplies();
+//            if (replies != null && !replies.isEmpty()) {
+//                // Hiển thị danh sách trả lời (bạn có thể sử dụng RecyclerView hoặc một cách khác)
+//            }
+            holder.txtReply.setOnClickListener(v -> {
+                Log.d("txtReply" , "đã nhấn");
+                if (replyClickListener != null) {
+                    replyClickListener.onReplyClick(position);
+                }
+            });
         }
     }
 
@@ -93,8 +118,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView textUsername, textComment, textTimestamp;
-        ImageButton editButton, deleteButton;
+        TextView textUsername, textComment, textTimestamp ,txtReply;
+        TextView editButton, deleteButton;
         private int currentPosition = RecyclerView.NO_POSITION;
 
         public CommentViewHolder(@NonNull View itemView) {
@@ -104,6 +129,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             textTimestamp = itemView.findViewById(R.id.textTimestamp);
             editButton = itemView.findViewById(R.id.editButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
+            txtReply = itemView.findViewById(R.id.txtReply);
         }
 
         public void bind(int position) {
