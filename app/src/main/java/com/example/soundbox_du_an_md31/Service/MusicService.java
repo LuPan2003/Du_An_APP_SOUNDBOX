@@ -27,6 +27,7 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static MediaPlayer mPlayer;
     public static int mLengthSong;
     public static int mAction = -1;
-
+    private DatabaseReference mDatabase;
 
     @Nullable
     @Override
@@ -288,6 +289,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendMusicNotification();
         sendBroadcastChangeListener();
         changeCountViewSong();
+
     }
 //    Phương thức này gửi thông báo cho các đối tượng đang lắng nghe sự kiện thay đổi bài hát.
     private void sendBroadcastChangeListener() {
@@ -314,6 +316,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
+
 
     @Override
     public void onDestroy() {

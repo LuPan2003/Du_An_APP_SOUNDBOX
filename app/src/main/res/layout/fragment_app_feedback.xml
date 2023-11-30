@@ -27,16 +27,14 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Feedback App"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="vertical"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="100dp"
         android:padding="@dimen/define_dimen_10">
 
         <TextView
@@ -50,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/define_dimen_2"
-            android:background="@drawable/bg_white_shape_border_color_main"
+            android:background="@drawable/comment_border"
             android:imeOptions="actionNext"
             android:inputType="text"
             android:padding="@dimen/define_dimen_12"
@@ -69,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/define_dimen_5"
-            android:background="@drawable/bg_white_shape_border_color_main"
+            android:background="@drawable/comment_border"
             android:imeOptions="actionNext"
             android:inputType="phone"
             android:padding="@dimen/define_dimen_12"
@@ -88,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/define_dimen_5"
-            android:background="@drawable/bg_white_shape_border_color_main"
+            android:background="@drawable/comment_border"
             android:imeOptions="actionNext"
             android:inputType="textEmailAddress"
             android:padding="@dimen/define_dimen_12"
@@ -118,13 +116,12 @@
 
         <TextView
             android:id="@+id/tv_send_feedback"
-            android:layout_width="@dimen/define_dimen_200"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/define_dimen_16"
             android:background="@color/black"
             android:gravity="center"
-            android:padding="@dimen/define_dimen_5"
+            android:padding="@dimen/define_dimen_12"
             android:text="@string/send_feedback"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_normal" />

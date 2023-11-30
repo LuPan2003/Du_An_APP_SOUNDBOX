@@ -55,7 +55,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +97,30 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
         Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
 
+        // Banner QC
+
+        // Kiểm tra trạng thái VIP của người dùng
+        boolean isVIP = checkUserIsVIP1();
+
+        if (!isVIP) {
+            // Người dùng không phải VIP, hiển thị quảng cáo
+            MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {
+                }
+            });
+            mAdView = mFragmentPlaySongBinding.adView;
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+
+        } else {
+            // Người dùng là VIP, ẩn quảng cáo
+            mFragmentPlaySongBinding.adView.setVisibility(View.GONE);
+        }
+        if(user1 == null){
+            return mFragmentPlaySongBinding.getRoot();
+        }
+
         DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
         DatabaseReference parentRef1 = databaseRef1.child("favoritesongs"); // Đường dẫn đến bảng cha
         DatabaseReference itemRef1 = parentRef1.child(user1.getUid()).child(currentSong1.getId() + "");
@@ -135,12 +158,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-        // Banner QC
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
+
 
         menuMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,9 +274,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-        mAdView = mFragmentPlaySongBinding.adView;
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+
         //
         mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
 
@@ -637,69 +653,164 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
+    private boolean checkUserIsVIP1() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            // Người dùng đã đăng nhập, kiểm tra trạng thái VIP từ cơ sở dữ liệu
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null) {
+                        // Xử lý trạng thái VIP
+                        handleVIPStatus(isVIP);
+                    } else {
+                        // Người dùng không phải VIP
+                        handleVIPStatus(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Người dùng không phải VIP
+                    handleVIPStatus(false);
+                }
+            });
+
+            // Kết quả trạng thái VIP sẽ được xử lý trong callback, nên hàm checkUserIsVIP1()
+            // không trả về giá trị ngay lập tức
+            return false;
+        } else {
+            // Người dùng chưa đăng nhập, không phải VIP
+            return false;
+        }
+    }
+
+    private void handleVIPStatus(boolean isVIP) {
+        if (isVIP) {
+            // Người dùng là VIP, xử lý logic tương ứng
+        } else {
+            // Người dùng không phải VIP, xử lý logic tương ứng
+        }
+    }
+
+    private void checkUserIsVIP(final Callback<Boolean> callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null) {
+                        callback.onResult(isVIP);
+                    } else {
+                        callback.onResult(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    callback.onResult(false);
+                }
+            });
+        } else {
+            callback.onResult(false);
+        }
+    }
+
+    private interface Callback<T> {
+        void onResult(T result);
+    }
+
     private void clickOnPrevButton() {
-        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+        checkUserIsVIP(new Callback<Boolean>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onResult(Boolean isVIP) {
+                if (isVIP) {
+                    // Xử lý khi người dùng là VIP
+                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                } else {
+                    // Xử lý khi người dùng không phải VIP
+                    MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+                        @Override
+                        public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        }
+                    });
+                    mAdView = mFragmentPlaySongBinding.adView;
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                    InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/9063512975", adRequest,
+                            new InterstitialAdLoadCallback() {
+                                @Override
+                                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                                    mInterstitialAd = interstitialAd;
+                                    if (mInterstitialAd != null) {
+                                        mInterstitialAd.show(getActivity());
+                                    } else {
+                                        Log.d("TAG", "Quảng cáo toàn màn hình chưa sẵn sàng.");
+                                    }
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                                    // Xử lý lỗi
+                                    mInterstitialAd = null;
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                                }
+                            });
+                }
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/9063512975", adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-
-                        mInterstitialAd = null;
-                    }
-                });
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(getActivity());
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-        GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
     }
 
     private void clickOnNextButton() {
-        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+        checkUserIsVIP(new Callback<Boolean>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onResult(Boolean isVIP) {
+                if (isVIP) {
+                    // Xử lý khi người dùng là VIP
+                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                } else {
+                    // Xử lý khi người dùng không phải VIP
+                    MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+                        @Override
+                        public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        }
+                    });
+                    mAdView = mFragmentPlaySongBinding.adView;
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                    InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/6877113584", adRequest,
+                            new InterstitialAdLoadCallback() {
+                                @Override
+                                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                                    mInterstitialAd = interstitialAd;
+                                    if (mInterstitialAd != null) {
+                                        mInterstitialAd.show(getActivity());
+                                    } else {
+                                        Log.d("TAG", "Quảng cáo toàn màn hình chưa sẵn sàng.");
+                                    }
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                                    // Xử lý lỗi
+                                    mInterstitialAd = null;
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                                }
+                            });
+                }
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/6877113584", adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-
-                        mInterstitialAd = null;
-                    }
-                });
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(getActivity());
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-        GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
     }
 
     private void clickOnPlayButton() {
