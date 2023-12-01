@@ -98,6 +98,9 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
         Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
 
+        if(user1 == null){
+            return mFragmentPlaySongBinding.getRoot();
+        }
         DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
         DatabaseReference parentRef1 = databaseRef1.child("favoritesongs"); // Đường dẫn đến bảng cha
         DatabaseReference itemRef1 = parentRef1.child(user1.getUid()).child(currentSong1.getId() + "");

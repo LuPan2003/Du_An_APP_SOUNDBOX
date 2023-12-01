@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -80,7 +81,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //
     private ActivityMainBinding mActivityMainBinding;
 
-     final private ProfileFragment mProfileFragment = new ProfileFragment();
+      private ProfileFragment mProfileFragment = new ProfileFragment();
 
     final private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
              new ActivityResultCallback<ActivityResult>() {
@@ -429,5 +430,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         mActivityResultLauncher.launch(Intent.createChooser(intent,"Select Picture"));
+    }
+
+    public void changeScreenBackgroundColor() {
+        View rootView = getWindow().getDecorView().getRootView();
+        rootView.setBackgroundColor(Color.BLUE);
     }
 }
