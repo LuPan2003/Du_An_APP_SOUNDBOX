@@ -25,7 +25,7 @@
     <string name="feedback_email">Email</string>
     <string name="feedback_phone">Phone number</string>
     <string name="feedback_comment">Comment (*)</string>
-    <string name="send_feedback">Gửi Góp Ý</string>
+    <string name="send_feedback">Gửi</string>
 
     <string name="play_all">Play all</string>
     <string name="view_all">Tất cả</string>

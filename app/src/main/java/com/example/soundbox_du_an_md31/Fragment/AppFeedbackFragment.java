@@ -17,6 +17,8 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.databinding.FragmentAppFeedbackBinding;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
 
+import java.util.Calendar;
+
 
 public class AppFeedbackFragment extends Fragment {
 
@@ -57,7 +59,17 @@ public class AppFeedbackFragment extends Fragment {
 
             // Thêm feedback với reply mặc định là false và timestamp là thời điểm hiện tại
             long timestamp = System.currentTimeMillis();
-            Feedback feedback = new Feedback(strName, strPhone, strEmail, strComment, timestamp, false);
+            Feedback feedback = new Feedback(strName, strPhone, strEmail, strComment, timestamp, false, 0, 0);
+
+            // Lấy thông tin về tháng và năm từ timestamp
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(timestamp);
+            int month = calendar.get(Calendar.MONTH) + 1; // Vì tháng trong Calendar là 0-indexed
+            int year = calendar.get(Calendar.YEAR);
+
+            // Thiết lập giá trị cho trường tháng và năm
+            feedback.setMonth(month);
+            feedback.setYear(year);
 
             // Lưu ý dòng code sau để đảm bảo trường reply được thiết lập là false
             feedback.setReply(false);
@@ -70,6 +82,7 @@ public class AppFeedbackFragment extends Fragment {
                     });
         }
     }
+
     public void sendFeedbackSuccess() {
         GlobalFuntion.hideSoftKeyboard(getActivity());
         GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_send_feedback_success));
