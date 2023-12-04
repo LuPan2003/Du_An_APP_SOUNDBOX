@@ -61,6 +61,18 @@
             android:name=".Activity.PlayMusicActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.TestZaloPay"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="demozalopay"
+                    android:host="app" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".Activity.SplashActivity"
             android:exported="false" />
         <activity

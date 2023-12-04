@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.soundbox_du_an_md31.Model.CreateOrder;
@@ -31,6 +32,7 @@ import vn.zalopay.sdk.listeners.PayOrderListener;
 public class TestZaloPay extends AppCompatActivity {
 
     private AppCompatButton btn1month,btn6month,btn12month;
+    private ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,7 @@ public class TestZaloPay extends AppCompatActivity {
         btn1month = findViewById(R.id.premium_1month);
         btn6month = findViewById(R.id.premium_6month);
         btn12month = findViewById(R.id.premium_12month);
+        btnBack = findViewById(R.id.icon_back);
         btn1month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,8 +60,21 @@ public class TestZaloPay extends AppCompatActivity {
                 requestZalo(100000);
             }
         });
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TestZaloPay.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
     private void requestZalo(int amount) {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+
+
         CreateOrder orderApi = new CreateOrder();
         try {
             JSONObject data = orderApi.createOrder(String.valueOf(amount));
@@ -71,8 +87,6 @@ public class TestZaloPay extends AppCompatActivity {
 
                     @Override
                     public void onPaymentSucceeded(String s, String s1, String s2) {
-                        FirebaseDatabase database = FirebaseDatabase.getInstance();
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         DatabaseReference reference = database.getReference("users").child(user.getUid());
 //                        Hien tai
                         Calendar calendar = Calendar.getInstance();

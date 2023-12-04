@@ -30,7 +30,7 @@
             android:layout_marginRight="30dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Premium"
+            android:text="Thanh toán bằng Zalo pay"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
