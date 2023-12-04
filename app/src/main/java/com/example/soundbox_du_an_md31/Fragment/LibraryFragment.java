@@ -59,7 +59,7 @@ public class LibraryFragment extends Fragment {
         }else{
             Uri photoUrl = user.getPhotoUrl();
 
-            Glide.with(getContext()).load(photoUrl).error(R.drawable.avata).into(profile);
+            Glide.with(getContext()).load(photoUrl).override(32,32).error(R.drawable.avata).into(profile);
             Log.d("image", "onCreateView: "+ photoUrl);
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference musicRef = database.getReference("album");
@@ -118,4 +118,50 @@ public class LibraryFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            soLuongAlbum.setText("0 danh sách");
+            tv_favorite.setText("0 bài hát");
+        }else{
+            Uri photoUrl = user.getPhotoUrl();
+
+            Glide.with(getContext()).load(photoUrl).override(32,32).error(R.drawable.avata).into(profile);
+            Log.d("image", "onCreateView: "+ photoUrl);
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference musicRef = database.getReference("album");
+            DatabaseReference albumRef = musicRef.child(user.getUid());
+            DatabaseReference favRef = database.getReference("favoritesongs").child(user.getUid());
+
+            albumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int count = (int) dataSnapshot.getChildrenCount();
+                    // Số lượng phần tử trong bảng "album"
+                    soLuongAlbum.setText(count+" danh sách");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Xảy ra lỗi trong quá trình truy vấn
+                    System.out.println("Lỗi: " + databaseError.getMessage());
+                }
+            });
+            favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int count = (int) snapshot.getChildrenCount();
+                    // Số lượng phần tử trong bảng "album"
+                    tv_favorite.setText(count+" bài hát");
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    System.out.println("Lỗi: " + error.getMessage());
+                }
+            });
+        }
+    }
 }

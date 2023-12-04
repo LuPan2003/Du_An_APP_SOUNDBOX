@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Song implements Serializable {
 
     private int id;
+    private String idSong;
     private String title;
     private String image;
     private String url;
@@ -18,6 +19,25 @@ public class Song implements Serializable {
 
     private boolean isCopyrighted;
     private boolean access;
+
+    private long listenTimestamp;
+    private String timestamp;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getListenTimestamp() {
+        return listenTimestamp;
+    }
+
+    public void setListenTimestamp(long listenTimestamp) {
+        this.listenTimestamp = listenTimestamp;
+    }
 
     public boolean isAccess() {
         return access;
@@ -40,6 +60,14 @@ public class Song implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public String getIdSong() {
+        return idSong;
+    }
+
+    public void setIdSong(String idSong) {
+        this.idSong = idSong;
     }
 
     public void setId(int id) {

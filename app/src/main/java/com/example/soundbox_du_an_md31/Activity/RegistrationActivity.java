@@ -81,6 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 // Tạo một node con cho người dùng với ID là userID
                                 DatabaseReference userNode = databaseReference.child("users").child(userID);
                                 userNode.child("email").setValue(user.getEmail());
+                                userNode.child("isLocked").setValue(false);
                                 userNode.child("isVIP").setValue(false);
                                 userNode.child("subscriptionType").setValue(false);
                                 userNode.child("creationTime").setValue(currentTime);

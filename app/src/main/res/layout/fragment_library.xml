@@ -33,8 +33,9 @@
                 android:layout_height="32dp"
                 app:cardCornerRadius="25dp">
                 <ImageView
+                    android:scaleType="centerCrop"
                     android:layout_width="32dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="32dp"
                     android:id="@+id/icon_profile"
                     android:src="@drawable/ic_person_black"
 

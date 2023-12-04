@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -55,8 +56,16 @@ import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 
@@ -123,6 +132,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mAdView = mActivityMainBinding.adView;
 //        AdRequest adRequest = new AdRequest.Builder().build();
 //        mAdView.loadAd(adRequest);
+
+
+
+        FirebaseMessaging.getInstance().subscribeToTopic("News")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Done";
+                        if (!task.isSuccessful()) {
+                            msg = "Failed";
+                        }
+
+                        // Thực hiện một hành động nào đó với kết quả, ví dụ: hiển thị Toast
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
         setContentView(mActivityMainBinding.getRoot());
 
@@ -304,38 +330,82 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         }
     }
 
+
+    private void checkUserIsVIP(final Callback<Boolean> callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null) {
+                        callback.onResult(isVIP);
+                    } else {
+                        callback.onResult(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    callback.onResult(false);
+                }
+            });
+        } else {
+            // Người dùng chưa đăng nhập, hiển thị quảng cáo
+            callback.onResult(false);
+        }
+    }
+
+    private interface Callback<T> {
+        void onResult(T result);
+    }
+
     private void clickOnCloseButton() {
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        checkUserIsVIP(new Callback<Boolean>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onResult(Boolean isVIP) {
+                if (isVIP) {
+                    // Nếu tài khoản là VIP, không hiển thị quảng cáo
+                    // Bắt đầu dịch vụ âm nhạc
+                    GlobalFuntion.startMusicService(MainActivity.this, Constant.CANNEL_NOTIFICATION, MusicService.mSongPosition);
+                } else {
+                    // Nếu tài khoản không phải VIP, hiển thị quảng cáo
+                    MobileAds.initialize(MainActivity.this, new OnInitializationCompleteListener() {
+                        @Override
+                        public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        }
+                    });
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                    InterstitialAd.load(MainActivity.this, "ca-app-pub-8801498166910444/8422167536", adRequest,
+                            new InterstitialAdLoadCallback() {
+                                @Override
+                                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                                    // Biến tham chiếu mInterstitialAd sẽ null cho đến khi
+                                    // quảng cáo được tải.
+                                    mInterstitialAd = interstitialAd;
+                                    if (mInterstitialAd != null) {
+                                        mInterstitialAd.show(MainActivity.this);
+                                    } else {
+                                        Log.d("TAG", "Quảng cáo toàn màn hình chưa sẵn sàng.");
+                                    }
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                                    // Xử lý lỗi
+                                    mInterstitialAd = null;
+                                }
+                            });
+
+                    // Bắt đầu dịch vụ âm nhạc
+                    GlobalFuntion.startMusicService(MainActivity.this, Constant.CANNEL_NOTIFICATION, MusicService.mSongPosition);
+                }
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        InterstitialAd.load(this,"ca-app-pub-8801498166910444/8422167536", adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-
-                        mInterstitialAd = null;
-                    }
-                });
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(this);
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-        // Start music service
-        GlobalFuntion.startMusicService(this, Constant.CANNEL_NOTIFICATION, MusicService.mSongPosition);
     }
 
     private void openPlayMusicActivity() {

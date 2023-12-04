@@ -27,10 +27,18 @@ import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
 
@@ -40,7 +48,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static MediaPlayer mPlayer;
     public static int mLengthSong;
     public static int mAction = -1;
-
+    private DatabaseReference mDatabase;
 
     @Nullable
     @Override
@@ -253,31 +261,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mAction = Constant.NEXT;
         nextSong();
     }
-
-    // Hàm hiển thị quảng cáo
-//    private void showAd() {
-//        // Khởi tạo đối tượng AdView
-//        AdView adView = findViewById(R.id.adView);
-//
-//        // Tạo một đối tượng AdRequest
-//        AdRequest adRequest = new AdRequest.Builder().build();
-//
-//        // Hiển thị quảng cáo
-//        adView.loadAd(adRequest);
-//
-//        // Thêm nút bỏ qua quảng cáo
-//        Button skipButton = findViewById(R.id.skipButton);
-//
-//        // Thiết lập listener cho sự kiện click
-//        skipButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Bỏ qua quảng cáo
-//                adView.setVisibility(View.GONE);
-//            }
-//        });
-//    }
-
     //Phương thức này được gọi khi bài hát hiện tại đã được chuẩn bị để phát. Phương thức này sẽ phát bài hát hiện tại.
     @Override
     public void onPrepared(MediaPlayer mp) {
@@ -288,6 +271,33 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendMusicNotification();
         sendBroadcastChangeListener();
         changeCountViewSong();
+        // Lưu thời điểm bắt đầu nghe bài hát vào Firebase
+        saveListenTimestampToFirebase();
+    }
+
+    private void saveListenTimestampToFirebase() {
+        if (mListSongPlaying != null && mSongPosition < mListSongPlaying.size()) {
+            Song currentSong = mListSongPlaying.get(mSongPosition);
+            long currentTimestamp = System.currentTimeMillis();
+
+            // Chuyển đổi chuỗi timestamp thành kiểu Date
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            Date originalTimestamp = null;
+            try {
+                originalTimestamp = dateFormat.parse(currentSong.getTimestamp());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // Tạo một Map mới để lưu thông tin bài hát với trường mới listenTimestamp
+            Map<String, Object> songData = new HashMap<>();
+            songData.put("timestamp", currentSong.getTimestamp()); // Giữ nguyên trường timestamp
+            songData.put("listenTimestamp", currentTimestamp); // Thêm trường listenTimestamp
+
+            // Lưu thông tin bài hát vào Firebase
+            DatabaseReference songRef = MyApplication.get(this).getSongDatabaseReference(currentSong.getId());
+            songRef.updateChildren(songData);
+        }
     }
 //    Phương thức này gửi thông báo cho các đối tượng đang lắng nghe sự kiện thay đổi bài hát.
     private void sendBroadcastChangeListener() {
@@ -314,6 +324,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     public void onCancelled(@NonNull DatabaseError error) {}
                 });
     }
+
 
     @Override
     public void onDestroy() {

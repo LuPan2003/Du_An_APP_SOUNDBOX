@@ -80,6 +80,8 @@ dependencies {
     // Add the dependency for the Analytics library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-analytics")
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+    implementation'com.google.firebase:firebase-messaging'
 
     // zalo pay
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
