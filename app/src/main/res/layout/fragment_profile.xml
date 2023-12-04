@@ -96,6 +96,7 @@
                     android:text="Null"
                     android:textSize="25sp"
                     android:textStyle="bold"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="@+id/card_avatar"
                     app:layout_constraintStart_toStartOf="@+id/card_avatar"
                     app:layout_constraintTop_toBottomOf="@+id/card_avatar" />
@@ -109,7 +110,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/tv_name"
                     app:layout_constraintStart_toStartOf="@+id/tv_name"
                     app:layout_constraintTop_toBottomOf="@+id/tv_name"
-
+                    android:textColor="@color/black"
                     />
 
                 <LinearLayout
@@ -130,6 +131,7 @@
                         android:drawableStart="@drawable/ic_abc_24"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
+                        android:textColor="@color/black"
                         android:text="Change infomation"
                         android:textAlignment="viewStart" />
                     <androidx.appcompat.widget.AppCompatButton
@@ -145,6 +147,7 @@
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
                         android:text="Change password"
+                        android:textColor="@color/black"
                         android:textAlignment="viewStart" />
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_premium"
@@ -159,6 +162,7 @@
                         android:drawableStart="@drawable/ic_backup_24"
                         android:drawablePadding="20dp"
                         android:paddingStart="20dp"
+                        android:textColor="@color/black"
                         android:text="Go to Premium" />
                     <Button
                         android:id="@+id/btn_exits"
