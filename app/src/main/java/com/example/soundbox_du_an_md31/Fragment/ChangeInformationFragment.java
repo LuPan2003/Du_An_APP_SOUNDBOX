@@ -3,6 +3,7 @@ package com.example.soundbox_du_an_md31.Fragment;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -95,6 +96,7 @@ public class ChangeInformationFragment extends Fragment {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
                             Toast.makeText(getActivity(), "Cập nhật profile thành công", Toast.LENGTH_SHORT).show();
+                            getFragmentManager().popBackStack();
                         }
                     }
                 });

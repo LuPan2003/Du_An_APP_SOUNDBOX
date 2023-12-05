@@ -119,7 +119,12 @@ public class LoginActivity extends AppCompatActivity {
                                                 // Giá trị là true
                                                 // TODO: Xử lý khi giá trị là true
                                                 Toast.makeText(LoginActivity.this, "Tài khoản bạn bị khóa !! Liên hệ qua thông tin địa chỉ tại app hỗ trợ để được hỗ trợ", Toast.LENGTH_SHORT).show();
-                                                finishAffinity();
+
+                                                finish();
+                                                onBackPressed();
+
+
+
                                             } else {
                                                 // Giá trị là false hoặc null
 
