@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
@@ -47,6 +49,7 @@ public class AlbumFragment extends Fragment {
 
     private FragmentAlbumBinding mFragmentAllSongsBinding;
     private List<Song> mListSong;
+    private ImageView icon_back;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -216,6 +219,17 @@ public class AlbumFragment extends Fragment {
                 if (strKey.equals("") || strKey.length() == 0) {
                     if (mListSong != null) mListSong.clear();
                     getListSongFromFirebase("");
+                }
+            }
+        });
+
+        // Back
+        mFragmentAllSongsBinding.iconBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                if (fragmentManager.getBackStackEntryCount() > 0) {
+                    fragmentManager.popBackStack();
                 }
             }
         });

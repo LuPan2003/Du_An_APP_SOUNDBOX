@@ -18,7 +18,7 @@ public class MyApplication extends Application {
     public static final String CHANNEL_ID = "channel_music_sounbox_id";
     private static final String CHANNEL_NAME = "channel_music_sounbox_name";
     private FirebaseDatabase mFirebaseDatabase;
-
+    public static final  String ID="push-notification-id";
     public static MyApplication get(Context context) {
         return (MyApplication) context.getApplicationContext();
     }
@@ -30,6 +30,17 @@ public class MyApplication extends Application {
         FirebaseApp.initializeApp(this);
         mFirebaseDatabase = FirebaseDatabase.getInstance(Constant.FIREBASE_URL);
         createChannelNotification();
+
+        createChannelNotification1();
+
+    }
+    private void createChannelNotification1() {
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.O){
+            NotificationChannel channel = new NotificationChannel(ID , "PushNotification" ,
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
     }
     //tạo một kênh thông báo để hiển thị thông báo cho người dùng.
     private void createChannelNotification() {
@@ -57,5 +68,9 @@ public class MyApplication extends Application {
     //trả về một tham chiếu đến cơ sở dữ liệu Firebase lưu trữ số lượt xem của một bài hát.
     public DatabaseReference getCountViewDatabaseReference(int songId) {
         return FirebaseDatabase.getInstance().getReference("/songs/" + songId + "/count");
+    }
+    public DatabaseReference getSongDatabaseReference(int songId) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        return databaseReference.child("songs").child(String.valueOf(songId));
     }
 }

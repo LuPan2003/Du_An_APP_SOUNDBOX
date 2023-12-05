@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_email"
         android:layout_marginTop="20dp">
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/premium_1month"
+            android:id="@+id/btnZalopay"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="32dp"
@@ -51,36 +51,10 @@
             android:drawableStart="@drawable/ic_calendar_month_24"
             android:drawablePadding="20dp"
             android:paddingStart="20dp"
-            android:text="10.000 VND / 1 month"
+            android:text="Thanh toán bằng Zalo Pay"
+            android:textColor="@color/black"
             android:textAlignment="viewStart" />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/premium_6month"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_background_white"
-            android:drawableStart="@drawable/ic_calendar_month_24"
-            android:drawablePadding="20dp"
-            android:paddingStart="20dp"
-            android:text="50.000 VND / 6 month"
-            android:textAlignment="viewStart" />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/premium_12month"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:textAlignment="viewStart"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/btn_background_white"
-            android:drawableStart="@drawable/ic_calendar_month_24"
-            android:drawablePadding="20dp"
-            android:paddingStart="20dp"
-            android:text="100.000 VND / 12 month" />
+
     </LinearLayout>
 
 </LinearLayout>

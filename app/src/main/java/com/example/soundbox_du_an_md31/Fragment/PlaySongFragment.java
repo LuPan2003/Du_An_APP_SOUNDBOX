@@ -55,7 +55,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +96,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         heartred = mFragmentPlaySongBinding.heartredPlay;
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
         Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+
         // Banner QC
 
         // Kiểm tra trạng thái VIP của người dùng
@@ -158,12 +158,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-        // Banner QC
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
+
 
         menuMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,9 +274,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-        mAdView = mFragmentPlaySongBinding.adView;
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+
         //
         mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
 
@@ -659,6 +652,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
 
     private boolean checkUserIsVIP1() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

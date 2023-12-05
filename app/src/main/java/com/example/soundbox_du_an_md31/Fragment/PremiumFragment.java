@@ -1,17 +1,13 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +17,8 @@ import android.widget.Toast;
 import com.example.soundbox_du_an_md31.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -66,38 +59,9 @@ public class PremiumFragment extends Fragment {
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
                             Map<String, Object> updates = new HashMap<>();
                             updates.put("isVIP", true);
-                            DatabaseReference propertyRef = ref.child("endTime");
-                            propertyRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    // Xử lý dữ liệu tại đây
-                                    if (dataSnapshot.exists()) {
-                                        // Thuộc tính tồn tại trong đối tượng
-                                        Log.d("time1", "có vào"  );
-                                        String time = dataSnapshot.getValue(String.class);
-                                        Log.d("time", "" + time);
-
-//                                        Integer times = time + 1;
-//                                        Log.d("time1", "" + times);
-//
-//                                        updates.put("time", times);
-//                                        ref.updateChildren(updates);
-                                        // Sử dụng giá trị của thuộc tính
-                                    } else {
-                                        // Thuộc tính không tồn tại trong đối tượng
-                                    }
-                                }
-                                
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    // Xử lý lỗi nếu có
-                                }
-                            });
-                            Toast.makeText(getActivity(),"Thanh toans thành công ", Toast.LENGTH_SHORT).show();
-
-
-
+                            updates.put("time", 1);
+                            ref.updateChildren(updates);
+                            Toast.makeText(getActivity(), "Thanh toán thành công", Toast.LENGTH_SHORT).show();
                             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                             if (fragmentManager.getBackStackEntryCount() > 0) {
                                 fragmentManager.popBackStack();

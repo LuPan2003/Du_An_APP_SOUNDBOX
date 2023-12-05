@@ -20,6 +20,25 @@ public class Song implements Serializable {
     private boolean isCopyrighted;
     private boolean access;
 
+    private long listenTimestamp;
+    private String timestamp;
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getListenTimestamp() {
+        return listenTimestamp;
+    }
+
+    public void setListenTimestamp(long listenTimestamp) {
+        this.listenTimestamp = listenTimestamp;
+    }
+
     public boolean isAccess() {
         return access;
     }
