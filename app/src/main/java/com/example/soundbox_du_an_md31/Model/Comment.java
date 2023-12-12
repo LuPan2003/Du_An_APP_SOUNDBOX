@@ -12,6 +12,36 @@ public class Comment {
     private String songId;
     private String commentText;
     private long timestamp;
+    private int heartCount; // Thêm trường này để lưu số lượng tim
+    // Các trường khác
+    private List<String> heartedBy;
+    public int getHeartCount() {
+        return heartCount;
+    }
+
+    public void setHeartCount(int heartCount) {
+        this.heartCount = heartCount;
+    }
+
+    public List<String> getHeartedBy() {
+        return heartedBy;
+    }
+
+    public void setHeartedBy(List<String> heartedBy) {
+        this.heartedBy = heartedBy;
+    }
+    public Comment(String commentId, String userId, String userName, String songId, String commentText, long timestamp, int heartCount, boolean isDeleted, List<ReplyComment> replies ,List<String> heartedBy) {
+        this.commentId = commentId;
+        this.userId = userId;
+        this.userName = userName;
+        this.songId = songId;
+        this.commentText = commentText;
+        this.timestamp = timestamp;
+        this.heartCount = heartCount;
+        this.isDeleted = isDeleted;
+        this.replies = replies;
+        this.heartedBy = heartedBy;
+    }
     @PropertyName("deleted")
     private boolean isDeleted;
     // Thêm trường để lưu trữ danh sách bình luận con
@@ -33,13 +63,15 @@ public class Comment {
             this.replies = new ArrayList<>();
         }
     }
-    public Comment(String commentId, String userId, String userName, String songId, String commentText, long timestamp) {
+    public Comment(String commentId, String userId, String userName, String songId, String commentText, long timestamp , int heartCount ,List<String> heartedBy) {
         this.commentId = commentId;
         this.userId = userId;
         this.userName = userName;
         this.songId = songId;
         this.commentText = commentText;
         this.timestamp = timestamp;
+        this.heartCount = heartCount;
+        this.heartedBy = heartedBy;
     }
 
     public boolean isDeleted() {

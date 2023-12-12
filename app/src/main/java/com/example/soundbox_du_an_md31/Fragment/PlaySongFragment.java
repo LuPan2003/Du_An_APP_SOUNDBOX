@@ -2,6 +2,8 @@ package com.example.soundbox_du_an_md31.Fragment;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +12,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +33,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.soundbox_du_an_md31.Activity.CommentActivity;
 import com.example.soundbox_du_an_md31.Activity.LoginActivity;
+import com.example.soundbox_du_an_md31.Activity.volumeSeekBar;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Song;
@@ -55,7 +61,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,8 +76,10 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 
     private AdView mAdView;
     private List<Song> mListSong;
+    public static int mSongPosition;
     private int mAction;
     private String currentSongId;
+    public static boolean isPlaying;
     private ImageView heart_song, menuMusic, heart_play, heartred;
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -81,7 +88,23 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             handleMusicAction();
         }
     };
-
+    private BroadcastReceiver musicShutdownReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Nhận thông báo khi nhạc tắt và cập nhật giao diện người dùng
+            updateUIOnMusicShutdown();
+        }
+    };
+    // Phương thức để cập nhật giao diện người dùng
+    private void updateUIOnMusicShutdown() {
+        if (mFragmentPlaySongBinding != null) {
+            mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
+        }
+    }
+    // Cung cấp phương thức để lấy binding
+    public FragmentPlaySongBinding getFragmentPlaySongBinding() {
+        return mFragmentPlaySongBinding;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -97,6 +120,38 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         heartred = mFragmentPlaySongBinding.heartredPlay;
         FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
         Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> openComment());
+        mFragmentPlaySongBinding.imgBlocked.setOnClickListener(v -> openvolum());
+        mFragmentPlaySongBinding.imgStopwatch.setOnClickListener(v -> showTimerDialog());
+        mFragmentPlaySongBinding.btnDownload.setOnClickListener(v -> download());
+        // Đăng ký BroadcastReceiver
+        IntentFilter filter = new IntentFilter("MUSIC_SHUTDOWN_ACTION");
+        requireActivity().registerReceiver(musicShutdownReceiver, filter);
+        // Banner QC
+
+        // Kiểm tra trạng thái VIP của người dùng
+        boolean isVIP = checkUserIsVIP1();
+
+        if (!isVIP) {
+            // Người dùng không phải VIP, hiển thị quảng cáo
+            MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(InitializationStatus initializationStatus) {
+                }
+            });
+            mAdView = mFragmentPlaySongBinding.adView;
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+
+        } else {
+            // Người dùng là VIP, ẩn quảng cáo
+            mFragmentPlaySongBinding.adView.setVisibility(View.GONE);
+        }
+
+
+        if (user1 == null) {
+            return mFragmentPlaySongBinding.getRoot();
+        }
 
         DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
         DatabaseReference parentRef1 = databaseRef1.child("favoritesongs"); // Đường dẫn đến bảng cha
@@ -131,16 +186,11 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             Log.d("PlaySongFragment", "Current Song ID: " + currentSongId);
         }
 //        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> showCommentBottomSheet());
-        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> openComment());
+
         showInforSong();
         mAction = MusicService.mAction;
         handleMusicAction();
-        // Banner QC
-        MobileAds.initialize(getContext(), new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-            }
-        });
+
 
         menuMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,10 +306,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-        mAdView = mFragmentPlaySongBinding.adView;
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        //
+
         mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
 
         heartred.setOnClickListener(new View.OnClickListener() {
@@ -422,6 +469,12 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    private void openvolum() {
+        // Tiếp tục với việc mở màn hình bình luận
+        Intent intent = new Intent(getActivity(), volumeSeekBar.class);
+        startActivity(intent);
+    }
+
     private void openComment() {
         // Kiểm tra đăng nhập
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -464,7 +517,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 
     // Phương thức tạo SONG_ID từ Artist và Title
     private String createSongId(String artist, String title) {
-        // Đơn giản là kết hợp Artist và Title, có thể bạn cần chuẩn hóa chúng trước khi kết hợp
+// Đơn giản là kết hợp Artist và Title, có thể bạn cần chuẩn hóa chúng trước khi kết hợp
         artist = (artist != null) ? artist : "";
         title = (title != null) ? title : "";
         return artist + "_" + title;
@@ -615,6 +668,8 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         if (getActivity() != null) {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mBroadcastReceiver);
         }
+        // Hủy đăng ký BroadcastReceiver khi Fragment bị hủy
+        requireActivity().unregisterReceiver(musicShutdownReceiver);
     }
 
     @Override
@@ -631,75 +686,168 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             case R.id.img_next:
                 clickOnNextButton();
                 break;
-
             default:
                 break;
         }
     }
 
+    private boolean checkUserIsVIP1() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            // Người dùng đã đăng nhập, kiểm tra trạng thái VIP từ cơ sở dữ liệu
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null) {
+                        // Xử lý trạng thái VIP
+                        handleVIPStatus(isVIP);
+                    } else {
+                        // Người dùng không phải VIP
+                        handleVIPStatus(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Người dùng không phải VIP
+                    handleVIPStatus(false);
+                }
+            });
+
+            // Kết quả trạng thái VIP sẽ được xử lý trong callback, nên hàm checkUserIsVIP1()
+            // không trả về giá trị ngay lập tức
+            return false;
+        } else {
+            // Người dùng chưa đăng nhập, không phải VIP
+            return false;
+        }
+    }
+
+    private void handleVIPStatus(boolean isVIP) {
+        if (isVIP) {
+            // Người dùng là VIP, xử lý logic tương ứng
+        } else {
+            // Người dùng không phải VIP, xử lý logic tương ứng
+        }
+    }
+
+    private void checkUserIsVIP(final Callback<Boolean> callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user != null) {
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null) {
+                        callback.onResult(isVIP);
+                    } else {
+                        callback.onResult(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    callback.onResult(false);
+                }
+            });
+        } else {
+            callback.onResult(false);
+        }
+    }
+
+    private interface Callback<T> {
+        void onResult(T result);
+    }
+
     private void clickOnPrevButton() {
-        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+        checkUserIsVIP(new Callback<Boolean>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onResult(Boolean isVIP) {
+                if (isVIP) {
+                    // Xử lý khi người dùng là VIP
+                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                } else {
+                    // Xử lý khi người dùng không phải VIP
+                    MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+                        @Override
+                        public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        }
+                    });
+                    mAdView = mFragmentPlaySongBinding.adView;
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                    InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/9063512975", adRequest,
+                            new InterstitialAdLoadCallback() {
+                                @Override
+                                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                                    mInterstitialAd = interstitialAd;
+                                    if (mInterstitialAd != null) {
+                                        mInterstitialAd.show(getActivity());
+                                    } else {
+                                        Log.d("TAG", "Quảng cáo toàn màn hình chưa sẵn sàng.");
+                                    }
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                                    // Xử lý lỗi
+                                    mInterstitialAd = null;
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
+                                }
+                            });
+                }
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/9063512975", adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-
-                        mInterstitialAd = null;
-                    }
-                });
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(getActivity());
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-        GlobalFuntion.startMusicService(getActivity(), Constant.PREVIOUS, MusicService.mSongPosition);
     }
 
     private void clickOnNextButton() {
-        MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+        checkUserIsVIP(new Callback<Boolean>() {
             @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            public void onResult(Boolean isVIP) {
+                if (isVIP) {
+                    // Xử lý khi người dùng là VIP
+                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                } else {
+                    // Xử lý khi người dùng không phải VIP
+                    MobileAds.initialize(getActivity(), new OnInitializationCompleteListener() {
+                        @Override
+                        public void onInitializationComplete(InitializationStatus initializationStatus) {
+                        }
+                    });
+                    mAdView = mFragmentPlaySongBinding.adView;
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
+                    InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/6877113584", adRequest,
+                            new InterstitialAdLoadCallback() {
+                                @Override
+                                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                                    mInterstitialAd = interstitialAd;
+                                    if (mInterstitialAd != null) {
+                                        mInterstitialAd.show(getActivity());
+                                    } else {
+                                        Log.d("TAG", "Quảng cáo toàn màn hình chưa sẵn sàng.");
+                                    }
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                                }
+
+                                @Override
+                                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                                    // Xử lý lỗi
+                                    mInterstitialAd = null;
+                                    GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
+                                }
+                            });
+                }
             }
         });
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        InterstitialAd.load(getActivity(), "ca-app-pub-8801498166910444/6877113584", adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-
-                        mInterstitialAd = null;
-                    }
-                });
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(getActivity());
-        } else {
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-        }
-        GlobalFuntion.startMusicService(getActivity(), Constant.NEXT, MusicService.mSongPosition);
     }
 
     private void clickOnPlayButton() {
@@ -707,6 +855,118 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             GlobalFuntion.startMusicService(getActivity(), Constant.PAUSE, MusicService.mSongPosition);
         } else {
             GlobalFuntion.startMusicService(getActivity(), Constant.RESUME, MusicService.mSongPosition);
+        }
+    }
+
+    private void showTimerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Chọn thời gian thoát tắt nhạc");
+
+        // Mảng chứa các mốc thời gian
+        final CharSequence[] timerOptions = {"5 phút", "10 phút", "15 phút", "30 phút"};
+
+        builder.setItems(timerOptions, (dialog, which) -> {
+            String selectedTime = timerOptions[which].toString();
+            Toast.makeText(getContext(), "Đặt hẹn giờ thoát nhạc " + selectedTime, Toast.LENGTH_SHORT).show();
+
+            // Gọi phương thức để xử lý hẹn giờ tắt nhạc với thời gian được chọn
+            scheduleMusicShutdown(selectedTime);
+        });
+
+        builder.show();
+    }
+
+    //  // Use Handler to delay the action
+    //        Handler handler = new Handler();
+    //        handler.postDelayed(new Runnable() {
+    //            @Override
+    //            public void run() {
+    //                if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
+//                        MusicService.mPlayer.pause();
+    //                    isPlaying = false;
+    //                     mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
+    //                    sendBroadcastChangeListener();
+    //                }
+    //                // You can also add additional logic based on your music control requirements
+    //
+    //                Toast.makeText(getContext(), "Nhạc đã được tắt theo hẹn giờ", Toast.LENGTH_SHORT).show();
+    //            }
+    //        }, delayMillis);
+
+    private void scheduleMusicShutdown(String selectedTime) {
+        long delayMillis = 0; // Default delay is 0 milliseconds
+
+        // Convert selectedTime to milliseconds based on the chosen option
+        switch (selectedTime) {
+            case "5 phút":
+                delayMillis = 5 * 60 * 1000; // 5 minutes in milliseconds
+                break;
+            case "10 phút":
+                delayMillis = 10 * 60 * 1000; // 10 minutes in milliseconds
+                break;
+            case "15 phút":
+                delayMillis = 15 * 60 * 1000; // 15 minutes in milliseconds
+                break;
+            case "30 phút":
+                delayMillis = 30 * 60 * 1000; // 30 minutes in milliseconds
+                break;
+        }
+        Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
+                        MusicService.mPlayer.pause();
+                            isPlaying = false;
+                             mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
+                            sendBroadcastChangeListener();
+                        }
+                        // You can also add additional logic based on your music control requirements
+
+                        Toast.makeText(getContext(), "Nhạc đã được tắt theo hẹn giờ", Toast.LENGTH_SHORT).show();
+                    }
+                }, delayMillis);
+    }
+
+    private void download() {
+        checkUserIsVIP(new Callback<Boolean>() {
+            @Override
+            public void onResult(Boolean isVipUser) {
+                if (!isVipUser) {
+                    // Hiển thị thông báo cho người dùng không phải là VIP
+                    Toast.makeText(getActivity(), "Đăng ký gói premium để được tải nhạc", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+
+        // Kiểm tra xem bài hát hiện tại có URL hợp lệ không
+        if (currentSong == null || TextUtils.isEmpty(currentSong.getUrl())) {
+            Toast.makeText(getActivity(), "Không thể tải bài hát này", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // Sử dụng DownloadManager để tải bài hát
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentSong.getUrl()));
+        request.setTitle(currentSong.getTitle());
+        request.setDescription("Đang tải bài hát");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, currentSong.getTitle() + ".mp3");
+
+        DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        if (downloadManager != null) {
+            downloadManager.enqueue(request);
+            Toast.makeText(getActivity(), "Đang tải xuống...", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Không thể tạo yêu cầu tải xuống", Toast.LENGTH_SHORT).show();
+        }
+            }
+        });
+    }
+
+    private void sendBroadcastChangeListener() {
+        if (getActivity() != null) {
+            Intent intent = new Intent(Constant.CHANGE_LISTENER);
+            intent.putExtra(Constant.MUSIC_ACTION, mAction);
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
         }
     }
 }

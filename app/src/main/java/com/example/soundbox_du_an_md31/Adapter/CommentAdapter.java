@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,20 +26,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private OnEditClickListener editClickListener;
     private OnDeleteClickListener deleteClickListener;
     private OnReplyClickListener replyClickListener;
-
+    private OnHeartClickListener heartClickListener;
     public CommentAdapter(Context context, List<Comment> commentList) {
         this.context = context;
         this.commentList = commentList;
     }
-
-    // Thêm phương thức này để cập nhật danh sách bình luận
-//    public void updateReplies(int position, List<Comment> updatedReplies) {
-//        Comment comment = commentList.get(position);
-//        if (comment != null) {
-//            comment.setReplies(updatedReplies);
-//            notifyItemChanged(position);
-//        }
-//    }
 
     // Interface để lắng nghe sự kiện sửa
     public interface OnEditClickListener {
@@ -68,7 +59,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.replyClickListener = listener;
     }
 
+    public interface OnHeartClickListener {
+        void onHeartClick(int position);
+    }
 
+    public void setOnHeartClickListener(OnHeartClickListener listener) {
+        this.heartClickListener = listener;
+    }
     @NonNull
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -84,8 +81,28 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             holder.textUsername.setText(comment.getUserName());
             holder.textComment.setText(comment.getCommentText());
             holder.textTimestamp.setText(formatTimestamp(comment.getTimestamp()));
+
             // Kiểm tra xem người dùng hiện tại có phải là chủ sở hữu của bình luận không
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            // Hiển thị số lượng tim
+            holder.heartCountTextView.setText(String.valueOf(comment.getHeartCount()));
+
+            // Kiểm tra xem người dùng đã thả tim cho bình luận hay chưa
+            boolean hasLiked = currentUser != null && comment.getHeartedBy() != null && comment.getHeartedBy().contains(currentUser.getUid());
+
+            // Thiết lập hình ảnh của trái tim dựa vào trạng thái
+            int heartDrawableRes = hasLiked ? R.drawable.heart_do : R.drawable.heart;
+            holder.imgheartcomment.setImageResource(heartDrawableRes);
+
+            // Thêm sự kiện click cho nút thả tim
+            holder.imgheartcomment.setOnClickListener(v -> {
+                Log.d("txtHeart", "Đã nhấn");
+                if (heartClickListener != null) {
+                    heartClickListener.onHeartClick(position);
+                }
+            });
+
             if (currentUser != null && currentUser.getUid().equals(comment.getUserId())) {
                 // Hiển thị tùy chọn sửa/xóa
                 holder.showEditDeleteOptions();
@@ -93,20 +110,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 // Ẩn tùy chọn sửa/xóa
                 holder.hideEditDeleteOptions();
             }
-            // Hiển thị và quản lý danh sách trả lời
-//            List<Comment> replies = comment.getReplies();
-//            if (replies != null && !replies.isEmpty()) {
-//                // Hiển thị danh sách trả lời (bạn có thể sử dụng RecyclerView hoặc một cách khác)
-//            }
+
             holder.txtReply.setOnClickListener(v -> {
-                Log.d("txtReply" , "đã nhấn");
+                Log.d("txtReply", "đã nhấn");
                 if (replyClickListener != null) {
                     replyClickListener.onReplyClick(position);
                 }
             });
         }
     }
-
     @Override
     public int getItemCount() {
         return commentList.size();
@@ -118,9 +130,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     public class CommentViewHolder extends RecyclerView.ViewHolder {
-        TextView textUsername, textComment, textTimestamp ,txtReply;
+        TextView textUsername, textComment, textTimestamp ,txtReply , heartCountTextView;
         TextView editButton, deleteButton;
         private int currentPosition = RecyclerView.NO_POSITION;
+        private ImageView imgheartcomment;
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -130,6 +143,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             editButton = itemView.findViewById(R.id.editButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
             txtReply = itemView.findViewById(R.id.txtReply);
+            imgheartcomment = itemView.findViewById(R.id.img_heart_comment);
+            heartCountTextView= itemView.findViewById(R.id.heartCountTextView);
         }
 
         public void bind(int position) {

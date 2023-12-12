@@ -83,7 +83,6 @@ public class RegistrationActivity extends AppCompatActivity {
                                 userNode.child("email").setValue(user.getEmail());
                                 userNode.child("isLocked").setValue(false);
                                 userNode.child("isVIP").setValue(false);
-                                userNode.child("subscriptionType").setValue(false);
                                 userNode.child("creationTime").setValue(currentTime);
                             } else {
                                 // Người dùng chưa đăng nhập
