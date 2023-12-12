@@ -686,6 +686,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             case R.id.img_next:
                 clickOnNextButton();
                 break;
+
             default:
                 break;
         }

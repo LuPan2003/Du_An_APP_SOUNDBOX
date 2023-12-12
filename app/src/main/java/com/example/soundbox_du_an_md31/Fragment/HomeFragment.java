@@ -1,6 +1,7 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -250,4 +251,6 @@ public class HomeFragment extends Fragment {
         GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
     }
+
+
 }

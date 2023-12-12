@@ -3,17 +3,19 @@ package com.example.soundbox_du_an_md31.Fragment;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.soundbox_du_an_md31.Activity.LoginActivity;
+
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,10 +45,19 @@ public class ProfileFragment extends Fragment {
     private ProgressDialog progressDialog;
     private Uri mUri;
     public static final String TAG = LibraryFragment.class.getName();
-    private ImageView icon_back, img_avatarProfile, img_changeIMG,img_changeIMGVip;
+    private ImageView icon_back, img_avatarProfile, img_changeIMG,img_changeIMGVip,settings;
     private TextView tv_name, tv_email;
-    private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium;
+    private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium,btn_change_background;
     private MainActivity mainActivity;
+    private SharedPreferences sharedPreferences;
+
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,18 +70,24 @@ public class ProfileFragment extends Fragment {
         btn_change_information = view.findViewById(R.id.btn_change_infor);
         btn_change_password = view.findViewById(R.id.btn_change_password);
         btn_premium = view.findViewById(R.id.btn_premium);
+        btn_change_background = view.findViewById(R.id.btn_ChangeColor);
         img_avatarProfile = view.findViewById(R.id.img_avatarProfile);
         tv_email = view.findViewById(R.id.tv_email);
         tv_name = view.findViewById(R.id.tv_name);
         btn_exit = view.findViewById(R.id.btn_exits);
         img_changeIMG = view.findViewById(R.id.img_changeImage);
         img_changeIMG = view.findViewById(R.id.img_changeImage);
-        img_changeIMGVip = view.findViewById(R.id.img_changeImage1);
+
+        img_changeIMGVip = view.findViewById(R.id.icon_setting);
+        settings = view.findViewById(R.id.img_changeImage1);
         progressDialog = new ProgressDialog(mainActivity);
 
 
 
+
         setProfile();
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Toast.makeText(mainActivity, "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
@@ -125,6 +142,23 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+
+//        btn_change_background.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                boolean isDarkMode = sharedPreferences.getBoolean(DARK_MODE_KEY, false);
+//                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                editor.putBoolean(DARK_MODE_KEY, !isDarkMode);
+//                editor.apply();
+//
+//                // Áp dụng chế độ tối hoặc chế độ sáng
+//                if (!isDarkMode) {
+//                    appl
+//                } else {
+//                    applyLightMode();
+//                }
+//            }
+//        });
         icon_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -232,11 +266,17 @@ public class ProfileFragment extends Fragment {
                     }
                 });
     }
+
+
+
     public void setUri(Uri mUri){
         this.mUri = mUri;
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
-
+    }
 }

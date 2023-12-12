@@ -77,13 +77,10 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="app"
-                    android:scheme="demozalopay" />
+                <data android:scheme="demozalopay"
+                    android:host="app" />
             </intent-filter>
         </activity>
         <activity

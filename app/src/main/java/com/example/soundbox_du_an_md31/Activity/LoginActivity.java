@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             progressDialog.dismiss();
                             if (task.isSuccessful()) {
-                                // Đăng nhập thành công
+                                luuThongTin();
                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                 if (user == null) {
                                     return;

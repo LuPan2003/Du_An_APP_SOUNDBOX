@@ -5,9 +5,9 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import vn.zalopay.sdk.Environment;
 import vn.zalopay.sdk.ZaloPayError;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
@@ -38,26 +39,29 @@ public class TestZaloPay extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_zalo_pay);
-        btn1month = findViewById(R.id.premium_1month);
-        btn6month = findViewById(R.id.premium_6month);
-        btn12month = findViewById(R.id.premium_12month);
-        btnBack = findViewById(R.id.icon_back);
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
+        initUI();
+
         btn1month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(10000);
+                requestZalo(10000,1);
             }
         });
         btn6month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(50000);
+                requestZalo(50000,6);
             }
         });
         btn12month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(100000);
+                requestZalo(100000,12);
             }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +72,15 @@ public class TestZaloPay extends AppCompatActivity {
             }
         });
     }
-    private void requestZalo(int amount) {
+
+    private void initUI(){
+        btn1month = findViewById(R.id.premium_1month);
+        btn6month = findViewById(R.id.premium_6month);
+        btn12month = findViewById(R.id.premium_12month);
+        btnBack = findViewById(R.id.icon_back);
+    }
+
+    private void requestZalo(int amount, int month) {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -93,13 +105,12 @@ public class TestZaloPay extends AppCompatActivity {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                         String currentDate = dateFormat.format(calendar.getTime());
 //                        sau 1 tháng
-                        calendar.add(Calendar.MONTH, 1);
+                        calendar.add(Calendar.MONTH, month);
                         String newDate = dateFormat.format(calendar.getTime());
                         Map<String, Object> data = new HashMap<>();
                         data.put("isVIP", true);
                         data.put("startTime", currentDate);
                         data.put("endTime", newDate);
-                        data.put("isLocked",true);
                         data.put("amount",amount);
                         reference.updateChildren(data);
                         Toast.makeText(TestZaloPay.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();

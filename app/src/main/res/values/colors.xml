@@ -40,4 +40,9 @@
     <color name="lavender">#8692f7</color>
     <color name="dark_blue">#32357a</color>
     <color name="light_blue">#f2f1f6</color>
+
+    <color name="dark_background">#000000</color>
+    <color name="dark_text_color_primary">#FFFFFF</color>
+    <color name="dark_text_color_secondary">#CCCCCC</color>
+    <!-- Các màu sắc khác cho chế độ tối -->
 </resources>

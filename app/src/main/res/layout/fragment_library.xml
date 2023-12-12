@@ -27,11 +27,18 @@
             android:textColor="@color/black"
             android:layout_marginLeft="10dp"
             />
+        <androidx.cardview.widget.CardView
+            android:layout_marginRight="10dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:cardCornerRadius="25dp">
+        </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:layout_marginRight="10dp"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:cardCornerRadius="25dp">
+
                 <ImageView
                     android:scaleType="centerCrop"
                     android:layout_width="32dp"
