@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
@@ -36,12 +38,37 @@ public class NewSongsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentNewSongsBinding = FragmentNewSongsBinding.inflate(inflater, container, false);
-
+        mFragmentNewSongsBinding.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
         getListNewSongs();
-//        initListener();
-
+        initListener();
+        mFragmentNewSongsBinding.iconBack.setOnClickListener(v -> backHome());
         return mFragmentNewSongsBinding.getRoot();
     }
+    private void backHome() {
+        if (getActivity() == null) {
+            return;
+        }
+
+        // Lấy FragmentManager
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        // Tạo một FragmentTransaction
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        // Thêm HomeFragment vào ngăn xếp và chuyển về nó
+        fragmentTransaction.replace(R.id.frame_layout, new HomeFragment());
+        fragmentTransaction.addToBackStack(null); // Để có thể quay lại từ HomeFragment
+
+        // Thực hiện Transaction
+        fragmentTransaction.commit();
+    }
+
 
     private void getListNewSongs() {
         if (getActivity() == null) {
@@ -94,12 +121,13 @@ public class NewSongsFragment extends Fragment {
         if (activity == null || activity.getActivityMainBinding() == null) {
             return;
         }
-//        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
-//            MusicService.clearListSongPlaying();
-//            MusicService.mListSongPlaying.addAll(mListSong);
-//            MusicService.isPlaying = false;
-//            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
-//            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
-//        });
+
+        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
     }
 }

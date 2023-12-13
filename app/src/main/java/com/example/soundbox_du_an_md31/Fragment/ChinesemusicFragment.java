@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.Activity.PlayMusicActivity;
 import com.example.soundbox_du_an_md31.Adapter.SongAdapter;
 import com.example.soundbox_du_an_md31.Constant.Constant;
@@ -34,7 +35,15 @@ public class ChinesemusicFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentChinesemusicBinding = FragmentChinesemusicBinding.inflate(inflater, container, false);
+        fragmentChinesemusicBinding.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
         getListNewSongs();
+        initListener();
         fragmentChinesemusicBinding.iconBackTrung.setOnClickListener(v -> backHome());
         return fragmentChinesemusicBinding.getRoot();
     }
@@ -101,5 +110,19 @@ public class ChinesemusicFragment extends Fragment {
         MusicService.isPlaying = false;
         GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+    }
+    private void initListener() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity == null || activity.getActivityMainBinding() == null) {
+            return;
+        }
+
+        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
     }
 }
