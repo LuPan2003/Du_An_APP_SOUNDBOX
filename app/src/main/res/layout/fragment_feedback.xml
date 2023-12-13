@@ -131,6 +131,7 @@
                 android:textSize="18dp"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/btn_charts"
             android:layout_width="180dp"
             android:layout_margin="10dp"
             android:layout_height="wrap_content"

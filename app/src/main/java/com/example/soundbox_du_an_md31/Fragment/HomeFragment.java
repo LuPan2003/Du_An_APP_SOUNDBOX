@@ -1,7 +1,6 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -101,6 +100,55 @@ public class HomeFragment extends Fragment {
 //            }
 //            return false;
 //        });
+        mFragmentHomeBinding.btnNhactre.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openTremusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhacrap.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openRapmusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhachouse.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openHousemusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhacedm.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openEdmmusic();
+            }
+        });
+
+        mFragmentHomeBinding.btnViet.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openVietnammusic();
+            }
+        });
+        mFragmentHomeBinding.btnTrung.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openChinesemusic();
+            }
+        });
+        mFragmentHomeBinding.btnHanquoc.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openKoreanmusic();
+            }
+        });
+        mFragmentHomeBinding.btnUsuk.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openUsukmusic();
+            }
+        });
 
         mFragmentHomeBinding.layoutViewAllPopular.setOnClickListener(v -> {
             MainActivity mainActivity = (MainActivity) getActivity();

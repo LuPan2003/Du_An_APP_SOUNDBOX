@@ -62,7 +62,13 @@ public class FeedbackFragment extends Fragment {
 
         mFragmentFeedbackBinding.gotoPremium.setOnClickListener(v -> openPremium());
         mFragmentFeedbackBinding.backgrPay.setOnClickListener(v -> openQuangCao());
+        mFragmentFeedbackBinding.btnCharts.setOnClickListener(v -> openCharts());
         return mFragmentFeedbackBinding.getRoot();
+    }
+
+    private void openCharts() {
+//        Intent intent = new Intent(getActivity() , RankingActivity.class);
+//        startActivity(intent);
     }
 
 

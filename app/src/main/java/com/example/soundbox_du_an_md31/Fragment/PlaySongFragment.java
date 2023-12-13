@@ -109,26 +109,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentPlaySongBinding = FragmentPlaySongBinding.inflate(inflater, container, false);
-        if (getActivity() != null) {
-            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver,
-                    new IntentFilter(Constant.CHANGE_LISTENER));
-        }
-        initControl();
-        heart_song = mFragmentPlaySongBinding.heartPlay;
-        menuMusic = mFragmentPlaySongBinding.menuMusic;
-        heart_play = mFragmentPlaySongBinding.heartPlay;
-        heartred = mFragmentPlaySongBinding.heartredPlay;
-        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
-        Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> openComment());
-        mFragmentPlaySongBinding.imgBlocked.setOnClickListener(v -> openvolum());
-        mFragmentPlaySongBinding.imgStopwatch.setOnClickListener(v -> showTimerDialog());
-        mFragmentPlaySongBinding.btnDownload.setOnClickListener(v -> download());
-        // Đăng ký BroadcastReceiver
-        IntentFilter filter = new IntentFilter("MUSIC_SHUTDOWN_ACTION");
-        requireActivity().registerReceiver(musicShutdownReceiver, filter);
-        // Banner QC
-
         // Kiểm tra trạng thái VIP của người dùng
         boolean isVIP = checkUserIsVIP1();
 
@@ -144,9 +124,31 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             mAdView.loadAd(adRequest);
 
         } else {
-            // Người dùng là VIP, ẩn quảng cáo
+            // qNgười dùng là VIP, ẩn uảng cáo
             mFragmentPlaySongBinding.adView.setVisibility(View.GONE);
         }
+
+
+        if (getActivity() != null) {
+            LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver,
+                    new IntentFilter(Constant.CHANGE_LISTENER));
+        }
+
+        initControl();
+        heart_song = mFragmentPlaySongBinding.heartPlay;
+        menuMusic = mFragmentPlaySongBinding.menuMusic;
+        heart_play = mFragmentPlaySongBinding.heartPlay;
+        heartred = mFragmentPlaySongBinding.heartredPlay;
+        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
+        Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        mFragmentPlaySongBinding.commentPlay.setOnClickListener(v -> openComment());
+        mFragmentPlaySongBinding.imgBlocked.setOnClickListener(v -> openvolum());
+        mFragmentPlaySongBinding.imgStopwatch.setOnClickListener(v -> showTimerDialog());
+        mFragmentPlaySongBinding.btnDownload.setOnClickListener(v -> download());
+        // Đăng ký BroadcastReceiver
+        IntentFilter filter = new IntentFilter("MUSIC_SHUTDOWN_ACTION");
+        requireActivity().registerReceiver(musicShutdownReceiver, filter);
+        // Banner QC
 
 
         if (user1 == null) {
@@ -536,12 +538,29 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 //    }
 
     private void sharePlay() {
-        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-        // Chia sẻ bài hát thông qua ứng dụng chia sẻ mặc định
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("audio/*");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(currentSong.getUrl()));
-        startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát"));
+        if (MusicService.mListSongPlaying != null && !MusicService.mListSongPlaying.isEmpty()) {
+            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+
+            if (currentSong != null && currentSong.getUrl() != null) {
+                // Tạo một Intent để chia sẻ bài hát
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("audio/*");
+
+                // Tạo một Uri từ đường dẫn của bài hát
+                Uri songUri = Uri.parse(currentSong.getUrl());
+                shareIntent.putExtra(Intent.EXTRA_STREAM, songUri);
+
+                // Tùy chỉnh tiêu đề khi hiển thị danh sách ứng dụng chia sẻ
+                String shareTitle = "Chia sẻ bài hát: " + currentSong.getTitle();
+                startActivity(Intent.createChooser(shareIntent, shareTitle));
+            } else {
+                // Xử lý trường hợp không có bài hát hiện tại hoặc không có đường dẫn
+                // Hiển thị thông báo hoặc xử lý tương ứng với trạng thái này
+            }
+        } else {
+            // Xử lý trường hợp không có danh sách bài hát hoặc danh sách đang rỗng
+            // Hiển thị thông báo hoặc xử lý tương ứng với trạng thái này
+        }
     }
 
 
