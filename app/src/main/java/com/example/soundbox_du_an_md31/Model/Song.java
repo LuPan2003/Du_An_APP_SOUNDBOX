@@ -22,6 +22,15 @@ public class Song implements Serializable {
 
     private long listenTimestamp;
     private String timestamp;
+    private String nation;
+
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
 
     public String getTimestamp() {
         return timestamp;

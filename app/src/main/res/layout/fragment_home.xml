@@ -9,7 +9,6 @@
     android:visibility="visible"
     android:orientation="vertical"
     >
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -29,7 +28,6 @@
             android:textColor="@color/white"
             />
     </LinearLayout>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -65,7 +63,213 @@
                         app:ci_drawable="@drawable/bg_indicatior_selected"
                         app:ci_drawable_unselected="@drawable/bg_indicatior_unselected" />
                 </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Thể Loại"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/text_size_normal"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold" />
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:id="@+id/songContainer2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/btn_nhactre"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_nhactre"
+                            android:padding="10dp">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc Trẻ"
+                                android:textSize="40dp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="100dp"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_nhacrap"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_nhacrap"
+                            android:padding="10dp">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc Rap"
+                                android:textSize="40dp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="100dp"
+                                android:textColor="@color/white"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_nhachouse"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_nhachouse"
+                            android:padding="10dp">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="House"
+                                android:textSize="40dp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="100dp"
+                                android:textColor="@color/white"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_nhacedm"
+                            android:layout_width="200dp"
+                            android:layout_height="200dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_jazz"
+                            android:padding="10dp">
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="EDM"
+                                android:textSize="40dp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="100dp"
+                                android:textColor="@color/white"
+                                />
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Quốc Gia"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/text_size_normal"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold" />
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:id="@+id/songContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <LinearLayout
+                            android:id="@+id/btn_viet"
+                            android:layout_width="150dp"
+                            android:layout_height="100dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_vietnam"
+                            android:padding="10dp"
+                            >
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/vietnam" />
+
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc Việt"
+                                android:textSize="20dp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_trung"
+                            android:layout_width="150dp"
+                            android:layout_height="100dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_china"
+
+                            android:padding="10dp"
+                            >
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/china" />
+
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc Hoa"
+                                android:textSize="20dp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_hanquoc"
+                            android:layout_width="150dp"
+                            android:layout_height="100dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_hanquoc"
+                            android:padding="10dp"
+                            >
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/southkorea" />
+
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc Hàn"
+                                android:textSize="20dp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/btn_usuk"
+                            android:layout_width="150dp"
+                            android:layout_height="100dp"
+                            android:orientation="vertical"
+                            android:layout_margin="10dp"
+                            android:background="@drawable/bgr_usuk"
+                            android:padding="10dp"
+                            >
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/flag" />
+
+                            <TextView
+                                android:layout_gravity="center"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhạc US UK"
+                                android:textSize="20dp"
+                                android:textStyle="bold"
+                                android:textColor="@color/white"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -166,7 +370,7 @@
                     android:layout_marginBottom="@dimen/define_dimen_10"
                     android:focusable="false"
                     android:nestedScrollingEnabled="false"
-                    android:paddingBottom="120dp"/>
+                    android:paddingBottom="120dp" />
 
             </LinearLayout>
 
