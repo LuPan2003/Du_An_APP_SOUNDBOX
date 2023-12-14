@@ -62,7 +62,7 @@ public class FeedbackFragment extends Fragment {
 
         mFragmentFeedbackBinding.gotoPremium.setOnClickListener(v -> openPremium());
         mFragmentFeedbackBinding.backgrPay.setOnClickListener(v -> openQuangCao());
-        mFragmentFeedbackBinding.btnCharts.setOnClickListener(v -> openCharts());
+//        mFragmentFeedbackBinding.btnCharts.setOnClickListener(v -> openCharts());
         return mFragmentFeedbackBinding.getRoot();
     }
 
