@@ -89,8 +89,9 @@
         android:orientation="horizontal"
         android:gravity="center">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:text="@string/menu_all_songs"
             android:textColor="@color/colorPrimaryDark"
@@ -102,7 +103,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="170dp"
             android:background="@drawable/bg_main_shape_corner_6_border_white"
             android:gravity="center"
             android:orientation="horizontal"

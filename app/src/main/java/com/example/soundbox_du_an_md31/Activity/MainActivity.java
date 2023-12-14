@@ -149,6 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //        mAdView.loadAd(adRequest);
 
 
+        checkVip();
 
         FirebaseMessaging.getInstance().subscribeToTopic("News")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -558,5 +559,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public void changeScreenBackgroundColor() {
         View rootView = getWindow().getDecorView().getRootView();
         rootView.setBackgroundColor(Color.BLUE);
+    }
+    public void checkVip(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Toast.makeText(this, "Bạn đang nghe nhạc với tư cách khách", Toast.LENGTH_SHORT).show();
+        }else {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference reference = database.getReference("users").child(user.getUid()).child("isVIP");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Object value = snapshot.getValue();
+                    boolean isVIP = (boolean) value;
+                    Log.d("zzz", String.valueOf(isVIP));
+                    if(isVIP == true){
+                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách VIP", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách thường", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 }
