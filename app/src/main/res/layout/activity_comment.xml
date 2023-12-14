@@ -5,11 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Activity.CommentActivity"
-    android:padding="8dp">
-
-    <!-- Nút trở lại -->
-
-    <!-- Tiêu đề Bình Luận Bài Hát -->
+    android:background="#fff">
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -20,21 +16,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingVertical="10dp">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="32dp"
-            android:layout_height="32dp">
-
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark">
             <ImageView
                 android:id="@+id/icon_back"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_back_ios_24_black"
-
+                android:src="@drawable/ic_arrow_back_24_white"
                 />
-        </androidx.cardview.widget.CardView>
-
         <TextView
             android:id="@+id/tv_header"
             android:layout_width="wrap_content"
@@ -43,7 +32,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Comment"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
