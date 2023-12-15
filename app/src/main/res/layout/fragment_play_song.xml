@@ -18,8 +18,8 @@
             android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:padding="10dp"
-            android:layout_marginLeft="350dp"
+            android:padding="5dp"
+            android:layout_marginLeft="330dp"
             android:background="@android:color/transparent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +30,7 @@
             android:id="@+id/img_song"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/define_dimen_40"
+            android:layout_margin="30dp"
             android:src="@drawable/image_no_available" />
     </LinearLayout>
     <LinearLayout

@@ -272,7 +272,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendBroadcastChangeListener();
         changeCountViewSong();
         // Lưu thời điểm bắt đầu nghe bài hát vào Firebase
-        saveListenTimestampToFirebase();
+//        saveListenTimestampToFirebase();
     }
 
     private void saveListenTimestampToFirebase() {

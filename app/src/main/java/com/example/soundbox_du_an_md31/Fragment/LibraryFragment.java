@@ -16,11 +16,17 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,9 +36,20 @@ import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
+import com.example.soundbox_du_an_md31.Activity.PlayMusicActivity;
 import com.example.soundbox_du_an_md31.Activity.SharedPreferencesManager;
+import com.example.soundbox_du_an_md31.Adapter.SongAdapter;
+import com.example.soundbox_du_an_md31.Adapter.SongGridAdapter;
+import com.example.soundbox_du_an_md31.Constant.Constant;
+import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
+import com.example.soundbox_du_an_md31.Model.Song;
+import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
+import com.example.soundbox_du_an_md31.Service.MusicService;
+import com.example.soundbox_du_an_md31.utils.StringUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,13 +63,17 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LibraryFragment extends Fragment {
     private MainActivity mainActivity;
     private ImageView profile,imgavatar,icon_settings;
     private TextView soLuongAlbum,tv_favorite;
-    private LinearLayout album, favorite;
+    private LinearLayout album, favorite,history;
+    private List<Song> mListSong;
+    private RecyclerView rcvHistory;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +92,14 @@ public class LibraryFragment extends Fragment {
         favorite = view.findViewById(R.id.btn_listsongfavorite);
         soLuongAlbum = view.findViewById(R.id.soLuongAlbum);
         tv_favorite = view.findViewById(R.id.tv_favorite);
+        rcvHistory = view.findViewById(R.id.rcv_listHistory);
+        history = view.findViewById(R.id.layout_play_all_history);
+
+        rcvHistory.setNestedScrollingEnabled(false);
+
+        getListSongFromFirebase("");
+        getListAllSongs();
+//        initListener();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user == null){
@@ -114,6 +143,44 @@ public class LibraryFragment extends Fragment {
                 }
             });
         }
+
+        history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user == null){
+                    Toast.makeText(getActivity(), "Chưa đăng nhập tài khoản", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild(user.getUid())) {
+                            // Nút con tồn tại
+                            // Thực hiện các hành động tương ứng
+                            MusicService.clearListSongPlaying();
+                            MusicService.mListSongPlaying.addAll(mListSong);
+                            MusicService.isPlaying = false;
+                            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+                            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+                        } else {
+                            // Nút con không tồn tại
+                            // Thực hiện các hành động tương ứng
+                            Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Xảy ra lỗi trong quá trình đọc dữ liệu
+                        Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
 
 
         profile.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +252,412 @@ public class LibraryFragment extends Fragment {
             });
         }
     }
+    private void getListAllSongs() {
+        if (getActivity() == null) {
+            return;
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Toast.makeText(getActivity(), "Chưa đăng nhập tài khoản", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+
+// Truy cập đến nút (node) cần kiểm tra
+        DatabaseReference booleanRef = databaseRef.child("users/"+user.getUid()+"/isVIP");
+
+        booleanRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Kiểm tra xem giá trị có tồn tại hay không
+                if (dataSnapshot.exists()) {
+                    // Lấy giá trị boolean từ DataSnapshot
+                    Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
+
+                    // Kiểm tra giá trị boolean
+                    if (booleanValue != null && booleanValue) {
+                        // Giá trị là true
+                        // TODO: Xử lý khi giá trị là true
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.hasChild(user.getUid())) {
+                                    // Nút con tồn tại
+                                    // Thực hiện các hành động tương ứng
+                                    MyApplication.get(getActivity()).getSongsHistoryDatabaseReference().addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            mListSong = new ArrayList<>();
+                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                Song song = dataSnapshot.getValue(Song.class);
+                                                if (song == null) {
+                                                    return;
+                                                }
+                                                mListSong.add(0, song);
+                                            }
+
+                                            displayListAllSongs();
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+                                        }
+                                    });
+
+                                } else {
+                                    // Nút con không tồn tại
+                                    // Thực hiện các hành động tương ứng
+                                    Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Xảy ra lỗi trong quá trình đọc dữ liệu
+                                Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        // Giá trị là false hoặc null
+
+                        // TODO: Xử lý khi giá trị là false hoặc null
+                        // Thành công
+                        Song currentSong1 = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+
+                        DatabaseReference databaseRef1 = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference parentRef1 = databaseRef1.child("history"); // Đường dẫn đến bảng cha
+                        DatabaseReference itemRef1 = parentRef1.child(user.getUid()).child(currentSong1.getId() + "");
+
+                        itemRef1.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    // Phần tử tồn tại
+                                    itemRef1.removeValue()
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+                                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            if (dataSnapshot.hasChild(user.getUid())) {
+                                                                // Nút con tồn tại
+                                                                // Thực hiện các hành động tương ứng
+                                                                MyApplication.get(getActivity()).getSongsHistoryDatabaseReference().addValueEventListener(new ValueEventListener() {
+                                                                    @Override
+                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                        mListSong = new ArrayList<>();
+                                                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                            Song song = dataSnapshot.getValue(Song.class);
+                                                                            if (song == null) {
+                                                                                return;
+                                                                            }
+                                                                            mListSong.add(0, song);
+                                                                        }
+
+                                                                        displayListAllSongs();
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                                        GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+                                                                    }
+                                                                });
+
+                                                            } else {
+                                                                // Nút con không tồn tại
+                                                                // Thực hiện các hành động tương ứng
+                                                                Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                                                                return;
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                            // Xảy ra lỗi trong quá trình đọc dữ liệu
+                                                            Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Xóa thất bại
+                                                }
+                                            });
+                                } else {
+                                    // Phần tử không tồn tại
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+                                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.hasChild(user.getUid())) {
+                                                // Nút con tồn tại
+                                                // Thực hiện các hành động tương ứng
+                                                MyApplication.get(getActivity()).getSongsHistoryDatabaseReference().addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        mListSong = new ArrayList<>();
+                                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                            Song song = dataSnapshot.getValue(Song.class);
+                                                            if (song == null) {
+                                                                return;
+                                                            }
+                                                            mListSong.add(0, song);
+                                                        }
+
+                                                        displayListAllSongs();
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+                                                    }
+                                                });
+
+                                            } else {
+                                                // Nút con không tồn tại
+                                                // Thực hiện các hành động tương ứng
+                                                Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            // Xảy ra lỗi trong quá trình đọc dữ liệu
+                                            Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                // Xử lý khi có lỗi xảy ra
+                            }
+                        });
+
+                    }
+                } else {
+                    // Nút không tồn tại trong database
+                    // TODO: Xử lý khi nút không tồn tại
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(user.getUid())) {
+                                // Nút con tồn tại
+                                // Thực hiện các hành động tương ứng
+                                MyApplication.get(getActivity()).getSongsHistoryDatabaseReference().addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        mListSong = new ArrayList<>();
+                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                            Song song = dataSnapshot.getValue(Song.class);
+                                            if (song == null) {
+                                                return;
+                                            }
+                                            mListSong.add(0, song);
+                                        }
+
+                                        displayListAllSongs();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+                                    }
+                                });
+
+                            } else {
+                                // Nút con không tồn tại
+                                // Thực hiện các hành động tương ứng
+                                Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // Xảy ra lỗi trong quá trình đọc dữ liệu
+                            Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
+            }
+        });
+
+
+    }
+    //được sử dụng để hiển thị danh sách tất cả các bài hát lên giao diện người dùng.
+    private void displayListAllSongs() {
+        if (getActivity() == null) {
+            return;
+        }
+        LinearLayoutManager layoutManager = new LinearLayoutManager(mainActivity);
+        rcvHistory.setLayoutManager(layoutManager);
+
+        SongAdapter songAdapter = new SongAdapter(mListSong, this::goToSongDetail);
+        rcvHistory.setAdapter(songAdapter);
+    }
+    //được sử dụng để chuyển đến giao diện chi tiết của một bài hát.
+    private void goToSongDetail(@NonNull Song song) {
+        MusicService.clearListSongPlaying();
+        MusicService.mListSongPlaying.add(song);
+        MusicService.isPlaying = false;
+        GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+        GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+    }
+
+    //được sử dụng để thiết lập các lắng nghe cho các sự kiện.
+    //thiết lập lắng nghe cho sự kiện nhấp chuột vào nút phát tất cả các bài hát.
+    //Khi nút này được nhấp chuột, chúng ta sẽ thiết lập lại danh sách các bài hát đang phát và thêm tất cả các bài hát trong danh sách bài hát hiện tại vào danh sách các bài hát đang phát. Sau đó, chúng ta sẽ khởi động dịch vụ âm nhạc và chuyển đến giao diện chi tiết của bài hát.
+    private void initListener() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity == null || activity.getActivityMainBinding() == null) {
+            return;
+        }
+
+        activity.getActivityMainBinding().header.layoutPlayAll.setOnClickListener(v -> {
+            MusicService.clearListSongPlaying();
+            MusicService.mListSongPlaying.addAll(mListSong);
+            MusicService.isPlaying = false;
+            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+        });
+
+        // Back
+    }
+
+
+
+    private void getListSongFromFirebase(String key) {
+        if (getActivity() == null) {
+            return;
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Toast.makeText(getActivity(), "Chưa đăng nhập tài khoản", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(user.getUid())) {
+                    // Nút con tồn tại
+                    // Thực hiện các hành động tương ứng
+                    MyApplication.get(getActivity()).getSongsHistoryDatabaseReference().addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            mListSong = new ArrayList<>();
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                Song song = dataSnapshot.getValue(Song.class);
+                                if (song == null) {
+                                    return;
+                                }
+
+                                if (StringUtil.isEmpty(key)) {
+                                    mListSong.add(0, song);
+                                } else {
+                                    if (GlobalFuntion.getTextSearch(song.getTitle()).toLowerCase().trim()
+                                            .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                                            || GlobalFuntion.getTextSearch(song.getArtist()).toLowerCase().trim()
+                                            .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                                            || GlobalFuntion.getTextSearch(song.getGenre()).toLowerCase().trim()
+                                            .contains(GlobalFuntion.getTextSearch(key).toLowerCase().trim())
+                                    ) {
+                                        mListSong.add(0, song);
+                                    }
+                                }
+                            }
+
+//                            displayListPopularSongs();
+                            displayListNewSongs();
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            GlobalFuntion.showToastMessage(getActivity(), getString(R.string.msg_get_date_error));
+                        }
+                    });
+
+                } else {
+                    // Nút con không tồn tại
+                    // Thực hiện các hành động tương ứng
+                    Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xảy ra lỗi trong quá trình đọc dữ liệu
+                Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void displayListPopularSongs() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        SongGridAdapter songGridAdapter = new SongGridAdapter(getListPopularSongs(), this::goToSongDetail);
+    }
+    private List<Song> getListPopularSongs() {
+        List<Song> list = new ArrayList<>();
+        if (mListSong == null || mListSong.isEmpty()) {
+            return list;
+        }
+        List<Song> allSongs = new ArrayList<>(mListSong);
+        Collections.sort(allSongs, (song1, song2) -> song2.getCount() - song1.getCount());
+        for (Song song : allSongs) {
+            if (list.size() < Constant.MAX_COUNT_POPULAR) {
+                list.add(song);
+            }
+        }
+        return list;
+    }
+
+    private void displayListNewSongs() {
+        if (getActivity() == null) {
+            return;
+        }
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 1);
+        rcvHistory.setLayoutManager(layoutManager);
+
+        SongAdapter songAdapter = new SongAdapter(getListNewSongs(), this::goToSongDetail);
+        rcvHistory.setAdapter(songAdapter);
+    }
+    private List<Song> getListNewSongs() {
+        List<Song> list = new ArrayList<>();
+        if (mListSong == null || mListSong.isEmpty()) {
+            return list;
+        }
+        for (Song song : mListSong) {
+            if (song.isLatest() && list.size() < Constant.MAX_COUNT_LATEST) {
+                list.add(song);
+            }
+        }
+        return list;
+    }
+
 
 
 }

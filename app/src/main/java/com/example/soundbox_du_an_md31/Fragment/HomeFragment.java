@@ -1,6 +1,13 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import static android.content.Context.ALARM_SERVICE;
+
+
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +32,7 @@ import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
+import com.example.soundbox_du_an_md31.Service.MusicReceiver;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentHomeBinding;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
@@ -37,6 +45,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
+
+
+
     private ProgressDialog progressDialog;
 
     private FragmentHomeBinding mFragmentHomeBinding;
@@ -252,5 +263,9 @@ public class HomeFragment extends Fragment {
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
+    }
 }

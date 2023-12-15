@@ -202,9 +202,10 @@ public class ProfileFragment extends Fragment {
 
         if (name == null) {
             tv_name.setVisibility(View.GONE);
-            tv_email.setVisibility(View.GONE);
 
-        } else {
+        }else if(email == null){
+            tv_name.setVisibility(View.GONE);
+        }else {
             tv_name.setVisibility(View.VISIBLE);
             tv_email.setVisibility(View.VISIBLE);
             tv_name.setText(name);

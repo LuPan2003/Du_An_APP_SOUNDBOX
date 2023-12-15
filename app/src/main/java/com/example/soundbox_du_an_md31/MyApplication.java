@@ -61,6 +61,11 @@ public class MyApplication extends Application {
         return mFirebaseDatabase.getReference("/album/"+user.getUid());
     }
 
+    public DatabaseReference getSongsHistoryDatabaseReference() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return mFirebaseDatabase.getReference("/history/"+user.getUid());
+    }
+
     //trả về một tham chiếu đến cơ sở dữ liệu Firebase lưu trữ phản hồi của người dùng.
     public DatabaseReference getFeedbackDatabaseReference() {
         return mFirebaseDatabase.getReference("/feedback");

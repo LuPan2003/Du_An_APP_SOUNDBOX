@@ -1,17 +1,18 @@
-﻿package com.example.soundbox_du_an_md31.Activity;
+package com.example.soundbox_du_an_md31.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.soundbox_du_an_md31.Model.CreateOrder;
+import com.example.soundbox_du_an_md31.Model.CreateOrderZaloPay;
 import com.example.soundbox_du_an_md31.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,25 +21,31 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import kotlinx.coroutines.GlobalScope;
+import vn.zalopay.sdk.Environment;
 import vn.zalopay.sdk.ZaloPayError;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
 
 public class TestZaloPay extends AppCompatActivity {
-
-    private AppCompatButton btn1month,btn6month,btn12month;
+    private AppCompatButton btn1month, btn6month, btn12month;
     private ImageView btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_zalo_pay);
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
         btn1month = findViewById(R.id.premium_1month);
         btn6month = findViewById(R.id.premium_6month);
         btn12month = findViewById(R.id.premium_12month);
@@ -69,8 +76,8 @@ public class TestZaloPay extends AppCompatActivity {
             }
         });
     }
-    private void requestZalo(int amount) {
 
+    private void requestZalo(int amount) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -100,7 +107,6 @@ public class TestZaloPay extends AppCompatActivity {
                         data.put("isVIP", true);
                         data.put("startTime", currentDate);
                         data.put("endTime", newDate);
-                        data.put("isLocked",true);
                         data.put("amount",amount);
                         reference.updateChildren(data);
                         Toast.makeText(TestZaloPay.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
@@ -123,6 +129,7 @@ public class TestZaloPay extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
