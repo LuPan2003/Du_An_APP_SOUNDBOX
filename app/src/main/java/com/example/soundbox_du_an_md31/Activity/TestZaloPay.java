@@ -1,8 +1,5 @@
 package com.example.soundbox_du_an_md31.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -11,12 +8,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+
 import com.example.soundbox_du_an_md31.Model.CreateOrder;
 import com.example.soundbox_du_an_md31.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
@@ -49,21 +53,26 @@ public class TestZaloPay extends AppCompatActivity {
         btn1month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(10000,1);
+                // Kiểm tra tài khoản isVIP trước khi thanh toán
+                checkUserIsVIP(10000, 1);
             }
         });
         btn6month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(50000,6);
+                // Kiểm tra tài khoản isVIP trước khi thanh toán
+                checkUserIsVIP(50000, 6);
             }
         });
+
         btn12month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestZalo(100000,12);
+                // Kiểm tra tài khoản isVIP trước khi thanh toán
+                checkUserIsVIP(100000, 12);
             }
         });
+
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +81,37 @@ public class TestZaloPay extends AppCompatActivity {
             }
         });
     }
+    private void showVIPToast() {
+        Toast.makeText(TestZaloPay.this, "Tài khoản của bạn đã là tài khoản VIP.", Toast.LENGTH_SHORT).show();
+    }
+    private void checkUserIsVIP(int amount, int month) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (user != null) {
+            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
+            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
+                    if (isVIP != null && isVIP) {
+                        // Người dùng đã là VIP, hiển thị thông báo
+                        showVIPToast(); // hoặc showVIPAlertDialog() nếu bạn muốn sử dụng AlertDialog
+                    } else {
+                        // Người dùng không phải là VIP, tiếp tục với quy trình thanh toán
+                        requestZalo(amount, month);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Xử lý lỗi đọc dữ liệu từ cơ sở dữ liệu
+                }
+            });
+        } else {
+            // Người dùng không đăng nhập, xử lý tương ứng nếu cần
+        }
+    }
     private void initUI(){
         btn1month = findViewById(R.id.premium_1month);
         btn6month = findViewById(R.id.premium_6month);

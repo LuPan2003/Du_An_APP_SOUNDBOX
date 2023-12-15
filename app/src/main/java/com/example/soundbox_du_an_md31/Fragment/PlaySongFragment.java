@@ -145,6 +145,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         mFragmentPlaySongBinding.imgBlocked.setOnClickListener(v -> openvolum());
         mFragmentPlaySongBinding.imgStopwatch.setOnClickListener(v -> showTimerDialog());
         mFragmentPlaySongBinding.btnDownload.setOnClickListener(v -> download());
+        mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> shareCurrentSong());
         // Đăng ký BroadcastReceiver
         IntentFilter filter = new IntentFilter("MUSIC_SHUTDOWN_ACTION");
         requireActivity().registerReceiver(musicShutdownReceiver, filter);
@@ -309,7 +310,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        mFragmentPlaySongBinding.sharePlay.setOnClickListener(v -> sharePlay());
+
 
         heartred.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,33 +537,27 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 //        CommentBottomSheetFragment commentFragment = new CommentBottomSheetFragment();
 //        commentFragment.show(getChildFragmentManager(), commentFragment.getTag());
 //    }
+private void shareCurrentSong() {
+    Song currentSong = MusicService.mListSongPlaying.get(mSongPosition);
 
-    private void sharePlay() {
-        if (MusicService.mListSongPlaying != null && !MusicService.mListSongPlaying.isEmpty()) {
-            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+    if (currentSong != null) {
+        // Tạo một Intent để chia sẻ thông tin bài hát đang phát
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, generateSongShareText(currentSong));
 
-            if (currentSong != null && currentSong.getUrl() != null) {
-                // Tạo một Intent để chia sẻ bài hát
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("audio/*");
-
-                // Tạo một Uri từ đường dẫn của bài hát
-                Uri songUri = Uri.parse(currentSong.getUrl());
-                shareIntent.putExtra(Intent.EXTRA_STREAM, songUri);
-
-                // Tùy chỉnh tiêu đề khi hiển thị danh sách ứng dụng chia sẻ
-                String shareTitle = "Chia sẻ bài hát: " + currentSong.getTitle();
-                startActivity(Intent.createChooser(shareIntent, shareTitle));
-            } else {
-                // Xử lý trường hợp không có bài hát hiện tại hoặc không có đường dẫn
-                // Hiển thị thông báo hoặc xử lý tương ứng với trạng thái này
-            }
-        } else {
-            // Xử lý trường hợp không có danh sách bài hát hoặc danh sách đang rỗng
-            // Hiển thị thông báo hoặc xử lý tương ứng với trạng thái này
-        }
+        // Bắt đầu Activity chia sẻ
+        startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát nhạc"));
+    } else {
+        Toast.makeText(getActivity(), "Không có thông tin bài hát để chia sẻ.", Toast.LENGTH_SHORT).show();
     }
+}
 
+    private String generateSongShareText(Song song) {
+        return "Chia sẽ bài hát nhạc trẻ:\n" +
+                song.getTitle() + " - " + song.getArtist() + "\n" +
+                song.getUrl() + "\n";
+    }
 
     private void initControl() {
         mTimer = new Timer();
@@ -782,7 +777,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private interface Callback<T> {
+    public interface Callback<T> {
         void onResult(T result);
     }
 
