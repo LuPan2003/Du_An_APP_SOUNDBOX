@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ public class ChangePasswordFragment extends Fragment {
     private ImageView icon_back;
 
     private Button btnUpdate;
-    private TextInputEditText emailXacThuc, currentPass, newPassWord, reNewPass;
+    private EditText emailXacThuc, currentPass, newPassWord, reNewPass;
     public static final String TAG = ChangeInformationFragment.class.getName();
 
     @Override

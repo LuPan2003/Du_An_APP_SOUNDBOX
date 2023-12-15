@@ -6,26 +6,54 @@
     tools:context=".Fragment.LibraryLoginFragment"
     android:orientation="vertical"
     >
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Vui lòng đăng nhập"
-        android:textSize="22sp"
-        android:textStyle="bold"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginTop="50dp"
-        />
-    <Button
-        android:id="@+id/btn_login"
+        android:elevation="4dp"
+        android:layout_marginBottom="8dp"
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/tv_header"
+            android:gravity="center"
+            android:text="Library"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginLeft="10dp"
+            />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:textAlignment="viewStart"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_background_white"
-        android:text="Log In" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bạn chưa đăng nhập !"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            />
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:textAlignment="viewStart"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_background_white"
+            android:text="Log In" />
+    </LinearLayout>
+
 
 </LinearLayout>

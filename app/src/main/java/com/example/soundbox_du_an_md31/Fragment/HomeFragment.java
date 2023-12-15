@@ -1,14 +1,6 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
-import static android.content.Context.ALARM_SERVICE;
-
-
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -32,7 +24,6 @@ import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
 import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
-import com.example.soundbox_du_an_md31.Service.MusicReceiver;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentHomeBinding;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
@@ -45,9 +36,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-
-
-
     private ProgressDialog progressDialog;
 
     private FragmentHomeBinding mFragmentHomeBinding;
@@ -112,6 +100,55 @@ public class HomeFragment extends Fragment {
 //            }
 //            return false;
 //        });
+        mFragmentHomeBinding.btnNhactre.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openTremusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhacrap.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openRapmusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhachouse.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openHousemusic();
+            }
+        });
+        mFragmentHomeBinding.btnNhacedm.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openEdmmusic();
+            }
+        });
+
+        mFragmentHomeBinding.btnViet.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openVietnammusic();
+            }
+        });
+        mFragmentHomeBinding.btnTrung.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openChinesemusic();
+            }
+        });
+        mFragmentHomeBinding.btnHanquoc.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openKoreanmusic();
+            }
+        });
+        mFragmentHomeBinding.btnUsuk.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.openUsukmusic();
+            }
+        });
 
         mFragmentHomeBinding.layoutViewAllPopular.setOnClickListener(v -> {
             MainActivity mainActivity = (MainActivity) getActivity();
@@ -263,9 +300,5 @@ public class HomeFragment extends Fragment {
         GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-    }
 }

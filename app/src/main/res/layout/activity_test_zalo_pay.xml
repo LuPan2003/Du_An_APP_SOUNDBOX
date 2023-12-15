@@ -5,23 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.TestZaloPay"
-    android:background="#fff"
-    >
+    android:background="#fff">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:elevation="4dp"
         android:gravity="center"
         android:id="@+id/header"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp">
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark">
 
         <ImageView
             android:id="@+id/icon_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_back_ios_24_black" />
+            android:src="@drawable/ic_arrow_back_24_white" />
 
         <TextView
             android:id="@+id/tv_header"
@@ -31,7 +32,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Thanh toán bằng Zalo pay"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>

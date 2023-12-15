@@ -33,17 +33,25 @@ import com.example.soundbox_du_an_md31.Fragment.AllSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.AppFeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
+import com.example.soundbox_du_an_md31.Fragment.ChinesemusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.DangkinhacFragment;
+import com.example.soundbox_du_an_md31.Fragment.EdmmusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
+import com.example.soundbox_du_an_md31.Fragment.HousemusicFragment;
+import com.example.soundbox_du_an_md31.Fragment.KoreanmusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryFragment;
 import com.example.soundbox_du_an_md31.Fragment.LibraryLoginFragment;
 import com.example.soundbox_du_an_md31.Fragment.ListSongFavoriteFragment;
+import com.example.soundbox_du_an_md31.Fragment.MusicrapFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.NhacVipFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.PremiumFragment;
 import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
+import com.example.soundbox_du_an_md31.Fragment.UsukFragment;
+import com.example.soundbox_du_an_md31.Fragment.VietnamesemusicFragment;
+import com.example.soundbox_du_an_md31.Fragment.YoungmusicFragment;
 import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
@@ -70,12 +78,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 
-import vn.zalopay.sdk.ZaloPaySDK;
-
 
 @SuppressLint("NonConstantResourceId")
 public class MainActivity extends BaseActivity implements View.OnClickListener  {
-    private AdView mAdView; // Đảm bảo rằng bạn đã khai báo biến mAdView
+    private AdView mAdView;
     InterstitialAd mInterstitialAd;
     public static final int TYPE_HOME = 1;
     public static final int MY_REQUEST_CODE= 10;
@@ -87,6 +93,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public static final int TYPE_NEW_SONGS = 5;
     public static final int TYPE_FEEDBACK = 6;
     public static final int TYPE_CONTACT = 7;
+    public static final int TYPE_VIETNAM_SONGS = 9;
+    public static final int TYPE_TRUNGQUOC_SONGS = 10;
+    public static final int TYPE_HANQUOC_SONGS = 11;
+    public static final int TYPE_USUK_SONGS = 12;
+    public static final int TYPE_TRE_SONGS = 13;
+    public static final int TYPE_RAP_SONGS = 14;
+    public static final int TYPE_HOUSE_SONGS = 15;
+    public static final int TYPE_EDM_SONGS = 15;
 //
     private int mTypeScreen = TYPE_HOME;
 //
@@ -135,6 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //        mAdView.loadAd(adRequest);
 
 
+        checkVip();
 
         FirebaseMessaging.getInstance().subscribeToTopic("News")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -203,7 +218,44 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         mActivityMainBinding.layoutBottom.layoutText.setOnClickListener(this);
         mActivityMainBinding.layoutBottom.imgSong.setOnClickListener(this);
     }
+    public void openTremusic() {
+        replaceFragment(new YoungmusicFragment());
+        mTypeScreen = TYPE_TRE_SONGS;
 
+    }
+    public void openRapmusic() {
+        replaceFragment(new MusicrapFragment());
+        mTypeScreen = TYPE_RAP_SONGS;
+
+    }
+    public void openHousemusic() {
+        replaceFragment(new HousemusicFragment());
+        mTypeScreen = TYPE_HOUSE_SONGS;
+
+    }
+    public void openEdmmusic() {
+        replaceFragment(new EdmmusicFragment());
+        mTypeScreen = TYPE_EDM_SONGS;
+
+    }
+    public void openVietnammusic() {
+        replaceFragment(new VietnamesemusicFragment());
+        mTypeScreen = TYPE_VIETNAM_SONGS;
+
+    }
+    public void openChinesemusic() {
+        replaceFragment(new ChinesemusicFragment());
+        mTypeScreen = TYPE_TRUNGQUOC_SONGS;
+
+    }
+    public void openKoreanmusic() {
+        replaceFragment(new KoreanmusicFragment());
+        mTypeScreen = TYPE_HANQUOC_SONGS;
+    }
+    public void openUsukmusic() {
+        replaceFragment(new UsukFragment());
+        mTypeScreen = TYPE_USUK_SONGS;
+    }
 
     public void openPopularSongsScreen() {
         replaceFragment(new PopularSongsFragment());
@@ -507,5 +559,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public void changeScreenBackgroundColor() {
         View rootView = getWindow().getDecorView().getRootView();
         rootView.setBackgroundColor(Color.BLUE);
+    }
+    public void checkVip(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Toast.makeText(this, "Bạn đang nghe nhạc với tư cách khách", Toast.LENGTH_SHORT).show();
+        }else {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference reference = database.getReference("users").child(user.getUid()).child("isVIP");
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Object value = snapshot.getValue();
+                    boolean isVIP = (boolean) value;
+                    Log.d("zzz", String.valueOf(isVIP));
+                    if(isVIP == true){
+                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách VIP", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách thường", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 }

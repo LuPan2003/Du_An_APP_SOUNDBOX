@@ -101,58 +101,53 @@ public class LoginActivity extends AppCompatActivity {
                                 if (user == null) {
                                     return;
                                 }
-                                DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
+                                // Lấy thời gian đăng nhập
+                                long loginTime = System.currentTimeMillis();
 
-// Truy cập đến nút (node) cần kiểm tra
-                                DatabaseReference booleanRef = databaseRef.child("users/"+user.getUid()+"/isLocked");
-                                // Đọc giá trị boolean từ nút đó
-                                booleanRef.addValueEventListener(new ValueEventListener() {
+                                // Cập nhật trường loginTime trong Firebase Realtime Database
+                                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+                                userRef.child("loginTime").setValue(loginTime).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        // Kiểm tra xem giá trị có tồn tại hay không
-                                        if (dataSnapshot.exists()) {
-                                            // Lấy giá trị boolean từ DataSnapshot
-                                            Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
+                                    public void onComplete(@NonNull Task<Void> updateTask) {
+                                        if (updateTask.isSuccessful()) {
+                                            // Truy cập đến nút (node) kiểm tra isLocked
+                                            DatabaseReference booleanRef = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("isLocked");
+                                            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        Boolean isLocked = dataSnapshot.getValue(Boolean.class);
+                                                        if (isLocked != null && isLocked) {
+                                                            // Tài khoản bị khóa
+                                                            Toast.makeText(LoginActivity.this, "Tài khoản bạn bị khóa !! Liên hệ qua thông tin địa chỉ tại app hỗ trợ để được hỗ trợ", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            // Tài khoản không bị khóa
+                                                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                                                            Intent loginIntent = new Intent(LoginActivity.this, MainActivity.class);
+                                                            startActivity(loginIntent);
+                                                        }
+                                                    } else {
+                                                        // Nút không tồn tại trong database
+                                                        Toast.makeText(LoginActivity.this, "Lỗi app đang bảo trì", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
 
-                                            // Kiểm tra giá trị boolean
-                                            if (booleanValue != null && booleanValue) {
-                                                // Giá trị là true
-                                                // TODO: Xử lý khi giá trị là true
-                                                Toast.makeText(LoginActivity.this, "Tài khoản bạn bị khóa !! Liên hệ qua thông tin địa chỉ tại app hỗ trợ để được hỗ trợ", Toast.LENGTH_SHORT).show();
-
-                                                finish();
-                                                onBackPressed();
-
-
-
-                                            } else {
-                                                // Giá trị là false hoặc null
-
-                                                // TODO: Xử lý khi giá trị là false hoặc null
-                                                // Thành công
-                                                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-                                                Intent login = new Intent(LoginActivity.this, MainActivity.class);
-                                                startActivity(login);
-
-                                            }
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                    // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
+                                                    Toast.makeText(LoginActivity.this, "Lỗi đọc giá trị từ Firebase", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
                                         } else {
-                                            // Nút không tồn tại trong database
-                                            // TODO: Xử lý khi nút không tồn tại
-                                            Toast.makeText(LoginActivity.this, "Lỗi app đang bảo trì", Toast.LENGTH_SHORT).show();
-
+                                            // Lỗi khi cập nhật loginTime
+                                            Toast.makeText(LoginActivity.this, "Lỗi cập nhật thời gian đăng nhập", Toast.LENGTH_SHORT).show();
                                         }
                                     }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        // Xử lý khi có lỗi xảy ra trong quá trình đọc giá trị
-                                    }
                                 });
-
                             } else {
-                            // Thất bại
+                                // Đăng nhập thất bại
                                 String error = task.getException().getMessage();
-                                Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + error, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

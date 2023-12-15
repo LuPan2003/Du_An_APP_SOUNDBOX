@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'com.example.soundbox_du_an_md31'
-    compileSdk 34
+    compileSdk 33
     buildFeatures {
         dataBinding true
     }
@@ -83,7 +83,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation'com.google.firebase:firebase-messaging'
-
     // zalo pay
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.14")

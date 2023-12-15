@@ -24,4 +24,5 @@ public class Constant {
     public static final String MUSIC_ACTION = "musicAction";
     public static final String SONG_POSITION = "songPosition";
     public static final String CHANGE_LISTENER = "change_listener";
+
 }

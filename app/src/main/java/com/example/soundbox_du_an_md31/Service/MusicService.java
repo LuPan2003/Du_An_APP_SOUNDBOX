@@ -25,9 +25,12 @@ import com.example.soundbox_du_an_md31.Model.Song;
 import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
@@ -272,7 +275,52 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         sendBroadcastChangeListener();
         changeCountViewSong();
         // Lưu thời điểm bắt đầu nghe bài hát vào Firebase
-//        saveListenTimestampToFirebase();
+        saveListenTimestampToFirebase();
+        saveUserToRankingTable();
+    }
+    private String getCurrentUserId() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        return (user != null) ? user.getUid() : null;
+    }
+    private void saveUserToRankingTable() {
+        String userId = getCurrentUserId();
+        if (userId != null) {
+            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings");
+
+            // Lấy điểm hiện tại của người dùng từ bảng rankings
+            rankingRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    int additionalPoints = 2; // Số điểm bạn muốn thêm cho mỗi lượt nghe bài hát
+
+                    // Lấy thông tin người dùng từ Firebase Authentication (ví dụ: email và tên người dùng)
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String userEmail = (user != null) ? user.getEmail() : "";
+                    String userName = (user != null) ? user.getDisplayName() : "";
+
+                    if (dataSnapshot.exists()) {
+                        // Người dùng đã có trong bảng rankings, cập nhật điểm
+                        int currentPoints = dataSnapshot.child("point").getValue(Integer.class);
+                        int newPoints = currentPoints + additionalPoints;
+                        rankingRef.child(userId).child("point").setValue(newPoints);
+                    } else {
+                        // Người dùng chưa có trong bảng rankings, thêm mới
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("userId", userId);
+                        userData.put("userEmail", userEmail);
+                        userData.put("userName", userName);
+                        userData.put("point", additionalPoints);
+
+                        rankingRef.child(userId).setValue(userData);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    // Xử lý lỗi nếu cần
+                }
+            });
+        }
     }
 
     private void saveListenTimestampToFirebase() {

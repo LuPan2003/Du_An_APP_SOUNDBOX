@@ -4,20 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Fragment.AppFeedbackFragment">
+    tools:context=".Fragment.AppFeedbackFragment"
+    android:background="@color/white">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:elevation="4dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark"
+        >
 
         <ImageView
             android:id="@+id/icon_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_back_ios_24_black" />
+            android:src="@drawable/ic_arrow_back_24_white" />
 
         <TextView
             android:id="@+id/tv_header"
@@ -26,16 +30,28 @@
             android:layout_marginRight="30dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Feedback App"
-            android:textSize="30sp"
+            android:text="Feed back"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:src="@drawable/soundboxlogo"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cảm ơn bạn đã sử dụng ứng dụng nghe nhạc của chúng tôi! Chúng tôi rất quan tâm đến ý kiến và phản hồi của bạn. Xin vui lòng chia sẻ ý kiến, góp ý hoặc báo cáo vấn đề bạn gặp phải bằng cách điền vào biểu mẫu dưới đây."
+        android:textSize="20dp"
+        android:layout_margin="10dp"
+        android:textStyle="italic"
+        android:textColor="@color/black"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="100dp"
-        android:padding="@dimen/define_dimen_10">
+        android:padding="@dimen/define_dimen_20">
 
         <TextView
             android:layout_width="wrap_content"

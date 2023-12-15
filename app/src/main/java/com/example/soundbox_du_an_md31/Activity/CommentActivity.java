@@ -10,12 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CommentActivity extends AppCompatActivity {
@@ -46,7 +45,7 @@ public class CommentActivity extends AppCompatActivity {
     private RecyclerView recyclerViewComments;
     private CommentAdapter commentAdapter;
     private List<Comment> commentList;
-
+    private HashMap<String, Boolean> userHeartsMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +79,7 @@ public class CommentActivity extends AppCompatActivity {
             finish();
             return;
         }
+
         tvBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,8 +98,10 @@ public class CommentActivity extends AppCompatActivity {
             Comment comment = commentList.get(position);
             showDeleteCommentDialog(comment);
         });
-        //Trả lời bình luận
-
+        commentAdapter.setOnHeartClickListener(position -> {
+            onHeartClick(position);
+            Toast.makeText(CommentActivity.this, "Thả tim bình luận", Toast.LENGTH_SHORT).show();
+        });
         commentAdapter.setOnReplyClickListener(position -> {
             // Kiểm tra đăng nhập
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -238,25 +240,26 @@ public class CommentActivity extends AppCompatActivity {
             Toast.makeText(this, "Không có kết nối internet. Vui lòng kiểm tra lại.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Tiếp tục với việc đăng bình luận
         String commentText = commentEditText.getText().toString().trim();
-
         if (commentText.isEmpty()) {
             return;
         }
-
         String userId = currentUser.getUid(); // Lấy ID của người dùng
         String userName = currentUser.getDisplayName(); // Lấy tên hiển thị của người dùng
         long timestamp = System.currentTimeMillis(); // Lấy thời gian hiện tại
         String commentKey = commentsRef.child(songId).push().getKey(); // Tạo khóa cho bình luận mới
+        // Tạo danh sách người dùng đã thả tim, ban đầu danh sách này sẽ rỗng
+        List<String> initialHeartedByList = new ArrayList<>();
         Comment comment = new Comment(
                 commentKey,
                 userId,
                 userName,
                 songId,
                 commentText,
-                timestamp
+                timestamp,
+                0,
+                initialHeartedByList
         );
         commentsRef.child(songId).child(commentKey).setValue(comment)
                 .addOnSuccessListener(aVoid -> {
@@ -267,7 +270,42 @@ public class CommentActivity extends AppCompatActivity {
                     Toast.makeText(CommentActivity.this, "Gửi bình luận thất bại", Toast.LENGTH_SHORT).show();
                 });
     }
+    private void onHeartClick(int position) {
+        // Kiểm tra đăng nhập
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // Người dùng chưa đăng nhập, xử lý tùy ý (ví dụ: yêu cầu đăng nhập)
+            return;
+        }
+        Comment selectedComment = commentList.get(position);
+        // Kiểm tra xem danh sách người đã thả tim đã được khởi tạo chưa
+        if (selectedComment.getHeartedBy() == null) {
+            // Nếu danh sách chưa tồn tại, tạo một danh sách mới và thêm người dùng vào đó
+            selectedComment.setHeartedBy(new ArrayList<>());
+            selectedComment.getHeartedBy().add(currentUser.getUid());
+            selectedComment.setHeartCount(selectedComment.getHeartCount() + 1);
+        }  else if (selectedComment.getHeartedBy().contains(currentUser.getUid())) {
+            // Người dùng đã thả tim, trừ đi 1 đơn vị và xóa người dùng khỏi danh sách đã thả tim
+            selectedComment.setHeartCount(selectedComment.getHeartCount() - 1);
+            selectedComment.getHeartedBy().remove(currentUser.getUid());
+        } else {
+            // Người dùng chưa thả tim, thực hiện tăng heartCount và thêm người dùng vào danh sách đã thả tim
+            selectedComment.setHeartCount(selectedComment.getHeartCount() + 1);
+            selectedComment.getHeartedBy().add(currentUser.getUid());
+        }
 
+        // Cập nhật dữ liệu trên Firebase
+        commentsRef.child(songId).child(selectedComment.getCommentId()).setValue(selectedComment)
+                .addOnSuccessListener(aVoid -> {
+                    // Cập nhật thành công, thực hiện các công việc cần thiết tại đây (ví dụ: hiển thị thông báo)
+                    Toast.makeText(CommentActivity.this, "Đã thả tim cho bình luận", Toast.LENGTH_SHORT).show();
+                    loadComments();
+                })
+                .addOnFailureListener(e -> {
+                    // Xử lý khi cập nhật thất bại (ví dụ: hiển thị thông báo lỗi)
+                    Toast.makeText(CommentActivity.this, "Lỗi khi thực hiện thả tim", Toast.LENGTH_SHORT).show();
+                });
+    }
     // Phương thức kiểm tra kết nối internet
     private boolean isOnline() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -279,7 +317,7 @@ public class CommentActivity extends AppCompatActivity {
         // Xóa danh sách bình luận cũ để tránh trùng lặp khi load lại
         commentList.clear();
         commentAdapter.notifyDataSetChanged();
-
+        userHeartsMap.clear();
         // Lắng nghe sự kiện khi có thay đổi trong danh sách bình luận
         commentsRef.child(songId).addChildEventListener(new ChildEventListener() {
             @Override
