@@ -1,5 +1,6 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,27 @@ public class PopularSongsFragment extends Fragment {
         getListPopularSongs();
         initListener();
         mFragmentPopularSongsBinding.iconBack.setOnClickListener(v -> backHome());
+        mFragmentPopularSongsBinding.sharePlay.setOnClickListener(v -> sharePlaylist());
         return mFragmentPopularSongsBinding.getRoot();
+    }
+    private void sharePlaylist() {
+        // Tạo một Intent để chia sẻ thông tin danh sách nhạc
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, generatePlaylistShareText());
+
+        // Bắt đầu Activity chia sẻ
+        startActivity(Intent.createChooser(shareIntent, "Chia sẻ danh sách nhạc"));
+    }
+    private String generatePlaylistShareText() {
+        StringBuilder shareText = new StringBuilder("Chia sẽ danh sách nhạc RAP:\n");
+
+        for (Song song : mListSong) {
+            shareText.append(song.getTitle()).append(" - ").append(song.getArtist()).append("\n");
+            shareText.append(song.getUrl()).append("\n");
+        }
+
+        return shareText.toString();
     }
     private void backHome() {
         if (getActivity() == null) {

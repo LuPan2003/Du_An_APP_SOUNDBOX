@@ -27,7 +27,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     Button btnHuy,btnSignUp;
     private FirebaseAuth mAuth;
-    private TextInputEditText email,pass,rePass;
+    private TextInputEditText email,pass,rePass , username;
     Context context = RegistrationActivity.this;
 
 
@@ -54,15 +54,15 @@ public class RegistrationActivity extends AppCompatActivity {
                 String strEmail = email.getText().toString().trim();
                 String strPass = pass.getText().toString().trim();
                 String strRePass = rePass.getText().toString().trim();
+                String strUsername = username.getText().toString().trim();
                 Log.d("zzz", "onClick: " + strEmail +","+ strPass);
-                createAccount(strEmail,strPass);
+                createAccount(strEmail,strPass , strUsername);
             }
 
         });
     }
 
-    private void createAccount(String email, String password) {
-        // [START create_user_with_email]
+    private void createAccount(String email, String password, String username) {
         progressDialog.show();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -74,38 +74,36 @@ public class RegistrationActivity extends AppCompatActivity {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             if (user != null) {
                                 String userID = user.getUid();
-                                // Lấy thời gian hiện tại
                                 long currentTime = System.currentTimeMillis();
-                                // Sử dụng ID người dùng ở đây cho mục đích xác thực hoặc quản lý thông tin người dùng.
                                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                // Tạo một node con cho người dùng với ID là userID
                                 DatabaseReference userNode = databaseReference.child("users").child(userID);
                                 userNode.child("email").setValue(user.getEmail());
                                 userNode.child("isLocked").setValue(false);
                                 userNode.child("isVIP").setValue(false);
                                 userNode.child("creationTime").setValue(currentTime);
+
+                                // Thêm dòng này để lưu trường username
+                                userNode.child("username").setValue(username);
                             } else {
                                 // Người dùng chưa đăng nhập
                             }
                             Toast.makeText(RegistrationActivity.this, "Đăng kí thành công", Toast.LENGTH_SHORT).show();
-                            // Sign in success, update UI with the signed-in user's information
-                            Intent intent = new Intent(RegistrationActivity.this,LoginActivity.class);
+                            Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
                             startActivity(intent);
-
                         } else {
-                            // If sign in fails, display a message to the user.
                             Toast.makeText(RegistrationActivity.this, "Đăng kí thất bại", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-        // [END create_user_with_email]
     }
+
     private void initUi(){
         email = findViewById(R.id.email1);
         pass = findViewById(R.id.pass1);
         rePass = findViewById(R.id.repass1);
         btnHuy = findViewById(R.id.btnHuy);
         btnSignUp = findViewById(R.id.btnSignUp);
+        username = findViewById(R.id.txtname);
     }
 
     @Override

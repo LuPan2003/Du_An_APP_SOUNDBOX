@@ -182,9 +182,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null){
                     replaceFragment(new LibraryFragment());
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
-                    fragmentTransaction.commit();
+//                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//                    fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
+//                    fragmentTransaction.commit();
                 }else{
                     replaceFragment(new LibraryLoginFragment());
                 }

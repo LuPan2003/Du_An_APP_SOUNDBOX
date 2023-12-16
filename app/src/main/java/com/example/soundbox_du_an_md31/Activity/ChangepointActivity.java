@@ -174,7 +174,7 @@ public class ChangepointActivity extends AppCompatActivity {
                                     // Kiểm tra điểm có đủ để đổi VIP không và kiểm tra trạng thái VIP
                                     if (!isVIP) {
                                         // User is not VIP, perform VIP upgrade
-                                        performVIPUpgrade(userId, userPoints, 30000, 12); // 12 tháng
+                                        performVIPUpgrade1year(userId, userPoints, 30000, 12); // 12 tháng
                                     } else {
                                         // User is already a VIP, display a message or handle as needed
                                         showAlreadyVIPMessage();
@@ -286,6 +286,7 @@ public class ChangepointActivity extends AppCompatActivity {
             userRef.child("isVIP").setValue(true);
             userRef.child("startTime").setValue(currentDate);
             userRef.child("endTime").setValue(endDate);
+            userRef.child("amount").setValue(50000);
 
             // Hiển thị thông báo hoặc cập nhật UI nếu cần
             showSuccessMessage();
@@ -314,6 +315,40 @@ public class ChangepointActivity extends AppCompatActivity {
 
             // Thực hiện logic đổi điểm thành VIP
             DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            userRef.child("isVIP").setValue(true);
+            userRef.child("amount").setValue(10000);
+            userRef.child("isVIP").setValue(true);
+            userRef.child("startTime").setValue(currentDate);
+            userRef.child("endTime").setValue(endDate);
+
+            // Hiển thị thông báo hoặc cập nhật UI nếu cần
+            showSuccessMessage();
+        } else {
+            // Hiển thị thông báo nếu điểm không đủ
+            showInsufficientPointsMessage();
+        }
+    }
+    private void performVIPUpgrade1year(String userId, int userPoints, int pointsNeeded, int numberOfMonths) {
+        // Kiểm tra xem số điểm của người dùng có đủ để đổi VIP không
+        if (userPoints >= pointsNeeded) {
+            // Trừ điểm
+            int newPoints = userPoints - pointsNeeded;
+            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
+            rankingRef.child("point").setValue(newPoints);
+
+            // Lấy ngày hiện tại
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String currentDate = sdf.format(new Date());
+
+            // Tính toán ngày kết thúc sau số tháng đặt trước
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, numberOfMonths);
+            String endDate = sdf.format(calendar.getTime());
+
+            // Thực hiện logic đổi điểm thành VIP
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            userRef.child("isVIP").setValue(true);
+            userRef.child("amount").setValue(100000);
             userRef.child("isVIP").setValue(true);
             userRef.child("startTime").setValue(currentDate);
             userRef.child("endTime").setValue(endDate);
