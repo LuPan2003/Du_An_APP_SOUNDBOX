@@ -64,10 +64,6 @@ public class PremiumFragment extends Fragment {
         icon_back = view.findViewById(R.id.icon_back);
         btnZaloPay = view.findViewById(R.id.btnZalopay);
         btnChangepoint =  view.findViewById(R.id.btnChangepoint);
-        // Zalo pay
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        ZaloPaySDK.init(2553, Environment.SANDBOX);
 
         btnZaloPay.setOnClickListener(new View.OnClickListener() {
             @Override

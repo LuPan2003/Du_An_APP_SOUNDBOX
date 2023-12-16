@@ -66,20 +66,6 @@
                 android:layout_height="30dp"
                 />
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txt_layout_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                app:startIconDrawable="@drawable/ic_abc_24"
-                >
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter name" />
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txt_layout_email"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
