@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //        mAdView.loadAd(adRequest);
 
 
-//        checkVip();
+        checkVip();
 
         FirebaseMessaging.getInstance().subscribeToTopic("News")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

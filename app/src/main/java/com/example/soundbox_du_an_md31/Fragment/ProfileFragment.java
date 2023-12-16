@@ -136,7 +136,7 @@ public class ProfileFragment extends Fragment {
                                 long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
                                 long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
 
-                                tv_daypremium.setText(String.valueOf(days) + "days");
+                                tv_daypremium.setText(String.valueOf(days) + " days");
                             }
 
                             @Override

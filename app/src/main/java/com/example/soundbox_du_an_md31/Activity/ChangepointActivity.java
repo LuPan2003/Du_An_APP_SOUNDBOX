@@ -3,8 +3,10 @@ package com.example.soundbox_du_an_md31.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,18 +25,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class ChangepointActivity extends AppCompatActivity {
-    private RecyclerView recyclerView;
     private RankingAdapter rankingAdapter;
     private AppCompatButton btn1month,btn6month,btn12month;
     private ImageView btnBack;
+    private TextView tv_point;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +48,10 @@ public class ChangepointActivity extends AppCompatActivity {
         btn1month = findViewById(R.id.premium_1month_point);
         btn6month = findViewById(R.id.premium_6month_point);
         btn12month = findViewById(R.id.premium_12month_point);
+        tv_point = findViewById(R.id.tv_point);
         btnBack = findViewById(R.id.icon_back_point);
-        recyclerView = findViewById(R.id.rcv_data);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Lấy UserId của người dùng đăng nhập
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = (user != null) ? user.getUid() : null;
-
-        if (userId != null) {
-            // Gọi hàm để lấy thông tin người dùng từ bảng rankings
-            getUserRankingInfo(userId);
-        }
-
+        getPoint();
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,349 +65,167 @@ public class ChangepointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //xữ lý 1 tháng
-                Changepointsfor1month();
+                requestPoint(500,1);
             }
         });
         btn6month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //xữ lý 6 tháng
-                Changepointsfor6month();
+                requestPoint(1500,6);
             }
         });
         btn12month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //xữ lý 1 năm
-                Changepointsfor1year();
+                requestPoint(3000,12);
             }
         });
 
     }
-    private void Changepointsfor1month() {
-        // Lấy UserId của người dùng đăng nhập
+
+    private void getPoint(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = (user != null) ? user.getUid() : null;
-
-        if (userId != null) {
-            // Lấy điểm hiện tại từ bảng rankings
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-
-            rankingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("rankings").child(user.getUid());
+        if(user != null){
+            reference.addValueEventListener(new ValueEventListener() {
+                private boolean isDataHandled = false;
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        // Người dùng có trong bảng rankings
-                        int userPoints = dataSnapshot.child("point").getValue(Integer.class);
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!isDataHandled){
+                        // hành động point
+                        Log.d("data", snapshot.toString());
+                        long pointht = snapshot.child("point").getValue(Long.class);
+                        Log.d("pointht", String.valueOf(pointht));
+                        tv_point.setText(String.valueOf(pointht) + " ĐIỂM");
 
-                        // Lấy trạng thái VIP từ bảng users
-                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot userDataSnapshot) {
-                                if (userDataSnapshot.exists()) {
-                                    boolean isVIP = userDataSnapshot.child("isVIP").getValue(Boolean.class);
-
-                                    // Kiểm tra điểm có đủ để đổi VIP không và kiểm tra trạng thái VIP
-                                    if (!isVIP) {
-                                        // User is not VIP, perform VIP upgrade
-                                        performVIPUpgrade(userId, userPoints, 500, 1); // 1 tháng
-                                    } else {
-                                        // User is already a VIP, display a message or handle as needed
-                                        showAlreadyVIPMessage();
-                                    }
-                                } else {
-                                    // Người dùng không có trong bảng users
-                                    // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                                    showNoUserInUsersMessage();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError userError) {
-                                // Xử lý lỗi nếu cần
-                            }
-                        });
-                    } else {
-                        // Người dùng không có trong bảng rankings
-                        // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                        showNoUserInRankingsMessage();
+                        isDataHandled = true;
+                    }else{
+                        Log.d("fail", "Lỗi");
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Xử lý lỗi nếu cần
+                    Log.d("error", error.toString());
                 }
             });
         }
     }
-
-    private void Changepointsfor1year() {
-        // Lấy UserId của người dùng đăng nhập
+    private void requestPoint(int point, int month){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = (user != null) ? user.getUid() : null;
-
-        if (userId != null) {
-            // Lấy điểm hiện tại từ bảng rankings
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-
-            rankingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("rankings").child(user.getUid());
+        if(user != null){
+            reference.addValueEventListener(new ValueEventListener() {
+                private boolean isDataHandled = false;
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        // Người dùng có trong bảng rankings
-                        int userPoints = dataSnapshot.child("point").getValue(Integer.class);
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (!isDataHandled){
+                        // hành động point
+                        Log.d("data", snapshot.toString());
+                        long pointht = snapshot.child("point").getValue(Long.class);
+                        Log.d("pointht", String.valueOf(pointht));
 
-                        // Lấy trạng thái VIP từ bảng users
-                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot userDataSnapshot) {
-                                if (userDataSnapshot.exists()) {
-                                    boolean isVIP = userDataSnapshot.child("isVIP").getValue(Boolean.class);
+                        if(pointht >= point){
+                            // đăng ký
+                            DatabaseReference userVIP = database.getReference("users").child(user.getUid());
+                            userVIP.addValueEventListener(new ValueEventListener() {
+                                private boolean isDataHandledAbc = false;
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (!isDataHandledAbc){
+                                        // Check vip
+                                        Boolean isVIP = snapshot.child("isVIP").getValue(Boolean.class);
+                                        if(isVIP == true) {
+//                                        Nếu là vip
+                                            Object value = snapshot.getValue();
+                                            if (value instanceof HashMap) {
+                                                DatabaseReference ref1 = database.getReference("users").child(user.getUid());
+                                                HashMap<String, Object> hashMapValue = (HashMap<String, Object>) value;
+                                                String endTimeStr = (String) hashMapValue.get("endTime");
+                                                Log.d("time", String.valueOf(endTimeStr));
+                                                long pointbandau;
+                                                if(snapshot.child("point").getValue(Long.class) != null){
+                                                    pointbandau = snapshot.child("point").getValue(Long.class);
+                                                }else{
+                                                    pointbandau = 0;
+                                                }
+                                                Log.d("amount", String.valueOf(pointbandau));
+                                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                                Date endTime = null;
+                                                try {
+                                                    endTime = dateFormat.parse(endTimeStr);
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+//                                            Thêm số tháng vào giá trị endTime
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.setTime(endTime);
+                                                calendar.add(Calendar.MONTH, month); // Thêm số tháng vào giá trị endTime
+//                                            Lấy giá trị endTime mới
+                                                String newEndTime = dateFormat.format(calendar.getTime());
 
-                                    // Kiểm tra điểm có đủ để đổi VIP không và kiểm tra trạng thái VIP
-                                    if (!isVIP) {
-                                        // User is not VIP, perform VIP upgrade
-                                        performVIPUpgrade1year(userId, userPoints, 30000, 12); // 12 tháng
-                                    } else {
-                                        // User is already a VIP, display a message or handle as needed
-                                        showAlreadyVIPMessage();
+//                                            point mới
+                                                long newPoint = pointbandau + point;
+                                                //Point
+                                                Map<String, Object> dataPoint = new HashMap<>();
+                                                long pointRank = pointht - point;
+                                                Map<String, Object> data = new HashMap<>();
+                                                data.put("isVIP", true);
+                                                data.put("endTime", newEndTime);
+                                                data.put("point",newPoint);
+                                                dataPoint.put("point",pointRank);
+                                                ref1.updateChildren(data);
+                                                reference.updateChildren(dataPoint);
+                                                Toast.makeText(ChangepointActivity.this, "Thành công", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }else{
+//                                        Không phải vip
+                                            Calendar calendar = Calendar.getInstance();
+                                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                            String currentDate = dateFormat.format(calendar.getTime());
+//                                      sau ? tháng
+                                            calendar.add(Calendar.MONTH, month);
+                                            String newDate = dateFormat.format(calendar.getTime());
+//                                        Point
+                                            Map<String, Object> dataPoint = new HashMap<>();
+                                            long newPoint = pointht - point;
+                                            Map<String, Object> data = new HashMap<>();
+                                            data.put("isVIP", true);
+                                            data.put("startTime", currentDate);
+                                            data.put("endTime", newDate);
+                                            data.put("point",point);
+                                            dataPoint.put("point",newPoint);
+                                            userVIP.updateChildren(data);
+                                            reference.updateChildren(dataPoint);
+                                            Toast.makeText(ChangepointActivity.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                                        }
+                                        isDataHandledAbc = true;
                                     }
-                                } else {
-                                    // Người dùng không có trong bảng users
-                                    // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                                    showNoUserInUsersMessage();
                                 }
-                            }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError userError) {
-                                // Xử lý lỗi nếu cần
-                            }
-                        });
-                    } else {
-                        // Người dùng không có trong bảng rankings
-                        // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                        showNoUserInRankingsMessage();
+                                }
+                            });
+                        }else{
+                            Toast.makeText(ChangepointActivity.this, "Số point không đủ, vui lòng xem thêm quảng cáo", Toast.LENGTH_SHORT).show();
+                        }
+                        isDataHandled = true;
+                    }else{
+                        Log.d("fail", "Lỗi");
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    // Xử lý lỗi nếu cần
+                    Log.d("error", error.toString());
                 }
             });
         }
     }
 
-    private void Changepointsfor6month() {
-        // Lấy UserId của người dùng đăng nhập
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = (user != null) ? user.getUid() : null;
-
-        if (userId != null) {
-            // Lấy điểm hiện tại từ bảng rankings
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-
-            rankingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        // Người dùng có trong bảng rankings
-                        int userPoints = dataSnapshot.child("point").getValue(Integer.class);
-
-                        // Lấy trạng thái VIP từ bảng users
-                        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-                        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot userDataSnapshot) {
-                                if (userDataSnapshot.exists()) {
-                                    boolean isVIP = userDataSnapshot.child("isVIP").getValue(Boolean.class);
-
-                                    // Kiểm tra điểm có đủ để đổi VIP không và kiểm tra trạng thái VIP
-                                    if (!isVIP) {
-                                        // User is not VIP, perform VIP upgrade
-                                        performVIPUpgrade6(userId, userPoints, 1500, 6); // 6 tháng
-                                    } else {
-                                        // User is already a VIP, display a message or handle as needed
-                                        showAlreadyVIPMessage();
-                                    }
-                                } else {
-                                    // Người dùng không có trong bảng users
-                                    // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                                    showNoUserInUsersMessage();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError userError) {
-                                // Xử lý lỗi nếu cần
-                            }
-                        });
-                    } else {
-                        // Người dùng không có trong bảng rankings
-                        // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                        showNoUserInRankingsMessage();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    // Xử lý lỗi nếu cần
-                }
-            });
-        }
-    }
-    private void performVIPUpgrade6(String userId, int userPoints, int pointsNeeded, int numberOfMonths) {
-        // Kiểm tra xem số điểm của người dùng có đủ để đổi VIP không
-        if (userPoints >= pointsNeeded) {
-            // Trừ điểm
-            int newPoints = userPoints - pointsNeeded;
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-            rankingRef.child("point").setValue(newPoints);
-
-            // Lấy ngày hiện tại
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String currentDate = sdf.format(new Date());
-
-            // Tính toán ngày kết thúc sau số tháng đặt trước
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, numberOfMonths);
-            String endDate = sdf.format(calendar.getTime());
-
-            // Thực hiện logic đổi điểm thành VIP
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-            userRef.child("isVIP").setValue(true);
-            userRef.child("startTime").setValue(currentDate);
-            userRef.child("endTime").setValue(endDate);
-            userRef.child("amount").setValue(50000);
-
-            // Hiển thị thông báo hoặc cập nhật UI nếu cần
-            showSuccessMessage();
-        } else {
-            // Hiển thị thông báo nếu điểm không đủ
-            showInsufficientPointsMessage();
-        }
-    }
-
-    private void performVIPUpgrade(String userId, int userPoints, int pointsNeeded, int numberOfMonths) {
-        // Kiểm tra xem số điểm của người dùng có đủ để đổi VIP không
-        if (userPoints >= pointsNeeded) {
-            // Trừ điểm
-            int newPoints = userPoints - pointsNeeded;
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-            rankingRef.child("point").setValue(newPoints);
-
-            // Lấy ngày hiện tại
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String currentDate = sdf.format(new Date());
-
-            // Tính toán ngày kết thúc sau số tháng đặt trước
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, numberOfMonths);
-            String endDate = sdf.format(calendar.getTime());
-
-            // Thực hiện logic đổi điểm thành VIP
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-            userRef.child("isVIP").setValue(true);
-            userRef.child("amount").setValue(10000);
-            userRef.child("isVIP").setValue(true);
-            userRef.child("startTime").setValue(currentDate);
-            userRef.child("endTime").setValue(endDate);
-
-            // Hiển thị thông báo hoặc cập nhật UI nếu cần
-            showSuccessMessage();
-        } else {
-            // Hiển thị thông báo nếu điểm không đủ
-            showInsufficientPointsMessage();
-        }
-    }
-    private void performVIPUpgrade1year(String userId, int userPoints, int pointsNeeded, int numberOfMonths) {
-        // Kiểm tra xem số điểm của người dùng có đủ để đổi VIP không
-        if (userPoints >= pointsNeeded) {
-            // Trừ điểm
-            int newPoints = userPoints - pointsNeeded;
-            DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings").child(userId);
-            rankingRef.child("point").setValue(newPoints);
-
-            // Lấy ngày hiện tại
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String currentDate = sdf.format(new Date());
-
-            // Tính toán ngày kết thúc sau số tháng đặt trước
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, numberOfMonths);
-            String endDate = sdf.format(calendar.getTime());
-
-            // Thực hiện logic đổi điểm thành VIP
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-            userRef.child("isVIP").setValue(true);
-            userRef.child("amount").setValue(100000);
-            userRef.child("isVIP").setValue(true);
-            userRef.child("startTime").setValue(currentDate);
-            userRef.child("endTime").setValue(endDate);
-
-            // Hiển thị thông báo hoặc cập nhật UI nếu cần
-            showSuccessMessage();
-        } else {
-            // Hiển thị thông báo nếu điểm không đủ
-            showInsufficientPointsMessage();
-        }
-    }
-
-    private void showSuccessMessage() {
-        Toast.makeText(ChangepointActivity.this, "Đổi điểm thành công. Bạn đã trở thành VIP.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void showInsufficientPointsMessage() {
-        Toast.makeText(ChangepointActivity.this, "Bạn không đủ điểm để đổi VIP.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void showNoUserInRankingsMessage() {
-        Toast.makeText(ChangepointActivity.this, "Vui lòng nghe nhạc hoặc xem quảng cáo để đủ điểm", Toast.LENGTH_SHORT).show();
-    }
-    private void showAlreadyVIPMessage() {
-        Toast.makeText(ChangepointActivity.this, "Tài khoản của bạn đã là tài khoản VIP rồi!", Toast.LENGTH_SHORT).show();
-    }
-    private void showNoUserInUsersMessage() {
-        Toast.makeText(ChangepointActivity.this, "Vui lòng đăng nhập!", Toast.LENGTH_SHORT).show();
-    }
-    private void getUserRankingInfo(String userId) {
-        DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference("rankings");
-
-        // Lấy thông tin người dùng từ bảng rankings
-        rankingRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // Người dùng có trong bảng rankings
-                    String userName = dataSnapshot.child("userName").getValue(String.class);
-                    String userEmail = dataSnapshot.child("userEmail").getValue(String.class);
-                    int userPoints = dataSnapshot.child("point").getValue(Integer.class);
-
-                    // Hiển thị thông tin trong RecyclerView
-                    RankingItem userRankingItem = new RankingItem(userName, userEmail, userPoints);
-                    displayUserRankingInfo(userRankingItem);
-                } else {
-                    // Người dùng không có trong bảng rankings
-                    // Xử lý theo ý của bạn, có thể hiển thị một thông báo hoặc ẩn RecyclerView
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Xử lý lỗi nếu cần
-            }
-        });
-    }
-
-    private void displayUserRankingInfo(RankingItem userRankingItem) {
-        // Khởi tạo Adapter và liên kết với RecyclerView
-        List<RankingItem> userRankingList = new ArrayList<>();
-        userRankingList.add(userRankingItem);
-        rankingAdapter = new RankingAdapter(userRankingItem);
-        recyclerView.setAdapter(rankingAdapter);
-    }
 }

@@ -27,7 +27,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     Button btnHuy,btnSignUp;
     private FirebaseAuth mAuth;
-    private TextInputEditText email,pass,rePass , username;
+    private TextInputEditText email,pass,rePass ;
     Context context = RegistrationActivity.this;
 
 
@@ -54,15 +54,14 @@ public class RegistrationActivity extends AppCompatActivity {
                 String strEmail = email.getText().toString().trim();
                 String strPass = pass.getText().toString().trim();
                 String strRePass = rePass.getText().toString().trim();
-                String strUsername = username.getText().toString().trim();
                 Log.d("zzz", "onClick: " + strEmail +","+ strPass);
-                createAccount(strEmail,strPass , strUsername);
+                createAccount(strEmail,strPass );
             }
 
         });
     }
 
-    private void createAccount(String email, String password, String username) {
+    private void createAccount(String email, String password) {
         progressDialog.show();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -82,8 +81,10 @@ public class RegistrationActivity extends AppCompatActivity {
                                 userNode.child("isVIP").setValue(false);
                                 userNode.child("creationTime").setValue(currentTime);
 
-                                // Thêm dòng này để lưu trường username
-                                userNode.child("username").setValue(username);
+//                                rankings
+                                DatabaseReference rankings = databaseReference.child("rankings").child(userID);
+                                rankings.child("email").setValue(user.getEmail());
+                                rankings.child("point").setValue(0);
                             } else {
                                 // Người dùng chưa đăng nhập
                             }
