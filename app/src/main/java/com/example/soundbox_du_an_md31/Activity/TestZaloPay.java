@@ -1,5 +1,9 @@
 package com.example.soundbox_du_an_md31.Activity;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -7,10 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.soundbox_du_an_md31.Model.CreateOrder;
 import com.example.soundbox_du_an_md31.R;
@@ -24,8 +24,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,26 +55,21 @@ public class TestZaloPay extends AppCompatActivity {
         btn1month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Kiểm tra tài khoản isVIP trước khi thanh toán
-                checkUserIsVIP(10000, 1);
+                requestZalo(10000,1);
             }
         });
         btn6month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Kiểm tra tài khoản isVIP trước khi thanh toán
-                checkUserIsVIP(50000, 6);
+                requestZalo(50000,6);
             }
         });
-
         btn12month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Kiểm tra tài khoản isVIP trước khi thanh toán
-                checkUserIsVIP(100000, 12);
+                requestZalo(100000,12);
             }
         });
-
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,37 +78,7 @@ public class TestZaloPay extends AppCompatActivity {
             }
         });
     }
-    private void showVIPToast() {
-        Toast.makeText(TestZaloPay.this, "Tài khoản của bạn đã là tài khoản VIP.", Toast.LENGTH_SHORT).show();
-    }
-    private void checkUserIsVIP(int amount, int month) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (user != null) {
-            DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference booleanRef = databaseRef.child("users/" + user.getUid() + "/isVIP");
-            booleanRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Boolean isVIP = dataSnapshot.getValue(Boolean.class);
-                    if (isVIP != null && isVIP) {
-                        // Người dùng đã là VIP, hiển thị thông báo
-                        showVIPToast(); // hoặc showVIPAlertDialog() nếu bạn muốn sử dụng AlertDialog
-                    } else {
-                        // Người dùng không phải là VIP, tiếp tục với quy trình thanh toán
-                        requestZalo(amount, month);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Xử lý lỗi đọc dữ liệu từ cơ sở dữ liệu
-                }
-            });
-        } else {
-            // Người dùng không đăng nhập, xử lý tương ứng nếu cần
-        }
-    }
     private void initUI(){
         btn1month = findViewById(R.id.premium_1month);
         btn6month = findViewById(R.id.premium_6month);
@@ -123,8 +90,6 @@ public class TestZaloPay extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-
-
 
         CreateOrder orderApi = new CreateOrder();
         try {
@@ -138,21 +103,80 @@ public class TestZaloPay extends AppCompatActivity {
 
                     @Override
                     public void onPaymentSucceeded(String s, String s1, String s2) {
-                        DatabaseReference reference = database.getReference("users").child(user.getUid());
-//                        Hien tai
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                        String currentDate = dateFormat.format(calendar.getTime());
-//                        sau 1 tháng
-                        calendar.add(Calendar.MONTH, month);
-                        String newDate = dateFormat.format(calendar.getTime());
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("isVIP", true);
-                        data.put("startTime", currentDate);
-                        data.put("endTime", newDate);
-                        data.put("amount",amount);
-                        reference.updateChildren(data);
-                        Toast.makeText(TestZaloPay.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                        if(user == null){
+                            Toast.makeText(getApplicationContext(), "Bạn đang nghe nhạc với tư cách khách", Toast.LENGTH_SHORT).show();
+                        }else {
+                            DatabaseReference reference = database.getReference("users").child(user.getUid());
+                            reference.addValueEventListener(new ValueEventListener() {
+                                private boolean isDataHandled = false;
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (!isDataHandled) {
+                                        // Thực hiện xử lý dữ liệu ở đây
+                                        Log.d("zzzz",snapshot.toString());
+                                        Boolean isVIP = snapshot.child("isVIP").getValue(Boolean.class);
+                                        // Kiểm tra kiểu giá trị "isVIP"
+                                        if(isVIP == true) {
+                                            Log.d("zzzz","true");
+                                            // Giá trị "isVIP" là true
+                                            Object value = snapshot.getValue();
+                                            if (value instanceof HashMap) {
+                                                DatabaseReference ref1 = database.getReference("users").child(user.getUid());
+                                                HashMap<String, Object> hashMapValue = (HashMap<String, Object>) value;
+                                                String endTimeStr = (String) hashMapValue.get("endTime");
+                                                Log.d("time", String.valueOf(endTimeStr));
+                                                long amountht = snapshot.child("amount").getValue(Long.class);
+                                                Log.d("amount", String.valueOf(amountht));
+                                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                                Date endTime = null;
+                                                try {
+                                                    endTime = dateFormat.parse(endTimeStr);
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+//                                            Thêm số tháng vào giá trị endTime
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.setTime(endTime);
+                                                calendar.add(Calendar.MONTH, month); // Thêm số tháng vào giá trị endTime
+//                                            Lấy giá trị endTime mới
+                                                String newEndTime = dateFormat.format(calendar.getTime());
+
+//                                            amount mới
+                                                int newamount = (int) (amountht + amount);
+                                                Map<String, Object> data = new HashMap<>();
+                                                data.put("isVIP", true);
+                                                data.put("endTime", newEndTime);
+                                                data.put("amount",newamount);
+                                                ref1.updateChildren(data);
+                                                Toast.makeText(TestZaloPay.this, "Oke", Toast.LENGTH_SHORT).show();
+                                            }
+                                        } else {
+                                            DatabaseReference ref2 = database.getReference("users").child(user.getUid());
+                                            Log.d("zzzz","fasle");
+                                            // Giá trị "isVIP" là false hoặc null
+                                            Calendar calendar = Calendar.getInstance();
+                                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                            String currentDate = dateFormat.format(calendar.getTime());
+//                                      sau ? tháng
+                                            calendar.add(Calendar.MONTH, month);
+                                            String newDate = dateFormat.format(calendar.getTime());
+                                            Map<String, Object> data = new HashMap<>();
+                                            data.put("isVIP", true);
+                                            data.put("startTime", currentDate);
+                                            data.put("endTime", newDate);
+                                            data.put("amount",amount);
+                                            ref2.updateChildren(data);
+                                            Toast.makeText(TestZaloPay.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                                        }
+                                        isDataHandled = true;
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.d("error",error.toString());
+                                }
+                            });
+                        }
                     }
 
                     @Override
@@ -177,4 +201,5 @@ public class TestZaloPay extends AppCompatActivity {
         super.onNewIntent(intent);
         ZaloPaySDK.getInstance().onResult(intent);
     }
+
 }

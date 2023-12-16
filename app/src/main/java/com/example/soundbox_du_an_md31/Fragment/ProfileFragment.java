@@ -40,13 +40,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 
 public class ProfileFragment extends Fragment {
     private ProgressDialog progressDialog;
     private Uri mUri;
     public static final String TAG = LibraryFragment.class.getName();
-    private ImageView icon_back, img_avatarProfile, img_changeIMG,img_changeIMGVip,settings;
-    private TextView tv_name, tv_email;
+    private ImageView icon_back, img_avatarProfile, img_changeIMG,img_changeIMGVip;
+    private TextView tv_name, tv_email,tv_daypremium;
     private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium,btn_change_background;
     private MainActivity mainActivity;
     private SharedPreferences sharedPreferences;
@@ -74,12 +80,11 @@ public class ProfileFragment extends Fragment {
         img_avatarProfile = view.findViewById(R.id.img_avatarProfile);
         tv_email = view.findViewById(R.id.tv_email);
         tv_name = view.findViewById(R.id.tv_name);
+        tv_daypremium = view.findViewById(R.id.tv_daypremium);
         btn_exit = view.findViewById(R.id.btn_exits);
         img_changeIMG = view.findViewById(R.id.img_changeImage);
-        img_changeIMG = view.findViewById(R.id.img_changeImage);
+        img_changeIMGVip = view.findViewById(R.id.changeImageVip);
 
-        img_changeIMGVip = view.findViewById(R.id.icon_setting);
-        settings = view.findViewById(R.id.img_changeImage1);
         progressDialog = new ProgressDialog(mainActivity);
 
 
@@ -106,17 +111,46 @@ public class ProfileFragment extends Fragment {
                     Boolean booleanValue = dataSnapshot.getValue(Boolean.class);
 
                     // Kiểm tra giá trị boolean
-                    if (booleanValue != null && booleanValue) {
+                    if (booleanValue == true) {
                         // Giá trị là true
                         // TODO: Xử lý khi giá trị là true
                        img_changeIMGVip.setVisibility(View.VISIBLE);
+                        DatabaseReference endTimeRef = databaseRef.child("users/"+user.getUid()+"/endTime");
+                        endTimeRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Log.d("zzz123", snapshot.toString());
+                                String endTimeStr = snapshot.getValue(String.class);
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                Date endTime = null;
+                                try {
+                                    endTime = dateFormat.parse(endTimeStr);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                // Lấy thời điểm hiện tại
+                                Calendar currentCalendar = Calendar.getInstance();
+                                Date currentTime = currentCalendar.getTime();
+
+                                // Tính số ngày giữa endTime và thời điểm hiện tại
+                                long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
+                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+
+                                tv_daypremium.setText(String.valueOf(days) + "days");
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.d("error", error.toString());
+                            }
+                        });
                     } else {
                         // Giá trị là false hoặc null
 
                         // TODO: Xử lý khi giá trị là false hoặc null
                         // Thành công
                         img_changeIMGVip.setVisibility(View.GONE);
-
+                        tv_daypremium.setVisibility(View.GONE);
 
                     }
                 } else {
