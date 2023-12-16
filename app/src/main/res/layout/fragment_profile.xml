@@ -43,6 +43,7 @@
             android:id="@+id/tv_daypremium"
             android:textSize="16sp"
             android:textColor="@color/red"
+            android:layout_marginRight="10dp"
             />
 
     </LinearLayout>

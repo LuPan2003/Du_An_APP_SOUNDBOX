@@ -48,14 +48,33 @@
         android:textColor="@color/black"
         android:layout_marginLeft="10dp"
         android:textSize="20dp"
+        android:id="@+id/tv_sodiemcuaban"
         />
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="80dp"
-        android:id="@+id/rcv_data"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/define_dimen_10"
-        android:layout_marginBottom="@dimen/define_dimen_10" />
+        android:orientation="horizontal"
+        android:layout_below="@+id/tv_sodiemcuaban"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/token"
+            />
+        <TextView
+            android:id="@+id/tv_point"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0 ĐIỂM"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="10dp"
+            />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -108,7 +127,7 @@
             android:drawableStart="@drawable/token"
             android:drawablePadding="20dp"
             android:paddingStart="20dp"
-            android:text="30000 điểm / 12 month"
+            android:text="3000 điểm / 12 month"
             android:textAlignment="viewStart"
             android:textColor="@color/black" />
         <TextView

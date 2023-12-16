@@ -125,7 +125,12 @@ public class TestZaloPay extends AppCompatActivity {
                                                 HashMap<String, Object> hashMapValue = (HashMap<String, Object>) value;
                                                 String endTimeStr = (String) hashMapValue.get("endTime");
                                                 Log.d("time", String.valueOf(endTimeStr));
-                                                long amountht = snapshot.child("amount").getValue(Long.class);
+                                                long amountht ;
+                                                if(snapshot.child("amount").getValue(Long.class) != null){
+                                                    amountht = snapshot.child("amount").getValue(Long.class);
+                                                }else{
+                                                    amountht = 0;
+                                                }
                                                 Log.d("amount", String.valueOf(amountht));
                                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                                                 Date endTime = null;
