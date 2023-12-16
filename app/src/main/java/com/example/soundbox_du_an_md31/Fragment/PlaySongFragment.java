@@ -533,25 +533,25 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         return MusicService.mListSongPlaying.get(MusicService.mSongPosition);
     }
 
-//    private void showCommentBottomSheet() {
+    //    private void showCommentBottomSheet() {
 //        CommentBottomSheetFragment commentFragment = new CommentBottomSheetFragment();
 //        commentFragment.show(getChildFragmentManager(), commentFragment.getTag());
 //    }
-private void shareCurrentSong() {
-    Song currentSong = MusicService.mListSongPlaying.get(mSongPosition);
+    private void shareCurrentSong() {
+        Song currentSong = MusicService.mListSongPlaying.get(mSongPosition);
 
-    if (currentSong != null) {
-        // Tạo một Intent để chia sẻ thông tin bài hát đang phát
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, generateSongShareText(currentSong));
+        if (currentSong != null) {
+            // Tạo một Intent để chia sẻ thông tin bài hát đang phát
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, generateSongShareText(currentSong));
 
-        // Bắt đầu Activity chia sẻ
-        startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát nhạc"));
-    } else {
-        Toast.makeText(getActivity(), "Không có thông tin bài hát để chia sẻ.", Toast.LENGTH_SHORT).show();
+            // Bắt đầu Activity chia sẻ
+            startActivity(Intent.createChooser(shareIntent, "Chia sẻ bài hát nhạc"));
+        } else {
+            Toast.makeText(getActivity(), "Không có thông tin bài hát để chia sẻ.", Toast.LENGTH_SHORT).show();
+        }
     }
-}
 
     private String generateSongShareText(Song song) {
         return "Chia sẽ bài hát nhạc trẻ:\n" +
@@ -927,20 +927,20 @@ private void shareCurrentSong() {
                 break;
         }
         Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
-                        MusicService.mPlayer.pause();
-                            isPlaying = false;
-                             mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
-                            sendBroadcastChangeListener();
-                        }
-                        // You can also add additional logic based on your music control requirements
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (MusicService.mPlayer != null && MusicService.mPlayer.isPlaying()) {
+                    MusicService.mPlayer.pause();
+                    isPlaying = false;
+                    mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
+                    sendBroadcastChangeListener();
+                }
+                // You can also add additional logic based on your music control requirements
 
-                        Toast.makeText(getContext(), "Nhạc đã được tắt theo hẹn giờ", Toast.LENGTH_SHORT).show();
-                    }
-                }, delayMillis);
+                Toast.makeText(getContext(), "Nhạc đã được tắt theo hẹn giờ", Toast.LENGTH_SHORT).show();
+            }
+        }, delayMillis);
     }
 
     private void download() {
@@ -952,27 +952,27 @@ private void shareCurrentSong() {
                     Toast.makeText(getActivity(), "Đăng ký gói premium để được tải nhạc", Toast.LENGTH_SHORT).show();
                     return;
                 }
-        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
 
-        // Kiểm tra xem bài hát hiện tại có URL hợp lệ không
-        if (currentSong == null || TextUtils.isEmpty(currentSong.getUrl())) {
-            Toast.makeText(getActivity(), "Không thể tải bài hát này", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // Sử dụng DownloadManager để tải bài hát
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentSong.getUrl()));
-        request.setTitle(currentSong.getTitle());
-        request.setDescription("Đang tải bài hát");
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, currentSong.getTitle() + ".mp3");
+                // Kiểm tra xem bài hát hiện tại có URL hợp lệ không
+                if (currentSong == null || TextUtils.isEmpty(currentSong.getUrl())) {
+                    Toast.makeText(getActivity(), "Không thể tải bài hát này", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                // Sử dụng DownloadManager để tải bài hát
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentSong.getUrl()));
+                request.setTitle(currentSong.getTitle());
+                request.setDescription("Đang tải bài hát");
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, currentSong.getTitle() + ".mp3");
 
-        DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-        if (downloadManager != null) {
-            downloadManager.enqueue(request);
-            Toast.makeText(getActivity(), "Đang tải xuống...", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity(), "Không thể tạo yêu cầu tải xuống", Toast.LENGTH_SHORT).show();
-        }
+                DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                if (downloadManager != null) {
+                    downloadManager.enqueue(request);
+                    Toast.makeText(getActivity(), "Đang tải xuống...", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Không thể tạo yêu cầu tải xuống", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

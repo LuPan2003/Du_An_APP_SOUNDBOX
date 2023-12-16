@@ -98,11 +98,12 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void initUi(){
-        email = findViewById(R.id.email1);
+        email = findViewById(R.id.email2);
         pass = findViewById(R.id.pass1);
         rePass = findViewById(R.id.repass1);
         btnHuy = findViewById(R.id.btnHuy);
         btnSignUp = findViewById(R.id.btnSignUp);
+        username = findViewById(R.id.txtname);
     }
 
     @Override

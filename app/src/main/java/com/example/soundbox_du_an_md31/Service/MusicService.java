@@ -325,7 +325,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     private void saveListenTimestampToFirebase() {
         if (mListSongPlaying != null && mSongPosition < mListSongPlaying.size()) {
-            Song currentSong = mListSongPlaying.get(mSongPosition);
+            Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
             long currentTimestamp = System.currentTimeMillis();
 
             // Chuyển đổi chuỗi timestamp thành kiểu Date

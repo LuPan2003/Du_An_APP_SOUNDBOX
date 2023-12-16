@@ -82,7 +82,6 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongGr
                                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                         holder.mItemSongGridBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
 
-                                        Toast.makeText(v.getContext(), "Thêm thành công", Toast.LENGTH_SHORT).show();
 
                                     }
                                 });

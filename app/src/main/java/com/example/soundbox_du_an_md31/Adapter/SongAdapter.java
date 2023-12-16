@@ -81,12 +81,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
                                 data.put("latest", song.isLatest());
                                 data.put("title", song.getTitle());
                                 data.put("url", song.getUrl());
+                                data.put("timestamp", song.getTimestamp());
                                 myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
                                         holder.mItemSongBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
 
-                                        Toast.makeText(v.getContext(), "Thêm thành công", Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
