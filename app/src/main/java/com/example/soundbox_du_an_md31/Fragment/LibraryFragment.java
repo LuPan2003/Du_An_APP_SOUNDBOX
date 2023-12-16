@@ -97,14 +97,15 @@ public class LibraryFragment extends Fragment {
         soLuongAlbum = view.findViewById(R.id.soLuongAlbum);
         tv_favorite = view.findViewById(R.id.tv_favorite);
         rcvHistory = view.findViewById(R.id.rcv_listHistory);
-        history = view.findViewById(R.id.layout_play_all_history);
         layout_all_2 = view.findViewById(R.id.layout_content_all1);
 
 //        rcvHistory.setNestedScrollingEnabled(false);
 
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
+        getListSongFromFirebase("");
+        getListAllSongs();
+        initListener();
         if(user == null){
             soLuongAlbum.setText("0 danh sách");
             tv_favorite.setText("0 bài hát");
@@ -147,43 +148,7 @@ public class LibraryFragment extends Fragment {
             });
         }
 
-        history.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user == null){
-                    Toast.makeText(getActivity(), "Chưa đăng nhập tài khoản", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("history");
 
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.hasChild(user.getUid())) {
-                            // Nút con tồn tại
-                            // Thực hiện các hành động tương ứng
-                            MusicService.clearListSongPlaying();
-                            MusicService.mListSongPlaying.addAll(mListSong);
-                            MusicService.isPlaying = false;
-                            GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
-                            GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
-                        } else {
-                            // Nút con không tồn tại
-                            // Thực hiện các hành động tương ứng
-                            Toast.makeText(getActivity(), "Chưa có bài hát nào", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Xảy ra lỗi trong quá trình đọc dữ liệu
-                        Toast.makeText(getActivity(), "App đang bảo trì !!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
 
 
         profile.setOnClickListener(new View.OnClickListener() {
@@ -205,9 +170,7 @@ public class LibraryFragment extends Fragment {
             }
         });
 
-        getListSongFromFirebase("");
-        getListAllSongs();
-        initListener();
+
 
         return view;
     }
@@ -221,6 +184,9 @@ public class LibraryFragment extends Fragment {
             soLuongAlbum.setText("0 danh sách");
             tv_favorite.setText("0 bài hát");
         }else{
+            getListSongFromFirebase("");
+            getListAllSongs();
+            initListener();
             Uri photoUrl = user.getPhotoUrl();
 
             Glide.with(getContext()).load(photoUrl).override(32,32).error(R.drawable.avata).into(profile);
@@ -259,6 +225,8 @@ public class LibraryFragment extends Fragment {
             });
         }
     }
+
+
     private void getListAllSongs() {
         if (getActivity() == null) {
             return;
@@ -564,6 +532,7 @@ public class LibraryFragment extends Fragment {
         }
         return list;
     }
+
 
 
 

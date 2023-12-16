@@ -135,6 +135,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/layout_play_all_history"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -143,32 +144,6 @@
                     android:textSize="@dimen/text_size_normal"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:id="@+id/layout_play_all_history"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="110dp"
-                    android:background="@drawable/bg_main_shape_corner_6_border_white"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/define_dimen_5"
-
-                    >
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_play_all_white"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/play_all"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/text_size_xsmall" />
-                </LinearLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:padding="10dp"
                     android:nestedScrollingEnabled="false"

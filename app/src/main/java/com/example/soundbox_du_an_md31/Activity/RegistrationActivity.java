@@ -104,7 +104,7 @@ public class RegistrationActivity extends AppCompatActivity {
         rePass = findViewById(R.id.repass1);
         btnHuy = findViewById(R.id.btnHuy);
         btnSignUp = findViewById(R.id.btnSignUp);
-        username = findViewById(R.id.txtname);
+
     }
 
     @Override
