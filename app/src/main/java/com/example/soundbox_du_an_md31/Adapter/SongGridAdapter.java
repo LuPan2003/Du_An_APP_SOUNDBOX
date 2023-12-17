@@ -62,32 +62,37 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongGr
                     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
                     mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                        private boolean lichSu = false;
                         @Override
                         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                            FirebaseUser user = firebaseAuth.getCurrentUser();
-                            if (user != null) {
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference("history").child(user.getUid());
-                                Map<String, Object> data = new HashMap<>();
-                                data.put("artist", song.getArtist());
-                                data.put("count", song.getCount());
-                                data.put("genre", song.getGenre());
-                                data.put("id", song.getId());
-                                data.put("image", song.getImage());
-                                data.put("latest", song.isLatest());
-                                data.put("title", song.getTitle());
-                                data.put("url", song.getUrl());
-                                myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
-                                    @Override
-                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                        holder.mItemSongGridBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
+                            if(!lichSu){
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                if (user != null) {
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef = database.getReference("history").child(user.getUid());
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("artist", song.getArtist());
+                                    data.put("count", song.getCount());
+                                    data.put("genre", song.getGenre());
+                                    data.put("id", song.getId());
+                                    data.put("image", song.getImage());
+                                    data.put("latest", song.isLatest());
+                                    data.put("title", song.getTitle());
+                                    data.put("url", song.getUrl());
+                                    myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                             iOnClickSongItemListener.onClickItemSong(song);
 
 
-                                    }
-                                });
-                            } else {
-                                Toast.makeText(v.getContext(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } else {
+                                    holder.mItemSongGridBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
+                                }
+                                lichSu = true;
                             }
+
                         }
                     });
                 }
@@ -125,32 +130,38 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongGr
                                     // TODO: Xử lý khi giá trị là true
                                     holder.mItemSongGridBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
 
+
                                     Log.d("history1", "đã vào: ");
                                     FirebaseAuth mAuth = FirebaseAuth.getInstance();
                                     mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                                        private boolean lichSu = false;
                                         @Override
                                         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                                            FirebaseUser user1 = firebaseAuth.getCurrentUser();
-                                            if (user1 != null) {
-                                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                                DatabaseReference myRef = database.getReference("history").child(user1.getUid());
-                                                Map<String, Object> data = new HashMap<>();
-                                                data.put("artist", song.getArtist());
-                                                data.put("count", song.getCount());
-                                                data.put("genre", song.getGenre());
-                                                data.put("id", song.getId());
-                                                data.put("image", song.getImage());
-                                                data.put("latest", song.isLatest());
-                                                data.put("title", song.getTitle());
-                                                data.put("url", song.getUrl());
-                                                myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
-                                                    @Override
-                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                    }
-                                                });
-                                            } else {
-                                                Toast.makeText(view.getContext(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
+                                            if(!lichSu){
+                                                FirebaseUser user1 = firebaseAuth.getCurrentUser();
+                                                if (user1 != null) {
+                                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                                    DatabaseReference myRef = database.getReference("history").child(user1.getUid());
+                                                    Map<String, Object> data = new HashMap<>();
+                                                    data.put("artist", song.getArtist());
+                                                    data.put("count", song.getCount());
+                                                    data.put("genre", song.getGenre());
+                                                    data.put("id", song.getId());
+                                                    data.put("image", song.getImage());
+                                                    data.put("latest", song.isLatest());
+                                                    data.put("title", song.getTitle());
+                                                    data.put("url", song.getUrl());
+                                                    myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
+                                                        @Override
+                                                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                        }
+                                                    });
+                                                } else {
+                                                    holder.mItemSongGridBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
+                                                }
+                                                lichSu = true;
                                             }
+
                                         }
                                     });
 

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.soundbox_du_an_md31.Activity.CommentActivity;
@@ -684,6 +685,17 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
         // Hủy đăng ký BroadcastReceiver khi Fragment bị hủy
         requireActivity().unregisterReceiver(musicShutdownReceiver);
+    }
+
+    private void switchToOtherScreen() {
+        // Kết thúc fragment hiện tại
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .remove(this)
+                .commit();
+
+        // Chuyển đến màn hình khác
+        // ...
     }
 
     @Override

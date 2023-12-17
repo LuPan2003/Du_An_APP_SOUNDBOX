@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.soundbox_du_an_md31.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -80,6 +81,8 @@ public class RegistrationActivity extends AppCompatActivity {
                                 userNode.child("isLocked").setValue(false);
                                 userNode.child("isVIP").setValue(false);
                                 userNode.child("creationTime").setValue(currentTime);
+                                userNode.child("point").setValue(0);
+                                userNode.child("amount").setValue(0);
 
 //                                rankings
                                 DatabaseReference rankings = databaseReference.child("rankings").child(userID);
@@ -90,7 +93,11 @@ public class RegistrationActivity extends AppCompatActivity {
                             }
                             Toast.makeText(RegistrationActivity.this, "Đăng kí thành công", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(RegistrationActivity.this, "Đăng kí thất bại", Toast.LENGTH_SHORT).show();
                         }

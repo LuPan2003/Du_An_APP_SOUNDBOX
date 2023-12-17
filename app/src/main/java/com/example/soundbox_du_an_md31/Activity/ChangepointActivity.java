@@ -91,20 +91,14 @@ public class ChangepointActivity extends AppCompatActivity {
         DatabaseReference reference = database.getReference("rankings").child(user.getUid());
         if(user != null){
             reference.addValueEventListener(new ValueEventListener() {
-                private boolean isDataHandled = false;
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (!isDataHandled){
                         // hành động point
                         Log.d("data", snapshot.toString());
                         long pointht = snapshot.child("point").getValue(Long.class);
                         Log.d("pointht", String.valueOf(pointht));
                         tv_point.setText(String.valueOf(pointht) + " ĐIỂM");
 
-                        isDataHandled = true;
-                    }else{
-                        Log.d("fail", "Lỗi");
-                    }
                 }
 
                 @Override
@@ -181,6 +175,8 @@ public class ChangepointActivity extends AppCompatActivity {
                                                 ref1.updateChildren(data);
                                                 reference.updateChildren(dataPoint);
                                                 Toast.makeText(ChangepointActivity.this, "Thành công", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(ChangepointActivity.this, MainActivity.class);
+                                                startActivity(intent);
                                             }
                                         }else{
 //                                        Không phải vip
@@ -202,6 +198,8 @@ public class ChangepointActivity extends AppCompatActivity {
                                             userVIP.updateChildren(data);
                                             reference.updateChildren(dataPoint);
                                             Toast.makeText(ChangepointActivity.this, "Thanh toán thành công", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(ChangepointActivity.this, MainActivity.class);
+                                            startActivity(intent);
                                         }
                                         isDataHandledAbc = true;
                                     }

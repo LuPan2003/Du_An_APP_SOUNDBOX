@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -46,6 +47,7 @@ import com.example.soundbox_du_an_md31.Fragment.ListSongFavoriteFragment;
 import com.example.soundbox_du_an_md31.Fragment.MusicrapFragment;
 import com.example.soundbox_du_an_md31.Fragment.NewSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.NhacVipFragment;
+import com.example.soundbox_du_an_md31.Fragment.PlaySongFragment;
 import com.example.soundbox_du_an_md31.Fragment.PopularSongsFragment;
 import com.example.soundbox_du_an_md31.Fragment.PremiumFragment;
 import com.example.soundbox_du_an_md31.Fragment.ProfileFragment;
@@ -103,6 +105,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public static final int TYPE_EDM_SONGS = 15;
 //
     private int mTypeScreen = TYPE_HOME;
+   private Fragment currentFragment;
 //
     private ActivityMainBinding mActivityMainBinding;
 
@@ -149,8 +152,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //        mAdView.loadAd(adRequest);
 
 
-        checkVip();
-
         FirebaseMessaging.getInstance().subscribeToTopic("News")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
@@ -161,7 +162,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                         }
 
                         // Thực hiện một hành động nào đó với kết quả, ví dụ: hiển thị Toast
-                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -170,7 +170,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
         mActivityMainBinding.bottomNavView.setBackground(null);
 
+
+
         replaceFragment(new HomeFragment());
+
 
         mActivityMainBinding.bottomNavView.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.home){
@@ -182,11 +185,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null){
                     replaceFragment(new LibraryFragment());
+                    switchToOtherScreen();
 //                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //                    fragmentTransaction.add(R.id.frame_layout,new LibraryFragment());
 //                    fragmentTransaction.commit();
                 }else{
                     replaceFragment(new LibraryLoginFragment());
+                    switchToOtherScreen();
                 }
             }else if(item.getItemId() == R.id.premimum){
                 replaceFragment(new FeedbackFragment());
@@ -202,6 +207,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
         initListener();
         displayLayoutBottom();
+    }
+
+    private void switchToOtherScreen() {
+        // Kết thúc fragment hiện tại
+        if (currentFragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(currentFragment).commit();
+            currentFragment = null;
+        }
+
+        // Chuyển đến màn hình khác
+        // ...
     }
 
 
@@ -385,6 +403,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
 
     private void checkUserIsVIP(final Callback<Boolean> callback) {
+        currentFragment= new PlaySongFragment();
+        switchToOtherScreen();
+        Log.d("close", "có vào ");
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {

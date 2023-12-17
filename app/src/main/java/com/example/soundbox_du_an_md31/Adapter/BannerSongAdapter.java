@@ -52,7 +52,49 @@ public class BannerSongAdapter extends RecyclerView.Adapter<BannerSongAdapter.Ba
         if(song.isCopyrighted() == false){
             holder.mItemBannerSongBinding.imgBannerVip.setVisibility(View.GONE);
             GlideUtils.loadUrlBanner(song.getImage(), holder.mItemBannerSongBinding.imageBanner);
-            holder.mItemBannerSongBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
+            holder.mItemBannerSongBinding.layoutItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.mItemBannerSongBinding.layoutItem.setOnClickListener(view -> iOnClickSongItemListener.onClickItemSong(song));
+
+                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+                    mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                        private boolean lichSu1= false;
+                        @Override
+                        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                            if(!lichSu1){
+                                FirebaseUser user = firebaseAuth.getCurrentUser();
+                                if (user != null) {
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef = database.getReference("history").child(user.getUid());
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("artist", song.getArtist());
+                                    data.put("count", song.getCount());
+                                    data.put("genre", song.getGenre());
+                                    data.put("id", song.getId());
+                                    data.put("image", song.getImage());
+                                    data.put("latest", song.isLatest());
+                                    data.put("title", song.getTitle());
+                                    data.put("url", song.getUrl());
+                                    data.put("timestamp", song.getTimestamp());
+                                    myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                            Log.d("lichsu", "onComplete: 111111111111");
+
+                                        }
+                                    });
+                                } else {
+
+                                }
+                                lichSu1= true;
+                            }
+
+                        }
+                    });
+                }
+            });
         }else{
             holder.mItemBannerSongBinding.imgBannerVip.setVisibility(View.GONE);
             GlideUtils.loadUrlBanner(song.getImage(), holder.mItemBannerSongBinding.imageBanner);
@@ -82,34 +124,42 @@ public class BannerSongAdapter extends RecyclerView.Adapter<BannerSongAdapter.Ba
                                 if (booleanValue != null && booleanValue) {
                                     // Giá trị là true
                                     // TODO: Xử lý khi giá trị là true
-                                    holder.mItemBannerSongBinding.layoutItem.setOnClickListener(v -> iOnClickSongItemListener.onClickItemSong(song));
+                                    holder.mItemBannerSongBinding.layoutItem.setOnClickListener(view -> iOnClickSongItemListener.onClickItemSong(song));
+
 
                                     Log.d("history1", "đã vào: ");
                                     FirebaseAuth mAuth = FirebaseAuth.getInstance();
                                     mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                                        private boolean lichSu = false;
                                         @Override
                                         public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                                            FirebaseUser user1 = firebaseAuth.getCurrentUser();
-                                            if (user1 != null) {
-                                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                                DatabaseReference myRef = database.getReference("history").child(user1.getUid());
-                                                Map<String, Object> data = new HashMap<>();
-                                                data.put("artist", song.getArtist());
-                                                data.put("count", song.getCount());
-                                                data.put("genre", song.getGenre());
-                                                data.put("id", song.getId());
-                                                data.put("image", song.getImage());
-                                                data.put("latest", song.isLatest());
-                                                data.put("title", song.getTitle());
-                                                data.put("url", song.getUrl());
-                                                myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
-                                                    @Override
-                                                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                    }
-                                                });
-                                            } else {
-                                                Toast.makeText(view.getContext(), "Bạn chưa login", Toast.LENGTH_SHORT).show();
+                                            if(!lichSu){
+                                                FirebaseUser user1 = firebaseAuth.getCurrentUser();
+                                                if (user1 != null) {
+                                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                                    DatabaseReference myRef = database.getReference("history").child(user1.getUid());
+                                                    Map<String, Object> data = new HashMap<>();
+                                                    data.put("artist", song.getArtist());
+                                                    data.put("count", song.getCount());
+                                                    data.put("genre", song.getGenre());
+                                                    data.put("id", song.getId());
+                                                    data.put("image", song.getImage());
+                                                    data.put("latest", song.isLatest());
+                                                    data.put("title", song.getTitle());
+                                                    data.put("url", song.getUrl());
+                                                    myRef.child(String.valueOf(song.getId())).setValue(data, new DatabaseReference.CompletionListener() {
+                                                        @Override
+                                                        public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+
+                                                        }
+                                                    });
+                                                } else {
+                                                    holder.mItemBannerSongBinding.layoutItem.setOnClickListener(view -> iOnClickSongItemListener.onClickItemSong(song));
+
+                                                }
+                                                lichSu = true;
                                             }
+
                                         }
                                     });
 

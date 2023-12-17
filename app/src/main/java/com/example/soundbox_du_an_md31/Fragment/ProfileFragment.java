@@ -170,9 +170,12 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
+
+                Intent intent = new Intent(mainActivity, MainActivity.class);
                 startActivity(intent);
                 mainActivity.finish();
+
+
 
             }
         });
@@ -236,9 +239,12 @@ public class ProfileFragment extends Fragment {
 
         if (name == null) {
             tv_name.setVisibility(View.GONE);
+            tv_email.setVisibility(View.VISIBLE);
+            tv_email.setText(email);
 
         }else if(email == null){
             tv_name.setVisibility(View.GONE);
+            tv_email.setVisibility(View.GONE);
         }else {
             tv_name.setVisibility(View.VISIBLE);
             tv_email.setVisibility(View.VISIBLE);
