@@ -32,7 +32,6 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Profile"
-            android:layout_marginLeft="40dp"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -40,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""
+            android:gravity="end"
             android:id="@+id/tv_daypremium"
             android:textSize="16sp"
             android:textColor="@color/red"
@@ -126,6 +126,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/card_avatar" />
 
                 <TextView
+                    android:layout_marginTop="10dp"
                     android:id="@+id/tv_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -188,16 +189,6 @@
                         android:paddingStart="20dp"
                         android:textColor="@color/black"
                         android:text="Go to Premium" />
-                    <Button
-                        android:id="@+id/btn_ChangeColor"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginStart="32dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginEnd="32dp"
-                        android:layout_marginBottom="10dp"
-                        android:background="@drawable/btn_background_white"
-                        android:text="Đổi nền" />
                     <Button
                         android:id="@+id/btn_exits"
                         android:layout_width="match_parent"

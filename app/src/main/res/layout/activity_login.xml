@@ -164,15 +164,11 @@
                 android:gravity="center"
                 >
                 <ImageView
-                    android:layout_width="70dp"
+                    android:id="@+id/img_khach"
+                    android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_margin="12dp"
-                    android:src="@drawable/google_logo"/>
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="12dp"
-                    android:src="@drawable/facebook_logo"/>
+                    android:src="@drawable/ic_person_black"/>
             </LinearLayout>
             <View
                 android:layout_width="wrap_content"

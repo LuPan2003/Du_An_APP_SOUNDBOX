@@ -1,5 +1,7 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.soundbox_du_an_md31.Activity.LoginActivity;
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.Activity.SoundSettingsActivity;
 import com.example.soundbox_du_an_md31.Adapter.ContactAdapter;
@@ -173,7 +176,31 @@ public class FeedbackFragment extends Fragment {
 
 
     public void openPremium(){
-        mainActivity.gotoPremium();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            mainActivity.gotoPremium();
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Bạn chưa đăng nhập !");
+            builder.setMessage("Bạn có muốn đăng nhập không");
+            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Xử lý sự kiện khi người dùng bấm nút Hủy
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
+
     }
 
     @Override

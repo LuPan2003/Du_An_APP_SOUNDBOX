@@ -79,6 +79,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 
 @SuppressLint("NonConstantResourceId")
@@ -151,6 +158,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 //        AdRequest adRequest = new AdRequest.Builder().build();
 //        mAdView.loadAd(adRequest);
 
+        checkVip();
 
         FirebaseMessaging.getInstance().subscribeToTopic("News")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -585,20 +593,50 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public void checkVip(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null){
-            Toast.makeText(this, "Bạn đang nghe nhạc với tư cách khách", Toast.LENGTH_SHORT).show();
+            Log.d("zzz","Khách");
         }else {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference reference = database.getReference("users").child(user.getUid()).child("isVIP");
+            DatabaseReference reference = database.getReference("users").child(user.getUid());
             reference.addValueEventListener(new ValueEventListener() {
+                private  boolean isHandle = false;
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Object value = snapshot.getValue();
-                    boolean isVIP = (boolean) value;
-                    Log.d("zzz", String.valueOf(isVIP));
-                    if(isVIP == true){
-                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách VIP", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(MainActivity.this, "Bạn đang nghe nhạc với tư cách thường", Toast.LENGTH_SHORT).show();
+                    if(!isHandle){
+                        Boolean isVIP = snapshot.child("isVIP").getValue(Boolean.class);
+                        Log.d("data", String.valueOf(isVIP));
+                        if(isVIP == true){
+                            Log.d("zzz","tài khoản vip");
+                            Object value = snapshot.getValue();
+                            if (value instanceof HashMap) {
+                                HashMap<String, Object> hashMapValue = (HashMap<String, Object>) value;
+                                String endTimeStr = (String) hashMapValue.get("endTime");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                                Date endTime = null;
+                                try {
+                                    endTime = dateFormat.parse(endTimeStr);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                // Lấy thời điểm hiện tại
+                                Calendar currentCalendar = Calendar.getInstance();
+                                Date currentTime = currentCalendar.getTime();
+                                Log.d("time","en"+endTime);
+                                Log.d("time","start"+currentTime);
+
+                                // Tính số ngày giữa endTime và thời điểm hiện tại
+                                long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
+                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) +1;
+                                Log.d("time", "day "+days);
+                                if(days <= 0){
+                                    Map<String, Object> data = new HashMap<>();
+                                    data.put("isVIP", false);
+                                    reference.updateChildren(data);
+                                }
+                            }
+                        }else{
+                            Log.d("zzz","tài khoản thường");
+                        }
+                        isHandle = true;
                     }
                 }
 

@@ -76,7 +76,6 @@ public class ProfileFragment extends Fragment {
         btn_change_information = view.findViewById(R.id.btn_change_infor);
         btn_change_password = view.findViewById(R.id.btn_change_password);
         btn_premium = view.findViewById(R.id.btn_premium);
-        btn_change_background = view.findViewById(R.id.btn_ChangeColor);
         img_avatarProfile = view.findViewById(R.id.img_avatarProfile);
         tv_email = view.findViewById(R.id.tv_email);
         tv_name = view.findViewById(R.id.tv_name);
@@ -134,7 +133,7 @@ public class ProfileFragment extends Fragment {
 
                                 // Tính số ngày giữa endTime và thời điểm hiện tại
                                 long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
-                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) +1;
 
                                 tv_daypremium.setText(String.valueOf(days) + " days");
                             }

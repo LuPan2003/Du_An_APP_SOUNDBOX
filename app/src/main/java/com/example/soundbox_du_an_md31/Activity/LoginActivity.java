@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     Button btnSignIn;
     private TextInputEditText email , password ;
     private TextView forgetpass,btnDangky;
+
+    private ImageView img_khach;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent login = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(login);
+            }
+        });
+        img_khach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -211,6 +221,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn = findViewById(R.id.btnSignIn);
         forgetpass = findViewById(R.id.tvForgetpass);
         cbLuuThongTin = findViewById(R.id.chk_remember);
+        img_khach = findViewById(R.id.img_khach);
     }
 
     @Override
