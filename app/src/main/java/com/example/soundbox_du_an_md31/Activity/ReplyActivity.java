@@ -1,9 +1,12 @@
 package com.example.soundbox_du_an_md31.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -35,6 +38,7 @@ public class ReplyActivity extends AppCompatActivity {
     private RecyclerView recyclerViewReplies;
     private ReplyAdapter replyAdapter;
     private List<ReplyComment> replyList; // Danh sách trả lời
+    private ImageView icon_back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class ReplyActivity extends AppCompatActivity {
         // Ánh xạ các thành phần UI
         editTextReply = findViewById(R.id.edit_text_reply);
         buttonPostReply = findViewById(R.id.button_post_reply);
+        icon_back = findViewById(R.id.icon_back);
         recyclerViewReplies = findViewById(R.id.recycler_view_comments);
         // Lấy dữ liệu từ Intent
         songId = getIntent().getStringExtra("SONG_ID");
@@ -59,6 +64,12 @@ public class ReplyActivity extends AppCompatActivity {
         recyclerViewReplies.setAdapter(replyAdapter);
 
         buttonPostReply.setOnClickListener(v -> postReply());
+        icon_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         replyAdapter.setOnEditClickListener(position -> {
             Log.d("replyAdapter", "zzzzzzzzzzzzzz");

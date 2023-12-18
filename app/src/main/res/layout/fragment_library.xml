@@ -114,7 +114,7 @@
                         android:id="@+id/soLuongAlbum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1 danh sách"
+                        android:text="0 danh sách"
                         android:textSize="16sp"
                         android:layout_marginLeft="10dp"
                         android:textColor="@color/black"

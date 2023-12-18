@@ -5,10 +5,39 @@
     android:layout_height="match_parent"
     android:background="#fff">
 
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingVertical="8dp"
+        android:background="@color/colorPrimaryDark">
+        <ImageView
+            android:id="@+id/icon_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_arrow_back_24_white"
+            />
+        <TextView
+            android:id="@+id/tv_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Reply comment"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
     <!-- Danh sách bình luận -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_comments"
         android:layout_width="match_parent"
+        android:layout_below="@+id/header"
+        android:layout_margin="10dp"
         android:layout_height="match_parent"
         android:layout_above="@+id/layout_comment_input"
         android:paddingBottom="8dp"/>
@@ -19,10 +48,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:padding="8dp">
+        android:padding="10dp"
+        android:layout_margin="10dp">
 
         <!-- Ô nhập trả lời -->
         <EditText
+            android:textColor="@color/black"
+            android:textColorHint="#ccc"
             android:id="@+id/edit_text_reply"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

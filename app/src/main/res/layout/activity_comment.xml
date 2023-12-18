@@ -52,12 +52,15 @@
 
     <!-- EditText để nhập bình luận mới -->
     <EditText
+        android:layout_marginHorizontal="10dp"
         android:id="@+id/etComment"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:hint="Add a comment..."
         android:background="@drawable/edittext_border"
         android:paddingStart="16dp"
+        android:textColorHint="#ccc"
+        android:textColor="@color/black"
         android:paddingEnd="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
@@ -67,6 +70,7 @@
 
     <!-- Button để đăng bình luận mới -->
     <Button
+        android:layout_marginHorizontal="10dp"
         android:id="@+id/postCommentButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
