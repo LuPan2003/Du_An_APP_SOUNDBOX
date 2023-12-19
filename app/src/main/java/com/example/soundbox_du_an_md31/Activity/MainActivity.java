@@ -81,6 +81,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -605,6 +608,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                         Boolean isVIP = snapshot.child("isVIP").getValue(Boolean.class);
                         Log.d("data", String.valueOf(isVIP));
                         if(isVIP == true){
+
                             Log.d("zzz","tài khoản vip");
                             Object value = snapshot.getValue();
                             if (value instanceof HashMap) {
@@ -622,10 +626,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                                 Date currentTime = currentCalendar.getTime();
                                 Log.d("time","en"+endTime);
                                 Log.d("time","start"+currentTime);
-
+//                                long daysRemaining = ChronoUnit.DAYS.between((Temporal) currentTime, (Temporal) endTime);
                                 // Tính số ngày giữa endTime và thời điểm hiện tại
-                                long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
-                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) +1;
+                                long diffInMillis = endTime.getTime() - currentTime.getTime();
+                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
                                 Log.d("time", "day "+days);
                                 if(days <= 0){
                                     Map<String, Object> data = new HashMap<>();

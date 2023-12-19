@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ForgotPasswordActivity extends AppCompatActivity {
     Button btnGuiEmail,btnHuy;
     private AppCompatEditText emailEditText;
+    private ImageView back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
                 overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_right);
                 finish();
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
         btnGuiEmail.setOnClickListener(new View.OnClickListener() {
@@ -83,5 +91,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.edt_email_forgot);
         btnGuiEmail=findViewById(R.id.reset_password_button);
         btnHuy = findViewById(R.id.btn_huy);
+        back = findViewById(R.id.back);
     }
 }
