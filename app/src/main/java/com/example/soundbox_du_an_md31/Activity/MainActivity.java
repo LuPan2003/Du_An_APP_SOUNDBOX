@@ -601,10 +601,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference reference = database.getReference("users").child(user.getUid());
             reference.addValueEventListener(new ValueEventListener() {
-                private  boolean isHandle = false;
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(!isHandle){
+
                         Boolean isVIP = snapshot.child("isVIP").getValue(Boolean.class);
                         Log.d("data", String.valueOf(isVIP));
                         if(isVIP == true){
@@ -640,8 +639,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                         }else{
                             Log.d("zzz","tài khoản thường");
                         }
-                        isHandle = true;
-                    }
+
                 }
 
                 @Override

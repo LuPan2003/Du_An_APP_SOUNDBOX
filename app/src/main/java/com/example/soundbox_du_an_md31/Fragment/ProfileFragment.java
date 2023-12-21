@@ -132,7 +132,7 @@ public class ProfileFragment extends Fragment {
                                 Date currentTime = currentCalendar.getTime();
 
                                 // Tính số ngày giữa endTime và thời điểm hiện tại
-                                long diffInMillis = Math.abs(currentTime.getTime() - endTime.getTime());
+                                long diffInMillis = endTime.getTime() - currentTime.getTime();
                                 long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) +1;
 
                                 tv_daypremium.setText(String.valueOf(days) + " days");
