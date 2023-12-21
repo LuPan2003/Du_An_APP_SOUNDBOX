@@ -3,6 +3,7 @@ package com.example.soundbox_du_an_md31.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,18 @@ import com.example.soundbox_du_an_md31.MyApplication;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentHomeBinding;
+import com.example.soundbox_du_an_md31.utils.GlideUtils;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class HomeFragment extends Fragment {
     private ProgressDialog progressDialog;
@@ -41,6 +46,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding mFragmentHomeBinding;
 
     private List<Song> mListSong;
+    private List<Song> mListRecommended;
     private List<Song> mListSongBanner;
 
     private final Handler mHandlerBanner = new Handler();
@@ -64,8 +70,9 @@ public class HomeFragment extends Fragment {
         mFragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false);
         progressDialog = new ProgressDialog(getActivity());
         getListSongFromFirebase("");
+        getRecommendedSongs();
         initListener();
-
+//
         return mFragmentHomeBinding.getRoot();
     }
 
@@ -293,6 +300,77 @@ public class HomeFragment extends Fragment {
 //    }
 
     private void goToSongDetail(@NonNull Song song) {
+        MusicService.clearListSongPlaying();
+        MusicService.mListSongPlaying.add(song);
+        MusicService.isPlaying = false;
+        GlobalFuntion.startMusicService(getActivity(), Constant.PLAY, 0);
+        GlobalFuntion.startActivity(getActivity(), PlayMusicActivity.class);
+    }
+
+//    Gợi ý bài hát
+    private void getRecommendedSongs(){
+        DatabaseReference songsRef = FirebaseDatabase.getInstance().getReference().child("songs");
+        int numberOfSongs = 5;
+        songsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (MusicService.mListSongPlaying == null || MusicService.mListSongPlaying.isEmpty()) {
+                    Log.d("song", "ko có");
+                    List<Song> allSongs = new ArrayList<>();
+
+                    // Lặp qua tất cả các bài hát trong dataSnapshot
+                    for (DataSnapshot songSnapshot : snapshot.getChildren()) {
+                        Song song = songSnapshot.getValue(Song.class);
+                        allSongs.add(song);
+                    }
+
+                    List<Song> recommendedSongs = new ArrayList<>();
+                    Random random = new Random();
+                    while (recommendedSongs.size() < numberOfSongs && !allSongs.isEmpty()) {
+                        int randomIndex = random.nextInt(allSongs.size());
+                        recommendedSongs.add(allSongs.remove(randomIndex));
+                    }
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                    mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                    SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                    mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
+                }else {
+                    Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                    List<Song> allSongs = new ArrayList<>();
+
+                // Lặp qua tất cả các bài hát trong dataSnapshot
+                    for (DataSnapshot songSnapshot : snapshot.getChildren()) {
+                        Song song = songSnapshot.getValue(Song.class);
+                        allSongs.add(song);
+                    }
+                    List<Song> songsInGenre = new ArrayList<>();
+                    String theloai = currentSong.getGenre();
+
+                    for (Song song : allSongs) {
+                        if (song != null && theloai.equals(song.getGenre())) {
+                            songsInGenre.add(song);
+                        }
+                    }
+                    List<Song> recommendedSongs = new ArrayList<>();
+                    Random random = new Random();
+                    while (recommendedSongs.size() < numberOfSongs && !songsInGenre.isEmpty()) {
+                        int randomIndex = random.nextInt(songsInGenre.size());
+                        recommendedSongs.add(songsInGenre.remove(randomIndex));
+                    }
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                    mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                    SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                    mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void goToSong(@NonNull Song song) {
         MusicService.clearListSongPlaying();
         MusicService.mListSongPlaying.add(song);
         MusicService.isPlaying = false;
