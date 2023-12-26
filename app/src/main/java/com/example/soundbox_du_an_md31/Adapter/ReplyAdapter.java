@@ -1,11 +1,15 @@
 package com.example.soundbox_du_an_md31.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +19,11 @@ import com.example.soundbox_du_an_md31.Model.ReplyComment;
 import com.example.soundbox_du_an_md31.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,6 +79,27 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
             holder.textReply.setText(reply.getReplyText());
             Log.d("ReplyAdapter", reply.getReplyText());
             holder.textTimestamp.setText(formatTimestamp(reply.getTimestamp()));
+//            avatar
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(reply.getUserId()).child("avatar");
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+//                    String base64Image = snapshot.toString();
+//                    img_avatarProfile.setImageURI(Uri.parse(base64Image));
+                        Log.d("quy1", snapshot.toString());
+                        String base64Image = (String) snapshot.getValue();
+                        byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                        holder.avatar.setImageBitmap(bitmap);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
             // Kiểm tra xem người dùng hiện tại có phải là chủ sở hữu của bình luận không
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -91,6 +121,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
     public class ReplyViewHolder extends RecyclerView.ViewHolder {
         TextView textUsername, textReply, textTimestamp;
         TextView editButton, deleteButton;
+        ImageView avatar;
         private int currentPosition = RecyclerView.NO_POSITION;
 
         public ReplyViewHolder(@NonNull View itemView) {
@@ -100,6 +131,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
             textTimestamp = itemView.findViewById(R.id.text_view_timestamp);
             editButton = itemView.findViewById(R.id.editButtonreply);
             deleteButton = itemView.findViewById(R.id.deleteButtonreply);
+            avatar = itemView.findViewById(R.id.icon_profile);
             // Thêm các thành phần giao diện người dùng cho mỗi mục trong danh sách trả lời
         }
         public void bind(int position) {

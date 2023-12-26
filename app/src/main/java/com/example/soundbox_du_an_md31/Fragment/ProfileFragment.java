@@ -1,11 +1,16 @@
 package com.example.soundbox_du_an_md31.Fragment;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +22,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +36,7 @@ import com.bumptech.glide.Glide;
 
 import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.R;
+import com.example.soundbox_du_an_md31.utils.GlideUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,10 +48,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -56,6 +69,7 @@ public class ProfileFragment extends Fragment {
     private AppCompatButton btn_change_information, btn_change_password, btn_exit, btn_premium,btn_change_background;
     private MainActivity mainActivity;
     private SharedPreferences sharedPreferences;
+    private static final int PICK_IMAGE_REQUEST = 1;
 
 
 
@@ -222,7 +236,13 @@ public class ProfileFragment extends Fragment {
                 mainActivity.gotoPremium();
             }
         });
-        initListener();
+        img_changeIMG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGallery();
+            }
+        });
+
         return view;
     }
 
@@ -250,64 +270,79 @@ public class ProfileFragment extends Fragment {
             tv_name.setText(name);
             tv_email.setText(email);
         }
-
-        Glide.with(getContext()).load(photoUrl).override(120, 120).error(R.drawable.avata).into(img_avatarProfile);
-
-
-    }
-
-    private void initListener() {
-        img_changeIMG.setOnClickListener(new View.OnClickListener() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).child("avatar");
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                onClickRequestPermission();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+//                    String base64Image = snapshot.toString();
+//                    img_avatarProfile.setImageURI(Uri.parse(base64Image));
+                    Log.d("quy1", snapshot.toString());
+                    String base64Image = (String) snapshot.getValue();
+                    byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                    img_avatarProfile.setImageBitmap(bitmap);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
+
+
+    }
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    private void onClickRequestPermission() {
-        MainActivity mainActivity = (MainActivity) getActivity();
-        if (mainActivity == null) {
-            return;
-        }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            mainActivity.openGallery();
-            return;
-        }
-        if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            mainActivity.openGallery();
-        } else {
-            String[] permission = {Manifest.permission.READ_EXTERNAL_STORAGE};
-            getActivity().requestPermissions(permission, MainActivity.MY_REQUEST_CODE);
-        }
-    }
-
-    public void setImageBitmap(Bitmap imageBitmap) {
-        img_avatarProfile.setImageBitmap(imageBitmap);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
-            return;
-        }
-        progressDialog.show();
-
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(mUri)
-                .build();
-
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+            Uri selectedImageUri = data.getData();
+            String base64Image = convertImageToBase64(selectedImageUri);
+            if (base64Image != null) {
+                // Sử dụng chuỗi Base64 theo ý của bạn
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference avaRef = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+                avaRef.addValueEventListener(new ValueEventListener() {
+                    private  boolean isHandle = false;
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
-                        if (task.isSuccessful()) {
-                            Toast.makeText(mainActivity, "Cập nhật avatar thành công", Toast.LENGTH_SHORT).show();
-                            setProfile();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!isHandle){
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("avatar", base64Image);
+                            avaRef.updateChildren(data);
+                            Log.d("quy",base64Image);
+                            isHandle = true;
                         }
                     }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
                 });
+            }
+        }
     }
-
-
+    private String convertImageToBase64(Uri imageUri) {
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byte[] byteArray = byteArrayOutputStream.toByteArray();
+            return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public void setUri(Uri mUri){
         this.mUri = mUri;

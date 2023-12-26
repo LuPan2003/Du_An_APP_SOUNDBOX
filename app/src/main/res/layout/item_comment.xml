@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="100dp"
         >
+
         <ImageView
             android:id="@+id/icon_profile"
             android:layout_width="32dp"

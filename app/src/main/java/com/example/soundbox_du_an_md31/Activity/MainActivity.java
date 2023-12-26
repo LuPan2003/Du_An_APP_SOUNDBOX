@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -21,6 +24,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -78,6 +82,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -120,6 +125,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     private ActivityMainBinding mActivityMainBinding;
 
       private ProfileFragment mProfileFragment = new ProfileFragment();
+    private static final int PICK_IMAGE_REQUEST = 1;
 
     final private ActivityResultLauncher<Intent> mActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
              new ActivityResultCallback<ActivityResult>() {
@@ -134,7 +140,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                  mProfileFragment.setUri(uri);
                  try {
                      Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
-                     mProfileFragment.setImageBitmap(bitmap);
+//                     mProfileFragment.setImageBitmap(bitmap);
                  } catch (IOException e) {
                      throw new RuntimeException(e);
                  }

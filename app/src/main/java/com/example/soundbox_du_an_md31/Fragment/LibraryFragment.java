@@ -5,6 +5,8 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,10 +112,26 @@ public class LibraryFragment extends Fragment {
             soLuongAlbum.setText("0 danh sách");
             tv_favorite.setText("0 bài hát");
         }else{
-            Uri photoUrl = user.getPhotoUrl();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users").child(user.getUid()).child("avatar");
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+//                    String base64Image = snapshot.toString();
+//                    img_avatarProfile.setImageURI(Uri.parse(base64Image));
+                        Log.d("quy1", snapshot.toString());
+                        String base64Image = (String) snapshot.getValue();
+                        byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                        profile.setImageBitmap(bitmap);
+                    }
+                }
 
-            Glide.with(getContext()).load(photoUrl).override(32,32).error(R.drawable.avata).into(profile);
-            Log.d("image", "onCreateView: "+ photoUrl);
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference musicRef = database.getReference("album");
             DatabaseReference albumRef = musicRef.child(user.getUid());
