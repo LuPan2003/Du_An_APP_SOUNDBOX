@@ -28,6 +28,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ChangeInformationFragment extends Fragment {
@@ -69,21 +77,16 @@ public class ChangeInformationFragment extends Fragment {
     }
     private void updateProfile(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        progressDialog.show();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
 
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(user.getUid(), edt_phone.getText().toString().trim());
-        user.updatePhoneNumber(credential)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getActivity(), "Thêm thành công", Toast.LENGTH_SHORT).show();
-                        } else {
-
-                        }
-                    }
-                });
-
+        if (edt_name.getText().length() == 0 || edt_phone.getText().length() ==0){
+            Toast.makeText(getActivity(), "Không được để trống", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", edt_name.getText().toString());
+        data.put("numberphone", edt_phone.getText().toString());
+        ref.updateChildren(data);
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(edt_name.getText().toString().trim())
@@ -100,6 +103,10 @@ public class ChangeInformationFragment extends Fragment {
                         }
                     }
                 });
+
+
+
+
     }
 
     private void setProfile() {
@@ -107,7 +114,19 @@ public class ChangeInformationFragment extends Fragment {
         if (user == null) {
             return;
         }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(user.getUid());
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String numberphone = snapshot.child("numberphone").getValue(String.class);
+                edt_phone.setText(numberphone);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         edt_name.setText(user.getDisplayName());
-        edt_phone.setText(user.getPhoneNumber());
     }
 }
