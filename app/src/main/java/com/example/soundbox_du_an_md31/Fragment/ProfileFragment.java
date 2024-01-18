@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -135,21 +137,29 @@ public class ProfileFragment extends Fragment {
                                 Log.d("zzz123", snapshot.toString());
                                 String endTimeStr = snapshot.getValue(String.class);
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                                Date endTime = null;
                                 try {
-                                    endTime = dateFormat.parse(endTimeStr);
+                                    Date date = dateFormat.parse(endTimeStr);
+
+                                    SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+                                    SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+                                    SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+                                    int day = Integer.parseInt(dayFormat.format(date));
+                                    int month = Integer.parseInt(monthFormat.format(date));
+                                    int year = Integer.parseInt(yearFormat.format(date));
+                                    LocalDate currentDate = LocalDate.now();
+                                    LocalDate endDate = LocalDate.of(year, month, day);
+                                    long remainingDays = ChronoUnit.DAYS.between(currentDate, endDate);
+                                    Log.d("time1","Ngày: " + day);
+                                    Log.d("time2","Ngày: " + month);
+                                    Log.d("time3","Ngày: " + year);
+                                    Log.d("time4", String.valueOf(remainingDays));
+                                    tv_daypremium.setText(String.valueOf(remainingDays) + " days");
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                 }
-                                // Lấy thời điểm hiện tại
-                                Calendar currentCalendar = Calendar.getInstance();
-                                Date currentTime = currentCalendar.getTime();
 
-                                // Tính số ngày giữa endTime và thời điểm hiện tại
-                                long diffInMillis = endTime.getTime() - currentTime.getTime();
-                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS) +1;
 
-                                tv_daypremium.setText(String.valueOf(days) + " days");
                             }
 
                             @Override

@@ -651,26 +651,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
                                 HashMap<String, Object> hashMapValue = (HashMap<String, Object>) value;
                                 String endTimeStr = (String) hashMapValue.get("endTime");
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                                Date endTime = null;
                                 try {
-                                    endTime = dateFormat.parse(endTimeStr);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
-                                // Lấy thời điểm hiện tại
-                                Calendar currentCalendar = Calendar.getInstance();
-                                Date currentTime = currentCalendar.getTime();
-                                Log.d("time","en"+endTime);
-                                Log.d("time","start"+currentTime);
-//                                long daysRemaining = ChronoUnit.DAYS.between((Temporal) currentTime, (Temporal) endTime);
-                                // Tính số ngày giữa endTime và thời điểm hiện tại
-                                long diffInMillis = endTime.getTime() - currentTime.getTime();
-                                long days = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
-                                Log.d("time", "day "+days);
-                                if(days <= 0){
+                                    Date date = dateFormat.parse(endTimeStr);
+
+                                    SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+                                    SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+                                    SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+                                    int day = Integer.parseInt(dayFormat.format(date));
+                                    int month = Integer.parseInt(monthFormat.format(date));
+                                    int year = Integer.parseInt(yearFormat.format(date));
+                                    LocalDate currentDate = LocalDate.now();
+                                    LocalDate endDate = LocalDate.of(year, month, day);
+                                    long remainingDays = ChronoUnit.DAYS.between(currentDate, endDate);
+                                    Log.d("time1","Ngày: " + day);
+                                    Log.d("time2","Ngày: " + month);
+                                    Log.d("time3","Ngày: " + year);
+                                    Log.d("time4", String.valueOf(remainingDays));
+                                    if(remainingDays <= 0){
                                     Map<String, Object> data = new HashMap<>();
                                     data.put("isVIP", false);
                                     reference.updateChildren(data);
+                                }
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
                             }
                         }else{

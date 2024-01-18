@@ -187,13 +187,15 @@ public class ChangepointActivity extends AppCompatActivity {
                                             calendar.add(Calendar.MONTH, month);
                                             String newDate = dateFormat.format(calendar.getTime());
 //                                        Point
+                                            long pointbandau = snapshot.child("point").getValue(Long.class);
+                                            long pointUser = point +pointbandau;
                                             Map<String, Object> dataPoint = new HashMap<>();
                                             long newPoint = pointht - point;
                                             Map<String, Object> data = new HashMap<>();
                                             data.put("isVIP", true);
                                             data.put("startTime", currentDate);
                                             data.put("endTime", newDate);
-                                            data.put("point",point);
+                                            data.put("point",pointUser);
                                             dataPoint.put("point",newPoint);
                                             userVIP.updateChildren(data);
                                             reference.updateChildren(dataPoint);

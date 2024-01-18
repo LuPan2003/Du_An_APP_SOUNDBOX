@@ -29,6 +29,8 @@ import com.example.soundbox_du_an_md31.Service.MusicService;
 import com.example.soundbox_du_an_md31.databinding.FragmentHomeBinding;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
 import com.example.soundbox_du_an_md31.utils.StringUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -313,54 +316,157 @@ public class HomeFragment extends Fragment {
         int numberOfSongs = 5;
         songsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (MusicService.mListSongPlaying == null || MusicService.mListSongPlaying.isEmpty()) {
-                    Log.d("song", "ko có");
-                    List<Song> allSongs = new ArrayList<>();
+            public void onDataChange(@NonNull DataSnapshot snapshotMusic) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user != null){
+//                    Có user
+                    if (MusicService.mListSongPlaying == null || MusicService.mListSongPlaying.isEmpty()) {
+//                        Không có bài hát
+                        DatabaseReference history = FirebaseDatabase.getInstance().getReference().child("history").child(user.getUid());
+                        history.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(snapshot.exists()){
+//                                    có lịch sử
+                                    Log.d("data", snapshot.toString());
+                                    List<Song> allSongs = new ArrayList<>();
+                                    // Lặp qua tất cả các bài hát trong dataSnapshot
+                                    for (DataSnapshot songSnapshot : snapshotMusic.getChildren()) {
+                                        Song song = songSnapshot.getValue(Song.class);
+                                        allSongs.add(song);
+                                    }
+                                    List<Song> songsInGenre = new ArrayList<>();
+                                    for (DataSnapshot songTheLoai : snapshot.getChildren()) {
+                                        Song song = songTheLoai.getValue(Song.class);
+                                        Log.d("song", song.getGenre());
+                                        String theloai = song.getGenre();
+                                        for (Song songRamdom : allSongs) {
+                                            if (song != null && theloai.equals(song.getGenre())) {
+                                                songsInGenre.add(songRamdom);
+                                            }
+                                        }
+                                        List<Song> recommendedSongs = new ArrayList<>();
+                                        Random random = new Random();
+                                        while (recommendedSongs.size() < numberOfSongs && !allSongs.isEmpty()) {
+                                            int randomIndex = random.nextInt(allSongs.size());
+                                            recommendedSongs.add(allSongs.remove(randomIndex));
+                                        }
+                                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                        mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                                        SongAdapter songAdapter = new SongAdapter(recommendedSongs,song1 -> goToSong(song1) );
+                                        mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
+                                        break;
+                                    }
 
-                    // Lặp qua tất cả các bài hát trong dataSnapshot
-                    for (DataSnapshot songSnapshot : snapshot.getChildren()) {
-                        Song song = songSnapshot.getValue(Song.class);
-                        allSongs.add(song);
-                    }
 
-                    List<Song> recommendedSongs = new ArrayList<>();
-                    Random random = new Random();
-                    while (recommendedSongs.size() < numberOfSongs && !allSongs.isEmpty()) {
-                        int randomIndex = random.nextInt(allSongs.size());
-                        recommendedSongs.add(allSongs.remove(randomIndex));
-                    }
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                    mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
-                    SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
-                    mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
-                }else {
-                    Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
-                    List<Song> allSongs = new ArrayList<>();
 
-                // Lặp qua tất cả các bài hát trong dataSnapshot
-                    for (DataSnapshot songSnapshot : snapshot.getChildren()) {
-                        Song song = songSnapshot.getValue(Song.class);
-                        allSongs.add(song);
-                    }
-                    List<Song> songsInGenre = new ArrayList<>();
-                    String theloai = currentSong.getGenre();
+                                }else{
+//                                    Không có lịch sử
+                                    List<Song> allSongs = new ArrayList<>();
 
-                    for (Song song : allSongs) {
-                        if (song != null && theloai.equals(song.getGenre())) {
-                            songsInGenre.add(song);
+                                    // Lặp qua tất cả các bài hát trong dataSnapshot
+                                    for (DataSnapshot songSnapshot : snapshotMusic.getChildren()) {
+                                        Song song = songSnapshot.getValue(Song.class);
+                                        allSongs.add(song);
+                                    }
+
+                                    List<Song> recommendedSongs = new ArrayList<>();
+                                    Random random = new Random();
+                                    while (recommendedSongs.size() < numberOfSongs && !allSongs.isEmpty()) {
+                                        int randomIndex = random.nextInt(allSongs.size());
+                                        recommendedSongs.add(allSongs.remove(randomIndex));
+                                    }
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                                    mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                                    SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                                    mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }else{
+//                        Đang nghe
+                        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                        List<Song> allSongs = new ArrayList<>();
+
+                        // Lặp qua tất cả các bài hát trong dataSnapshot
+                        for (DataSnapshot songSnapshot : snapshotMusic.getChildren()) {
+                            Song song = songSnapshot.getValue(Song.class);
+                            allSongs.add(song);
                         }
+                        List<Song> songsInGenre = new ArrayList<>();
+                        String theloai = currentSong.getGenre();
+
+                        for (Song song : allSongs) {
+                            if (song != null && theloai.equals(song.getGenre())) {
+                                songsInGenre.add(song);
+                            }
+                        }
+                        List<Song> recommendedSongs = new ArrayList<>();
+                        Random random = new Random();
+                        while (recommendedSongs.size() < numberOfSongs && !songsInGenre.isEmpty()) {
+                            int randomIndex = random.nextInt(songsInGenre.size());
+                            recommendedSongs.add(songsInGenre.remove(randomIndex));
+                        }
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                        mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                        SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                        mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
                     }
-                    List<Song> recommendedSongs = new ArrayList<>();
-                    Random random = new Random();
-                    while (recommendedSongs.size() < numberOfSongs && !songsInGenre.isEmpty()) {
-                        int randomIndex = random.nextInt(songsInGenre.size());
-                        recommendedSongs.add(songsInGenre.remove(randomIndex));
+                }else{
+//                    Không nghe
+                    if (MusicService.mListSongPlaying == null || MusicService.mListSongPlaying.isEmpty()) {
+                        Log.d("song", "ko có");
+                        List<Song> allSongs = new ArrayList<>();
+
+                        // Lặp qua tất cả các bài hát trong dataSnapshot
+                        for (DataSnapshot songSnapshot : snapshotMusic.getChildren()) {
+                            Song song = songSnapshot.getValue(Song.class);
+                            allSongs.add(song);
+                        }
+
+                        List<Song> recommendedSongs = new ArrayList<>();
+                        Random random = new Random();
+                        while (recommendedSongs.size() < numberOfSongs && !allSongs.isEmpty()) {
+                            int randomIndex = random.nextInt(allSongs.size());
+                            recommendedSongs.add(allSongs.remove(randomIndex));
+                        }
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                        mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                        SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                        mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
+                    }else {
+                        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+                        List<Song> allSongs = new ArrayList<>();
+
+                        // Lặp qua tất cả các bài hát trong dataSnapshot
+                        for (DataSnapshot songSnapshot : snapshotMusic.getChildren()) {
+                            Song song = songSnapshot.getValue(Song.class);
+                            allSongs.add(song);
+                        }
+                        List<Song> songsInGenre = new ArrayList<>();
+                        String theloai = currentSong.getGenre();
+
+                        for (Song song : allSongs) {
+                            if (song != null && theloai.equals(song.getGenre())) {
+                                songsInGenre.add(song);
+                            }
+                        }
+                        List<Song> recommendedSongs = new ArrayList<>();
+                        Random random = new Random();
+                        while (recommendedSongs.size() < numberOfSongs && !songsInGenre.isEmpty()) {
+                            int randomIndex = random.nextInt(songsInGenre.size());
+                            recommendedSongs.add(songsInGenre.remove(randomIndex));
+                        }
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                        mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
+                        SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
+                        mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
                     }
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                    mFragmentHomeBinding.rcvRecommendedSongs.setLayoutManager(linearLayoutManager);
-                    SongAdapter songAdapter = new SongAdapter(recommendedSongs,song -> goToSong(song) );
-                    mFragmentHomeBinding.rcvRecommendedSongs.setAdapter(songAdapter);
                 }
             }
 
