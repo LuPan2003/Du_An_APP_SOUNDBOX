@@ -2,8 +2,7 @@ package com.example.soundbox_du_an_md31.Model;
 
 import java.io.Serializable;
 
-public class Song implements Serializable {
-
+public class SongDown implements Serializable {
     private int id;
     private String idSong;
     private String title;
@@ -28,7 +27,7 @@ public class Song implements Serializable {
         return nation;
     }
 
-    public Song(String idSong, String title, String image, String url, String artist, boolean latest, String genre, int count) {
+    public SongDown(String idSong, String title, String image, String url, String artist, boolean latest, String genre, int count) {
         this.idSong = idSong;
         this.title = title;
         this.image = image;
@@ -77,7 +76,7 @@ public class Song implements Serializable {
         isCopyrighted = copyrighted;
     }
 
-    public Song() {
+    public SongDown() {
     }
 
     public int getId() {

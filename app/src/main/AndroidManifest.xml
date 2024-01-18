@@ -17,7 +17,6 @@
     <uses-permission android:name="android.permission.ACCESS_ACCELEROMETER" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
@@ -34,6 +33,9 @@
         tools:ignore="UnusedAttribute"
         tools:replace="android:supportsRtl"
         tools:targetApi="31">
+        <activity
+            android:name=".Activity.PlayMusicDownActivity"
+            android:exported="false" />
         <activity
             android:name=".Activity.ChangepointActivity"
             android:exported="false" />
@@ -77,10 +79,13 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="demozalopay"
-                    android:host="app" />
+
+                <data
+                    android:host="app"
+                    android:scheme="demozalopay" />
             </intent-filter>
         </activity>
         <activity

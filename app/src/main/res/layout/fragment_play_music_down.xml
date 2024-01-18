@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#6699CC">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:orientation="vertical"
+        android:id="@+id/image_music"
+        >
+        <ImageButton
+            android:layout_gravity="end"
+            android:id="@+id/menuMusic"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/vertical_3dots_icon"
+            android:contentDescription="To open menu"
+            app:tint="@color/white"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="10dp"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img_song"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/define_dimen_40"
+            android:layout_marginStart="@dimen/define_dimen_40"
+            android:layout_marginTop="@dimen/define_dimen_40"
+            android:layout_marginEnd="@dimen/define_dimen_40"
+            android:layout_marginBottom="@dimen/define_dimen_40"
+            android:src="@drawable/image_no_available" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/image_music"
+        android:paddingHorizontal="10dp"
+        android:gravity="center"
+        android:id="@+id/title_music"
+        >
+        <TextView
+            android:id="@+id/tv_song_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/text_size_normal"
+            android:textStyle="bold"
+            android:text="Tên bài hát"/>
+        <TextView
+            android:id="@+id/tv_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:textStyle="italic"
+            android:textColor="#ccc"
+            android:text="Ca sĩ"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/seekbar_music"
+        android:paddingHorizontal="10dp"
+        android:layout_below="@+id/title_music"
+        android:layout_marginVertical="20dp">
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/define_dimen_2">
+
+            <TextView
+                android:id="@+id/tv_time_current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_start_time"
+                android:textColor="@color/colorWhite" />
+
+            <TextView
+                android:id="@+id/tv_time_max"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="@string/label_start_time"
+                android:textColor="@color/colorWhite"
+                tools:ignore="RelativeOverlap" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/seekbar_music"
+        android:layout_marginHorizontal="20dp"
+        android:id="@+id/play_music"
+        android:gravity="center">
+        <ImageButton
+            android:id="@+id/share_play"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="To edit song info"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_share_24_white"
+            app:tint="@color/colorWhite" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_below="@+id/seekbar_music"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+            <ImageView
+                android:id="@+id/img_previous"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/iconpreview"
+                tools:ignore="ContentDescription" />
+            <ImageView
+                android:id="@+id/img_play"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="@dimen/define_dimen_20"
+                android:layout_marginEnd="@dimen/define_dimen_20"
+                android:src="@drawable/iconplay"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/img_next"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:src="@drawable/iconnext"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/favourite"
+            app:layout_constraintEnd_toStartOf="@+id/favourite"
+            app:layout_constraintTop_toTopOf="@+id/favourite">
+            <ImageButton
+                android:id="@+id/heartred_play"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="To edit song info"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/heart_outline_icon"
+                app:tint="@color/red" />
+            <ImageButton
+                android:id="@+id/heart_play"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="To edit song info"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/heart_outline_icon"
+                app:tint="@color/colorWhite" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/play_music"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:id="@+id/layout_contact"
+        >
+        <ImageView
+            android:id="@+id/img_stopwatch"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/stopwatch"
+            tools:ignore="ContentDescription"
+            app:tint="@color/colorWhite"
+            android:layout_marginHorizontal="20dp"/>
+        <ImageView
+            android:id="@+id/img_blocked"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/controls"
+            tools:ignore="ContentDescription"
+            app:tint="@color/colorWhite"
+            android:layout_marginHorizontal="20dp"/>
+        <ImageButton
+            android:id="@+id/btn_download"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="To edit song info"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/download"
+            app:tint="@color/colorWhite"
+            android:layout_marginHorizontal="20dp"/>
+        <ImageButton
+            android:id="@+id/comment_Play"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="To edit song info"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/comment"
+            app:tint="@color/colorWhite"
+            android:layout_marginHorizontal="20dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/layout_contact"
+        android:gravity="bottom">
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-8801498166910444/3511803390">
+        </com.google.android.gms.ads.AdView>
+    </LinearLayout>
+</RelativeLayout>

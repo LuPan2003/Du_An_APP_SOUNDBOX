@@ -75,7 +75,7 @@ import java.util.List;
 public class LibraryFragment extends Fragment {
     private MainActivity mainActivity;
     private ImageView profile,imgavatar,icon_settings;
-    private TextView soLuongAlbum,tv_favorite;
+    private TextView soLuongAlbum,tv_favorite,tvDown;
     private LinearLayout album, favorite,history,layout_all_2;
     private List<Song> mListSong;
     private RecyclerView rcvHistory;
@@ -101,6 +101,7 @@ public class LibraryFragment extends Fragment {
         tv_favorite = view.findViewById(R.id.tv_favorite);
         rcvHistory = view.findViewById(R.id.rcv_listHistory);
         layout_all_2 = view.findViewById(R.id.layout_content_all1);
+        tvDown = view.findViewById(R.id.layout_play_all_history);
 
 //        rcvHistory.setNestedScrollingEnabled(false);
 
@@ -166,8 +167,12 @@ public class LibraryFragment extends Fragment {
             });
         }
 
-
-
+        tvDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainActivity.gotoDown();
+            }
+        });
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override

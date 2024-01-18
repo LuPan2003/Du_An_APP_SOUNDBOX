@@ -3,16 +3,13 @@ package com.example.soundbox_du_an_md31.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,12 +31,16 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.soundbox_du_an_md31.Activity.CommentActivity;
 import com.example.soundbox_du_an_md31.Activity.LoginActivity;
+import com.example.soundbox_du_an_md31.Activity.MainActivity;
 import com.example.soundbox_du_an_md31.Activity.volumeSeekBar;
 import com.example.soundbox_du_an_md31.Constant.Constant;
 import com.example.soundbox_du_an_md31.Constant.GlobalFuntion;
+import com.example.soundbox_du_an_md31.Dao.Dao;
 import com.example.soundbox_du_an_md31.Model.Song;
+import com.example.soundbox_du_an_md31.Model.SongDown;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
+import com.example.soundbox_du_an_md31.Service.MyServiceDown;
 import com.example.soundbox_du_an_md31.databinding.FragmentPlaySongBinding;
 import com.example.soundbox_du_an_md31.utils.AppUtil;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
@@ -62,11 +63,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @SuppressLint("NonConstantResourceId")
 public class PlaySongFragment extends Fragment implements View.OnClickListener {
@@ -74,7 +86,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
 
     private FragmentPlaySongBinding mFragmentPlaySongBinding;
     private Timer mTimer;
-
+    private MainActivity mainActivity;
     private AdView mAdView;
     private List<Song> mListSong;
     public static int mSongPosition;
@@ -96,21 +108,25 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
             updateUIOnMusicShutdown();
         }
     };
+
     // Phương thức để cập nhật giao diện người dùng
     private void updateUIOnMusicShutdown() {
         if (mFragmentPlaySongBinding != null) {
             mFragmentPlaySongBinding.imgPlay.setImageResource(R.drawable.ic_play_black);
         }
     }
+
     // Cung cấp phương thức để lấy binding
     public FragmentPlaySongBinding getFragmentPlaySongBinding() {
         return mFragmentPlaySongBinding;
     }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mFragmentPlaySongBinding = FragmentPlaySongBinding.inflate(inflater, container, false);
         // Kiểm tra trạng thái VIP của người dùng
+
         boolean isVIP = checkUserIsVIP1();
 
         if (!isVIP) {
@@ -310,7 +326,6 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-
 
 
         heartred.setOnClickListener(new View.OnClickListener() {
@@ -673,6 +688,7 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -955,39 +971,122 @@ public class PlaySongFragment extends Fragment implements View.OnClickListener {
         }, delayMillis);
     }
 
-    private void download() {
-        checkUserIsVIP(new Callback<Boolean>() {
+    private void downloadSongFromUrl(String url, String fileName) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
-            public void onResult(Boolean isVipUser) {
-                if (!isVipUser) {
-                    // Hiển thị thông báo cho người dùng không phải là VIP
-                    Toast.makeText(getActivity(), "Đăng ký gói premium để được tải nhạc", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
 
-                // Kiểm tra xem bài hát hiện tại có URL hợp lệ không
-                if (currentSong == null || TextUtils.isEmpty(currentSong.getUrl())) {
-                    Toast.makeText(getActivity(), "Không thể tải bài hát này", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                // Sử dụng DownloadManager để tải bài hát
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(currentSong.getUrl()));
-                request.setTitle(currentSong.getTitle());
-                request.setDescription("Đang tải bài hát");
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, currentSong.getTitle() + ".mp3");
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    InputStream inputStream = response.body().byteStream();
+                    File outputFile = new File(getContext().getFilesDir(), fileName);
 
-                DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                if (downloadManager != null) {
-                    downloadManager.enqueue(request);
-                    Toast.makeText(getActivity(), "Đang tải xuống...", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Không thể tạo yêu cầu tải xuống", Toast.LENGTH_SHORT).show();
+                    OutputStream outputStream = new FileOutputStream(outputFile);
+
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+
+                    outputStream.flush();
+                    outputStream.close();
+                    inputStream.close();
+
+                    // Bài hát đã được tải xuống và lưu trữ thành công.
+                    // Tiếp tục xử lý phát bài hát trong fragment của bạn.
                 }
             }
         });
     }
+
+    private void downloadMusicFromUrl(String url, String fileName) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                InputStream inputStream = null;
+                OutputStream outputStream = null;
+
+                try {
+                    File directory = new File(getActivity().getExternalFilesDir(null), "music"); // Thay "music" bằng tên thư mục bạn muốn lưu trữ nhạc
+                    if (!directory.exists()) {
+                        directory.mkdirs();
+                    }
+
+                    File file = new File(directory, fileName);
+
+                    inputStream = response.body().byteStream();
+                    outputStream = new FileOutputStream(file);
+
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+
+                    outputStream.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (outputStream != null) {
+                        try {
+                            outputStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void download() {
+        Dao dao = new Dao(getActivity());
+        Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        SongDown song = new SongDown(currentSong.getIdSong(), currentSong.getTitle()
+                , currentSong.getImage(), currentSong.getUrl(), currentSong.getArtist()
+                , currentSong.isLatest(), currentSong.getGenre(), currentSong.getCount()
+        );
+
+        // Sử dụng DownloadManager để tải bài hát
+        if (dao.themSong(song) == true) {
+            Toast.makeText(getContext(), "Đang tải nhạc", Toast.LENGTH_SHORT).show();
+        downloadMusicFromUrl(currentSong.getUrl(), currentSong.getTitle());
+            Toast.makeText(getContext(), "Tải nhạc thành công", Toast.LENGTH_SHORT).show();
+
+
+        }
+
+
+    }
+
 
     private void sendBroadcastChangeListener() {
         if (getActivity() != null) {

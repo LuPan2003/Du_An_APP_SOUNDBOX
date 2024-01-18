@@ -7,12 +7,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.soundbox_du_an_md31.Fragment.ListSongPlayingFragment;
 import com.example.soundbox_du_an_md31.Fragment.PlayMusicDownFragment;
-import com.example.soundbox_du_an_md31.Fragment.PlaySongFragment;
 
-
-public class MusicViewPagerAdapter extends FragmentStateAdapter {
-
-    public MusicViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+public class MusicViewPagerDownAdapter extends FragmentStateAdapter {
+    public MusicViewPagerDownAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 
@@ -22,7 +19,7 @@ public class MusicViewPagerAdapter extends FragmentStateAdapter {
         if (position == 0) {
             return new ListSongPlayingFragment();
         }
-        return new PlaySongFragment();
+        return new PlayMusicDownFragment();
     }
 
     @Override

@@ -40,6 +40,7 @@ import com.example.soundbox_du_an_md31.Fragment.ChangeInformationFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChangePasswordFragment;
 import com.example.soundbox_du_an_md31.Fragment.ChinesemusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.DangkinhacFragment;
+import com.example.soundbox_du_an_md31.Fragment.DownLoadFragment;
 import com.example.soundbox_du_an_md31.Fragment.EdmmusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.FeedbackFragment;
 import com.example.soundbox_du_an_md31.Fragment.HomeFragment;
@@ -59,8 +60,10 @@ import com.example.soundbox_du_an_md31.Fragment.UsukFragment;
 import com.example.soundbox_du_an_md31.Fragment.VietnamesemusicFragment;
 import com.example.soundbox_du_an_md31.Fragment.YoungmusicFragment;
 import com.example.soundbox_du_an_md31.Model.Song;
+import com.example.soundbox_du_an_md31.Model.SongDown;
 import com.example.soundbox_du_an_md31.R;
 import com.example.soundbox_du_an_md31.Service.MusicService;
+import com.example.soundbox_du_an_md31.Service.MyServiceDown;
 import com.example.soundbox_du_an_md31.databinding.ActivityMainBinding;
 import com.example.soundbox_du_an_md31.utils.GlideUtils;
 import com.google.android.gms.ads.AdRequest;
@@ -224,6 +227,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
         initListener();
         displayLayoutBottom();
+        displayLayoutBottomD();
     }
 
     private void switchToOtherScreen() {
@@ -329,8 +333,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
 
             case R.id.layout_text:
             case R.id.img_song:
-                openPlayMusicActivity();
 
+                openPlayMusicActivity();
                 break;
         }
     }
@@ -366,6 +370,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
         showStatusButtonPlay();
     }
 
+    private void displayLayoutBottomD() {
+        if (MyServiceDown.mPlayer == null) {
+            mActivityMainBinding.layoutBottom.layoutItem.setVisibility(View.GONE);
+            return;
+        }
+        mActivityMainBinding.layoutBottom.layoutItem.setVisibility(View.VISIBLE);
+        showInforSongD();
+        showStatusButtonPlay();
+
+    }
+
 
 
 
@@ -386,6 +401,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
             return;
         }
         Song currentSong = MusicService.mListSongPlaying.get(MusicService.mSongPosition);
+        mActivityMainBinding.layoutBottom.tvSongName.setText(currentSong.getTitle());
+        mActivityMainBinding.layoutBottom.tvArtist.setText(currentSong.getArtist());
+        GlideUtils.loadUrl(currentSong.getImage(), mActivityMainBinding.layoutBottom.imgSong);
+    }
+    private void showInforSongD() {
+        if (MyServiceDown.mListSongPlaying1 == null || MyServiceDown.mListSongPlaying1.isEmpty()) {
+            return;
+        }
+        SongDown currentSong = MyServiceDown.mListSongPlaying1.get(MyServiceDown.mSongPosition);
         mActivityMainBinding.layoutBottom.tvSongName.setText(currentSong.getTitle());
         mActivityMainBinding.layoutBottom.tvArtist.setText(currentSong.getArtist());
         GlideUtils.loadUrl(currentSong.getImage(), mActivityMainBinding.layoutBottom.imgSong);
@@ -529,6 +553,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener  
     public void gotoAlBum(){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         AlbumFragment changeInformationFragment = new AlbumFragment();
+        fragmentTransaction.replace(R.id.frame_layout,changeInformationFragment);
+        fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
+        fragmentTransaction.commit();
+    }
+    public void gotoDown(){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        DownLoadFragment changeInformationFragment = new DownLoadFragment();
         fragmentTransaction.replace(R.id.frame_layout,changeInformationFragment);
         fragmentTransaction.addToBackStack(ChangeInformationFragment.TAG);
         fragmentTransaction.commit();

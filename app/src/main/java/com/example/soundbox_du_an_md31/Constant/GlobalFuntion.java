@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.soundbox_du_an_md31.Service.MusicReceiver;
 import com.example.soundbox_du_an_md31.Service.MusicService;
+import com.example.soundbox_du_an_md31.Service.MyServiceDown;
 
 import java.text.Normalizer;
 import java.util.regex.Pattern;
@@ -99,6 +100,12 @@ public class GlobalFuntion {
     //Khởi động dịch vụ âm nhạc.
     public static void startMusicService(Context ctx, int action, int songPosition) {
         Intent musicService = new Intent(ctx, MusicService.class);
+        musicService.putExtra(Constant.MUSIC_ACTION, action);
+        musicService.putExtra(Constant.SONG_POSITION, songPosition);
+        ctx.startService(musicService);
+    }
+    public static void startMusicServiceDown(Context ctx, int action, int songPosition) {
+        Intent musicService = new Intent(ctx, MyServiceDown.class);
         musicService.putExtra(Constant.MUSIC_ACTION, action);
         musicService.putExtra(Constant.SONG_POSITION, songPosition);
         ctx.startService(musicService);
